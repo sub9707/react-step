@@ -1,5 +1,4 @@
-import React from 'react';
-import { ArrowLeft, BookOpen, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
 import { useMDXContent } from '../hooks/useMDXContent';
 import NavigationBar from '../components/CourseContent/NavigationBar';
 import MDXRenderer from '../components/CourseContent/MDXRenderer';
@@ -199,7 +198,7 @@ function ContentPage({ level = 'beginner', lessonId = '1' }: ContentPageProps) {
                 다음 강의
                 <ArrowRight className="w-4 h-4" />
               </div>
-            )} onClick={handlePrevLesson} className={'"flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"'} size='md'>
+            )} onClick={handleNextLesson} className={'"flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"'} size='md'>
             </Button>
           </div>
         </div>

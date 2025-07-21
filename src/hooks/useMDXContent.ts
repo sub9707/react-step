@@ -137,7 +137,7 @@ export const loadMDXComponent = async (path: string): Promise<MDXContent | null>
 };
 
 // MDX 파일 목록 가져오기
-export const getMDXFileList = async (level: string): Promise<string[]> => {
+export const getMDXFileList = async (): Promise<string[]> => {
   try {
     const commonFiles = ['lesson-1', 'lesson-2', 'lesson-3', 'lesson-4', 'lesson-5'];
     return commonFiles;

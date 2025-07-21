@@ -1,4 +1,3 @@
-import React from 'react';
 import FootnoteCodeBox from '../../../../../components/CourseContent/FootnoteCodeBox';
 
 export const ReactFootnoteData = {
