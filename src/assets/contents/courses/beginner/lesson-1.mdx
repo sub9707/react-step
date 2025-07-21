@@ -1,0 +1,472 @@
+export const metadata = {
+  id: 1,
+  title: "리액트란? - 초보자를 위한 React 입문",
+  description: "React의 기본 개념에 대해 알아봅시다.",
+  difficulty: "쉬움",
+  tags: ["React", "입문", "기초"],
+  lastUpdated: "2024-01-15",
+  image: "/content/beginner/1/react-bg.png"
+};
+
+import { CodeSandbox, Quiz, CalloutBox, DownloadableFile, LinkCard, EmbeddedVideo, HighlightWord, ComparisonImages } from '@components/CourseContent/EmbeddedComponents';
+import { FootnoteProvider, FootnoteLink } from '@/components/CourseContent/FootnoteProvider';
+import { ReactFootnoteData } from '@/assets/contents/courses/beginner/1_footnotes/lesson_1.tsx';
+
+<FootnoteProvider data={ReactFootnoteData}>
+웹 개발을 배우다 보면 React라는 이름을 자주 듣게 됩니다. <br/> 
+
+하지만 React가 정확히 무엇인지, 왜 이렇게 인기가 많은지 궁금하셨을 것입니다. <br/> 
+
+이번 회차에서는 React가 어떻게 생겼는지, 왜 사용하는지 등에 대해 간단히 알아보겠습니다.<br/> 
+
+가벼운 마음으로 읽어주세요.
+
+<Image
+  src="/content/beginner/1/react.png"
+  alt="React 로고"
+  caption="React는 사용자 인터페이스를 구축하기 위한 JavaScript '라이브러리'입니다 - react.dev"
+/>
+
+<br/><br/>
+
+## React란?
+
+<CalloutBox type="info" title="💡 알고가요!">
+**React**는 Facebook(현 Meta)에서 개발한 사용자 인터페이스(UI)를 구축하기 위한 JavaScript 라이브러리입니다.<br/> 
+ 특히 단일 페이지 애플리케이션(SPA)을 만들 때 매우 유용합니다.
+</CalloutBox>
+
+React를 한마디로 정의하면: <i><HighlightWord>재사용 가능한 컴포넌트를 이용해 사용자 인터페이스를 효율적으로 구축할 수 있게 도와주는 도구</HighlightWord></i>입니다.
+
+컴포넌트는 뭐고 재사용이 왜 가능할까요?
+
+<Image
+  src="/content/beginner/1/bricks.png"
+  alt="컴포넌트"
+  caption="컴포넌트는 코드 벽돌을 만들기 위해 만든 주형틀과 같습니다"
+/>
+
+뒤에서 설명하겠지만, 간단히 설명하자면 컴포넌트는 코드 벽돌을 만들기 위해 만든 주형틀이라고 생각하면 편합니다.
+
+이 벽돌들로 벽을 짓고, 집을 짓는 것이죠.
+
+웹사이트를 만들 때 React를 사용하면 복잡한 웹 애플리케이션도 개발할 때 편리하고 효율적으로 만들 수 있습니다.
+
+<br/>
+
+### React의 핵심 개념
+
+React를 이해하기 위해서는 몇 가지 핵심 개념을 알아야 합니다:
+
+1. <HighlightWord>컴포넌트(Component)</HighlightWord>: UI를 독립적이고 재사용 가능한 조각으로 나눈 것
+2. <HighlightWord>JSX</HighlightWord>: JavaScript 안에서 HTML과 유사한 문법을 사용할 수 있게 해주는 확장 문법
+3. <HighlightWord>가상 DOM</HighlightWord>:실제 DOM을 추상화한 JavaScript 객체
+4. <HighlightWord>Props</HighlightWord>: 컴포넌트 간에 데이터를 전달하는 방법
+5. <HighlightWord>State</HighlightWord>: 컴포넌트 내부에서 관리하는 동적 데이터
+
+이 내용들은 뒤 회차에서 차차 알아가보겠습니다.
+
+<br/>
+
+### React가 해결하는 문제들
+
+기존의 웹 개발에서는 다음과 같은 문제들이 있었습니다:
+
+<CalloutBox type="warning" title="전통적인 웹 개발의 한계">
+- **코드 중복**: 비슷한 UI를 만들 때마다 HTML/CSS/JS를 반복 작성
+- **상태 관리**: 사용자 상호작용에 따른 화면 변화를 추적하기 어려움
+- **유지보수**: 코드가 복잡해질수록 버그 찾기와 수정이 어려워짐
+- **성능**: DOM 조작이 많아질수록 페이지가 느려짐
+</CalloutBox>
+
+React는 이런 문제들을 **컴포넌트 기반 구조**와 **선언적 프로그래밍**으로 해결합니다.
+
+<br/><br/><br/>
+
+## React의 역사
+
+React의 탄생 배경을 알아보면 왜 React가 필요하게 됐는지 이해할 수 있습니다.
+
+
+<Image
+  src="/content/beginner/1/facebook.png"
+  alt="facebook"
+  width="two-thirds"
+  caption="전통적인 방식의 웹 애플리케이션 구현은 사용자의 행동을 화면에 바로 반영하기 어려웠습니다."
+/>
+<br/>
+
+### 탄생 배경 (2011-2013)
+
+<CalloutBox type="warning" title="과거의 문제점">
+React가 등장하기 전에는 웹 애플리케이션이 복잡해질수록 **코드 관리가 어려워지고**, **UI 상태 관리가 복잡해지는** 문제가 있었습니다. 특히 Facebook 같은 대규모 애플리케이션에서 이런 문제가 심각했습니다.
+</CalloutBox>
+
+Facebook은 2010년대 초반 웹사이트가 급성장하면서 다음과 같은 문제에 직면했습니다:
+
+- **뉴스피드의 실시간 업데이트**: 사용자가 게시물에 좋아요를 누르면 사용자 확면에도 즉시 반영되어야 함
+- **채팅 시스템**: 여러 채팅창이 동시에 열려있고 실시간으로 메시지가 업데이트됨
+- **알림 시스템**: 새로운 알림이 오면 여러 곳에서 동시에 표시되어야 함
+
+기존의 jQuery나 백본(Backbone.js) 같은 도구로는 이런 복잡한 상태 관리가 매우 어려웠습니다.
+
+<br/>
+
+### React의 발전 과정
+
+- **2011년**: Facebook의 Jordan Walke가 PHP의 XHP에서 영감을 받아 FaxJS 개발
+- **2012년**: Instagram 인수 후 Instagram에서도 사용 시작
+- **2013년 5월**: React 오픈소스로 공개 (JSConf US에서 발표)
+- **2015년**: React Native 출시 (모바일 앱 개발)
+- **2016년**: React 15 출시 (안정성 개선)
+- **2017년**: React 16 (Fiber 아키텍처) 출시 - 성능 대폭 개선
+- **2019년**: Hook 도입 - 함수형 컴포넌트의 혁신
+- **2022년**: React 18 출시 - Concurrent 기능 추가
+
+<br/>
+
+### 현재의 React
+
+현재 React는 다음과 같은 위치에 있습니다
+
+- **가장 인기 있는 프론트엔드 라이브러리** 중 하나 (GitHub 스타 200K+)
+- **Netflix, Airbnb, 카카오, 라인, 쿠팡** 등 수많은 대기업에서 사용
+- **활발한 커뮤니티**와 풍부한 생태계
+
+<CalloutBox type="success" title="React의 인기 지표">
+- **npm 주간 다운로드**: 2000만+
+- **GitHub 스타**: 200,000+
+- **Stack Overflow 설문조사**: 가장 사랑받는 웹 프레임워크 2위
+- **개발자 채용 공고**: 프론트엔드 직무의 70% 이상에서 요구
+</CalloutBox>
+
+<br/><br/>
+
+## 왜 React가 필요한가?
+
+React가 왜 이렇게 인기가 많은지 구체적인 이유를 알아보겠습니다.
+
+<br/>
+
+### 1. 재사용성
+
+<CalloutBox type="success" title="✅ 재사용성의 장점">
+한 번 만든 컴포넌트를 여러 곳에서 재사용할 수 있어 **개발 시간을 단축**하고 **유지보수가 쉬워집니다**.
+</CalloutBox>
+
+캍은 보도 블럭 틀에 색깔과 재료를 달리 넣으면 다른 벽돌이 똑같은 모양으로 나오듯, React 컴포넌트도 마찬가지입니다.
+
+<CodeSandbox
+title="재사용 가능한 버튼 컴포넌트 - 간단한 예시"
+language="javascript"
+code={`// 한 번만 만든 버튼 컴포넌트
+    function Button({ text, color }) {
+    return (
+        <button style={{ backgroundColor: color, padding: '10px', margin: '5px' }}>
+          {text}
+        </button>
+    );
+}
+// 같은 컴포넌트를 여러 번 재사용!
+  function App() {
+    return (
+      <div>
+        <h3>한 번 만들고 여러 번 사용!</h3>
+        <Button text="저장" color="blue" />
+        <Button text="삭제" color="red" />
+        <Button text="확인" color="green" />
+      </div>
+    );
+}`}
+editable={true}
+/>
+
+이를 통해 코드 분량을 줄이고, 이해하기 쉬운 구조를 통해 코드 파악이 쉬워집니다.
+
+<br/>
+
+### 2. 효율적인 렌더링
+
+가상 DOM은 React의 핵심적인 렌더링 방식입니다.
+
+React는 **가상 DOM**을 사용하여 필요한 부분만 업데이트합니다. 이는 성능 향상에 큰 도움이 됩니다.
+
+자세한 내용은 뒷부분에서 알아보겠습니다.
+
+
+<br/>
+
+### 3. 단방향 데이터 흐름
+
+<Image
+  src="/content/beginner/1/props.png"
+  alt="props"
+  width="half"
+  caption="React는 단방향으로 데이터가 흐르도록 설계되었습니다."
+/>
+
+데이터가 위에서 아래로만 흐르기 때문에 **코드를 예측하기 쉽고 디버깅이 간단**합니다.
+
+
+<br/>
+
+### 4. 풍부한 생태계
+
+React 주변에는 개발을 돕는 수많은 도구와 라이브러리가 있습니다
+
+**핵심 도구들:**
+- **Create React App**: 빠른 프로젝트 설정
+- **Next.js**: 서버사이드 렌더링, 정적 사이트 생성
+- **React Router**: 페이지 라우팅
+
+**상태 관리:**
+- **Redux**: 전역 상태 관리의 표준
+- **Zustand**: 가벼운 상태 관리
+- **React Query**: 서버 상태 관리
+
+**UI 라이브러리:**
+- **Material-UI**
+- **Ant Design**
+- **Chakra UI**
+
+<br/>
+
+### 5. 개발자 경험 (Developer Experience)
+
+React는 개발자가 편리하게 개발할 수 있도록 많은 도구를 제공합니다:
+
+<CalloutBox type="success" title="뛰어난 개발 도구">
+- **React DevTools**: 컴포넌트 구조와 상태를 시각적으로 확인
+- **Hot Reloading**: 코드 변경 시 페이지 새로고침 없이 즉시 반영
+- **에러 경계**: 에러가 발생해도 전체 앱이 중단되지 않음
+- **타입스크립트 지원**: 더 안전한 코드 작성 가능
+</CalloutBox>
+
+<br/><br/><br/>
+
+## 다른 프레임워크와의 차이점
+
+React를 다른 인기 있는 프론트엔드 프레임워크/라이브러리와 비교해보겠습니다.
+
+<br/>
+
+### React vs Vue.js
+
+<ComparisonImages leftImage={{src:`/content/beginner/1/react-bg.png`, alt:'react-bg'}} rightImage={{src:`/content/beginner/1/vue-bg.jpg`, alt:'vue-bg'}} />
+
+Vue.js는 React와 함께 가장 인기 있는 프론트엔드 프레임워크 중 하나입니다.
+
+| 특징 | React | Vue |
+|------|--------|--------|
+| **학습 곡선** | 중간 (JSX 문법 익혀야 함) | 쉬움 (HTML 템플릿 사용) |
+| **문법** | JSX (JavaScript + HTML) | 템플릿 기반 (HTML + 디렉티브) |
+| **생태계** | 매우 풍부 | 중간 (빠르게 성장 중) |
+| **성능** | 높음 | 높음 |
+| **번들 크기** | 중간 | 작음 |
+
+
+<CalloutBox type="info" title="💡 어떤 것을 선택할까?">
+- **React**: 큰 프로젝트, 팀 규모가 클 때, 풍부한 생태계가 필요할 때
+- **Vue**: 빠른 프로토타이핑, 학습 곡선이 완만한 것을 원할 때, 작은 프로젝트일 때
+</CalloutBox>
+
+<br/>
+
+### React vs Angular
+
+<ComparisonImages leftImage={{src:`/content/beginner/1/react-bg.png`, alt:'react-bg'}} rightImage={{src:`/content/beginner/1/angular-bg.jpg`, alt:'angular-bg'}} />
+
+Angular은 Google에서 만든 완전한 프레임워크입니다.
+
+| 특징 | React | Angular |
+|------|--------|---------|
+| **타입** | 라이브러리 | 완전한 프레임워크 |
+| **언어** | JavaScript/TypeScript | TypeScript (필수) |
+| **번들 크기** | 작음 (42KB) | 큼 (130KB+) |
+| **설정** | 유연함 | 정해진 구조 |
+| **학습 곡선** | 중간 | 가파름 |
+| **의존성 주입** | 없음 | 내장됨 |
+| **라우팅** | 별도 라이브러리 | 내장됨 |
+
+
+<CalloutBox type="info" title="💡 어떤 것을 선택할까?">
+- **React**: 빠르게 시작하고 유연하게 확장하고 싶을 때
+- **Angular**: 구조화된 환경에서 팀 전체가 일관되게 개발하고 싶을 때
+</CalloutBox>
+
+<br/>
+
+
+## 프레임워크 vs 라이브러리
+
+많은 사람들이 React를 "프레임워크"라고 부르지만, 정확히는 **라이브러리**입니다. 이 차이를 이해하는 것이 중요합니다.
+
+<br/>
+
+### 라이브러리 (Library)
+
+<CalloutBox type="success" title="✅ 라이브러리의 특징">
+**당신이 코드를 제어**합니다. 필요한 기능만 가져와서 사용할 수 있습니다.
+</CalloutBox>
+
+라이브러리는 **도구상자**와 같습니다. 필요한 도구를 꺼내서 사용하고, 사용하지 않는 도구는 그대로 두면 됩니다.
+
+**React의 라이브러리적 특징:**
+- **UI 구축에만 집중** - 다른 기능은 선택적으로 추가
+- **필요한 기능만 선택**하여 사용
+- **더 많은 자유도**를 제공
+- **작은 번들 크기**로 시작 가능
+
+<br/>
+
+### 프레임워크 (Framework)
+
+<CalloutBox type="warning" title="⚠️ 프레임워크의 특징">
+**프레임워크가 코드를 제어**합니다. 정해진 구조와 규칙을 따라야 합니다.
+</CalloutBox>
+
+프레임워크는 **건축 설계도**와 같습니다. 미리 정해진 구조에 따라 집을 지어야 합니다.
+
+<br/>
+
+
+### 어떤 것이 더 좋을까?
+
+<CalloutBox type="info" title="선택의 기준">
+**라이브러리 (React)가 좋은 경우:**
+- 프로젝트 요구사항이 다양하고 유연성이 필요할 때
+- 팀이 여러 기술을 선택하고 싶을 때
+- 작은 규모로 시작해서 점진적으로 확장하고 싶을 때
+
+**프레임워크 (Angular)가 좋은 경우:**
+- 큰 규모의 엔터프라이즈 애플리케이션을 만들 때
+- 팀 전체가 동일한 규칙을 따르게 하고 싶을 때
+- 처음부터 모든 기능이 필요할 때
+</CalloutBox>
+
+<br/><br/><br/>
+
+## React의 장점과 단점
+
+마지막으로 React만 두고서 장단점을 살펴보겠습니다.
+장단점을 잘 살펴보고 여러분의 프로젝트에는 어떤 것이 적합할지 생각해보세요.
+
+<br/>
+
+### 장점 👍
+
+**1. 뛰어난 재사용성**
+- 컴포넌트 기반 구조로 코드 재사용이 쉬움
+- 개발 시간 단축 및 유지보수 효율성 증대
+
+**2. 우수한 성능**
+- 가상 DOM을 통한 효율적 렌더링
+- 필요한 부분만 업데이트하여 빠른 사용자 경험
+
+**3. 풍부한 생태계**
+- 수많은 써드파티 라이브러리
+- 활발한 오픈소스 커뮤니티
+- 풍부한 학습 자료와 튜토리얼
+
+**4. 강력한 커뮤니티**
+- Meta(Facebook)의 지속적인 지원
+- 전 세계 개발자들의 활발한 기여
+- 빠른 버그 수정과 기능 개선
+
+**5. 다른 영역으로 확대 가능**
+- React Native로 모바일 앱 개발 가능
+- Next.js로 풀스택 개발 가능
+- 다른 React 기반 기술들 학습이 쉬워짐
+
+<br/>
+
+### 단점 👎
+
+**1. 가파른 학습 곡선**
+- JSX 문법에 익숙해지는 시간 필요
+- 함수형 프로그래밍 개념 이해 필요
+
+**2. 빠른 생태계 변화**
+- 새로운 라이브러리와 도구가 계속 등장
+- 기존 방식이 deprecated되는 경우가 종종 있음
+- 지속적인 학습이 필요함
+
+**3. 선택의 피로감**
+- 너무 많고 자유로운 라이브러리 옵션
+- 프로젝트 설정 시 결정해야 할 것들이 많음
+- 초보자에게는 혼란스러울 수 있음
+
+
+<br/>
+
+### React 사용을 권장하는 경우
+
+<CalloutBox type="success" title="✅ React가 완벽한 선택">
+- **단일 페이지 애플리케이션(SPA)**을 만들 때
+- **재사용 가능한 UI 컴포넌트**가 많이 필요할 때
+- **동적이고 상호작용이 많은 웹사이트**를 만들 때
+- **향후 모바일 앱**으로 확장할 계획이 있을 때
+</CalloutBox>
+
+**프로젝트 예시:**
+- **소셜미디어 플랫폼**: 실시간 피드, 댓글, 좋아요 기능
+- **대시보드 애플리케이션**: 차트, 테이블, 필터 기능이 많은 관리자 페이지
+- **온라인 쇼핑몰**: 상품 필터링, 장바구니, 결제 과정
+- **협업 도구**: 실시간 채팅, 문서 편집, 알림 시스템
+- **게임 인터페이스**: 스코어보드, 인벤토리, 실시간 상태 표시
+
+<br/>
+
+
+## 학습 퀴즈
+
+그럼 이번 회차에 알게된 내용을 퀴즈를 풀고 점검해봅시다.
+
+<br/>
+
+<Quiz
+  question="React의 핵심 개념이 아닌 것은?"
+  options={[
+    "컴포넌트",
+    "JSX",
+    "가상 DOM",
+    "양방향 데이터 바인딩"
+  ]}
+  correctAnswer={3}
+  explanation="React는 단방향 데이터 흐름을 사용합니다."
+/>
+
+<Quiz
+  question="React를 개발한 회사는?"
+  options={[
+    "Google",
+    "Facebook (Meta)",
+    "Microsoft",
+    "Netflix"
+  ]}
+  correctAnswer={1}
+  explanation="React는 2013년 Facebook(현 Meta)에서 오픈소스로 공개했습니다."
+/>
+
+<Quiz
+  question="다음 중 React 사용을 권장하지 않는 경우는?"
+  options={[
+    "단일 페이지 애플리케이션",
+    "정적인 블로그 사이트",
+    "대시보드 애플리케이션",
+    "실시간 채팅 앱"
+  ]}
+  correctAnswer={1}
+  explanation="정적인 블로그 사이트는 Gatsby, Next.js static 또는 일반 HTML이 더 적합합니다. React는 동적이고 상호작용이 많은 애플리케이션에 적합합니다."
+/>
+
+<br/><br/><br/>
+---
+
+<CalloutBox type="success" title="🎉 축하합니다!">
+React의 기본 개념을 성공적으로 학습했습니다! 이제 다음 단계로 넘어갈 준비가 되었습니다. <br/>
+다음 회차부터는 이번 회차에 여러분이 몰랐을 수 있던 용어들에 대해 알아보겠습니다.
+</CalloutBox>
+
+
+</FootnoteProvider>

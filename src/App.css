@@ -1,0 +1,92 @@
+@import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
+@tailwind utilities;
+
+/* @theme 사용자 정의 테마 정의 */
+@theme {
+  /* Dark 계열 */
+  --color-dark-1: #3e3e3e;       /* #141414 */
+  --color-dark-2: #2b2b2b;        /* #212121 */
+  --color-dark-3: #1d1d1d;        /* #333333 */
+  --color-dark-4: #0f0f0f;        /* #4a4a4a */
+
+  /* Light 계열 */
+  --color-light-1: #f8f8f8;    /* #f9f9f9 */
+  --color-light-2: #c2c2c2;    /* #cccccc */
+  --color-light-3: #848484;    /* #999999 */
+  --color-light-4: #5a5a5a;    /* #999999 */
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0; 
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* 다크 모드에서의 스크롤바 */
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Firefox용 스크롤바 스타일 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+.dark * {
+  scrollbar-color: rgba(255, 255, 255, 0.3) transparent;
+}
+
+.layout-container {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+}
+
+.layout-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.layout-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.layout-container::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
