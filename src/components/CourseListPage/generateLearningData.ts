@@ -65,33 +65,6 @@ export const generateLearningData = async (level: LevelType): Promise<LearningIt
     throw new Error(`${level} 단계의 강의 파일을 불러오는데 실패했습니다.`);
   }
 };
-/**
- * 특정 레슨의 메타데이터만 가져옵니다
- */
-export const getSingleLessonMetadata = async (
-  level: LevelType,
-  lessonId: number
-): Promise<LearningItem | null> => {
-  const folderName = getLevelFolderName(level);
-
-  try {
-    const lessonModule = await import(
-      /* @vite-ignore */
-      `../../assets/contents/courses/${folderName}/lesson-${lessonId}.mdx`
-    );
-
-    if (lessonModule.metadata) {
-      return {
-        ...lessonModule.metadata,
-        id: lessonId
-      };
-    }
-    return null;
-  } catch (error) {
-    console.error(`Failed to load lesson-${lessonId}.mdx for ${level}:`, error);
-    return null;
-  }
-};
 
 /**
  * 특정 레벨의 사용 가능한 레슨 수를 확인합니다

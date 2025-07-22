@@ -1,5 +1,5 @@
 import { ArrowLeft, Loader2, AlertCircle, ArrowRight } from 'lucide-react';
-import { useMDXContent } from '../hooks/useMDXContent';
+import { useMDXContent, getAvailableLessons } from '../hooks/useMDXContent';
 import NavigationBar from '../components/CourseContent/NavigationBar';
 import MDXRenderer from '../components/CourseContent/MDXRenderer';
 import { componentRegistry } from '../components/CourseContent/EmbeddedComponents';
@@ -14,17 +14,32 @@ interface ContentPageProps {
 function ContentPage({ level = 'beginner', lessonId = '1' }: ContentPageProps) {
   const { MDXComponent, metadata, loading, error } = useMDXContent(level, lessonId);
   const navigate = useNavigate();
+  
+  // 사용 가능한 레슨 목록 가져오기
+  const availableLessons = getAvailableLessons(level);
+  const currentLessonNum = parseInt(lessonId);
+  const currentIndex = availableLessons.indexOf(currentLessonNum);
+  
+  const hasPrevLesson = currentIndex > 0;
+  const hasNextLesson = currentIndex < availableLessons.length - 1;
+  
+  const prevLessonNum = hasPrevLesson ? availableLessons[currentIndex - 1] : null;
+  const nextLessonNum = hasNextLesson ? availableLessons[currentIndex + 1] : null;
 
   const handleBackToList = () => {
-    navigate(`/courses/${level}`)
+    navigate(`/courses/${level}`);
   };
 
   const handlePrevLesson = () => {
-    navigate(`/courses/${level}/${parseInt(lessonId) - 1}`)
+    if (prevLessonNum) {
+      navigate(`/courses/${level}/${prevLessonNum}`);
+    }
   };
 
   const handleNextLesson = () => {
-    navigate(`/courses/${level}/${parseInt(lessonId) + 1}`)
+    if (nextLessonNum) {
+      navigate(`/courses/${level}/${nextLessonNum}`);
+    }
   };
 
   // 로딩 상태
@@ -170,11 +185,10 @@ function ContentPage({ level = 'beginner', lessonId = '1' }: ContentPageProps) {
 
         {/* 하단 네비게이션 */}
         <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-between items-center">
-
           {/* 목록으로 돌아가기 버튼 */}
           <button
             onClick={handleBackToList}
-            className="text-white dark:text-light-2 font-medium cursor-pointer"
+            className="text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 font-medium cursor-pointer transition-colors"
           >
             목록으로
           </button>
@@ -182,24 +196,30 @@ function ContentPage({ level = 'beginner', lessonId = '1' }: ContentPageProps) {
           {/* 이전/다음 강의 버튼 */}
           <div className="flex gap-3">
             {/* 이전 강의 버튼 */}
-            {parseInt(lessonId) > 1 && (
-              <Button variant='primary' children={(
-                <div className='flex items-center gap-3'>
-                  <ArrowLeft className="w-4 h-4" />
-                  이전 강의
-                </div>
-              )} onClick={handlePrevLesson} className={'"flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"'} size='md'>
+            {hasPrevLesson && (
+              <Button 
+                variant="primary" 
+                onClick={handlePrevLesson} 
+                size="md"
+                className="flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                이전 강의
               </Button>
             )}
 
             {/* 다음 강의 버튼 */}
-            <Button variant='primary' children={(
-              <div className='flex items-center gap-3'>
+            {hasNextLesson && (
+              <Button 
+                variant="primary" 
+                onClick={handleNextLesson} 
+                size="md"
+                className="flex items-center gap-2"
+              >
                 다음 강의
                 <ArrowRight className="w-4 h-4" />
-              </div>
-            )} onClick={handleNextLesson} className={'"flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 transition-colors"'} size='md'>
-            </Button>
+              </Button>
+            )}
           </div>
         </div>
       </div>
