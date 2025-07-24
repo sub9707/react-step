@@ -3,21 +3,21 @@ import { useMDXContent, getAvailableLessons } from '../hooks/useMDXContent';
 import NavigationBar from '../components/CourseContent/NavigationBar';
 import MDXRenderer from '../components/CourseContent/MDXRenderer';
 import { componentRegistry } from '../components/CourseContent/EmbeddedComponents';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/common/Button';
 
 interface ContentPageProps {
   level?: string;
-  lessonId?: string;
 }
 
-function ContentPage({ level = 'beginner', lessonId = '1' }: ContentPageProps) {
-  const { MDXComponent, metadata, loading, error } = useMDXContent(level, lessonId);
+function ContentPage({ level = 'beginner'}: ContentPageProps) {
+  const { lessonId } = useParams<{ lessonId: string }>();
+  const { MDXComponent, metadata, loading, error } = useMDXContent(level, lessonId!);
   const navigate = useNavigate();
   
   // 사용 가능한 레슨 목록 가져오기
   const availableLessons = getAvailableLessons(level);
-  const currentLessonNum = parseInt(lessonId);
+  const currentLessonNum = parseInt(lessonId!);
   const currentIndex = availableLessons.indexOf(currentLessonNum);
   
   const hasPrevLesson = currentIndex > 0;

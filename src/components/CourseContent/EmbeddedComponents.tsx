@@ -492,6 +492,7 @@ interface ImageItem {
   src: string;
   alt: string;
   caption?: string;
+  isGif?: boolean; // GIF 여부 명시적 지정
 }
 
 // 이미지 너비 타입 정의
@@ -504,7 +505,14 @@ interface ImageGalleryProps extends EmbeddedComponentProps {
   borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   shadow?: boolean;
   border?: boolean;
+  autoplayGifs?: boolean; // GIF 자동 재생 여부
+  showGifIndicator?: boolean; // GIF 표시기 표시 여부
 }
+
+// GIF 감지 함수
+const isGifImage = (src: string): boolean => {
+  return src.toLowerCase().includes('.gif') || src.toLowerCase().includes('gif');
+};
 
 // 이미지 갤러리 컴포넌트
 export const ImageGallery: React.FC<ImageGalleryProps> = ({
@@ -512,7 +520,9 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
   width = 'full',
   borderRadius = 'lg',
   shadow = true,
-  border = false
+  border = false,
+  autoplayGifs = true,
+  showGifIndicator = true
 }) => {
   const isSingleImage = images.length === 1;
   
@@ -545,30 +555,56 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
     <div className="my-8 w-full flex justify-center">
       <div className={containerClass}>
         <div className={isSingleImage ? 'w-full' : 'flex flex-wrap justify-center gap-4 w-full'}>
-          {images.map((image, index) => (
-            <div key={index} className={imageWrapperClass}>
-              <div className="relative group">
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  className={`
-                    w-full h-auto object-cover transition-all duration-300 
-                    ${borderRadiusClass}
-                    ${shadow ? 'shadow-md hover:shadow-lg' : ''}
-                    ${border ? 'border border-gray-200 dark:border-gray-700' : ''}
-                  `}
-                  loading="lazy"
-                />
+          {images.map((image, index) => {
+            const isGif = image.isGif ?? isGifImage(image.src);
+            
+            return (
+              <div key={index} className={imageWrapperClass}>
+                <div className="relative group">
+                  <img
+                    src={image.src}
+                    alt={image.alt}
+                    className={`
+                      w-full h-auto object-cover transition-all duration-300 
+                      ${borderRadiusClass}
+                      ${shadow ? 'shadow-md hover:shadow-lg' : ''}
+                      ${border ? 'border border-gray-200 dark:border-gray-700' : ''}
+                      ${isGif && !autoplayGifs ? 'cursor-pointer' : ''}
+                    `}
+                    loading="lazy"
+                  />
+                  
+                  {/* GIF 표시기 */}
+                  {isGif && showGifIndicator && (
+                    <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-md font-medium">
+                      GIF
+                    </div>
+                  )}
+                  
+                  {/* 호버 시 재생/일시정지 버튼 (GIF용) */}
+                  {isGif && !autoplayGifs && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <div className="bg-white bg-opacity-90 rounded-full p-3 cursor-pointer hover:bg-opacity-100 transition-all">
+                          <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* 이미지 설명 텍스트 */}
+                {image.caption && (
+                  <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3 px-2">
+                    {image.caption}
+                    {isGif && ' (GIF)'}
+                  </p>
+                )}
               </div>
-              
-              {/* 이미지 설명 텍스트 */}
-              {image.caption && (
-                <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3 px-2">
-                  {image.caption}
-                </p>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>
@@ -584,21 +620,55 @@ export const Image: React.FC<{
   borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
   shadow?: boolean;
   border?: boolean;
-}> = ({ src, alt, caption, ...props }) => {
+  isGif?: boolean;
+  autoplayGifs?: boolean;
+  showGifIndicator?: boolean;
+}> = ({ src, alt, caption, isGif, ...props }) => {
   return (
     <ImageGallery
-      images={[{ src, alt, caption }]}
+      images={[{ src, alt, caption, isGif }]}
       {...props}
     />
   );
 };
 
-// 비교 이미지 컴포넌트 (Before/After 등)
+// GIF 전용 편의 컴포넌트
+export const GifImage: React.FC<{
+  src: string;
+  alt: string;
+  caption?: string;
+  width?: ImageWidth;
+  borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl';
+  shadow?: boolean;
+  border?: boolean;
+  autoplay?: boolean;
+  showIndicator?: boolean;
+}> = ({ src, alt, caption, autoplay = true, showIndicator = true, ...props }) => {
+  return (
+    <ImageGallery
+      images={[{ src, alt, caption, isGif: true }]}
+      autoplayGifs={autoplay}
+      showGifIndicator={showIndicator}
+      {...props}
+    />
+  );
+};
+
+// 비교 이미지 컴포넌트
 export const ComparisonImages: React.FC<{
   leftImage: ImageItem;
   rightImage: ImageItem;
   labels?: { left: string; right: string };
-}> = ({ leftImage, rightImage, labels }) => {
+  height?: 'sm' | 'md' | 'lg' | 'xl';
+}> = ({ leftImage, rightImage, labels, height = 'md' }) => {
+  
+  const heightClasses = {
+    sm: 'h-48',    // 192px
+    md: 'h-64',    // 256px  
+    lg: 'h-80',    // 320px
+    xl: 'h-96'     // 384px
+  };
+
   return (
     <div className="my-8 w-full">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -608,11 +678,14 @@ export const ComparisonImages: React.FC<{
               {labels.left}
             </div>
           )}
-          <img
-            src={leftImage.src}
-            alt={leftImage.alt}
-            className="w-full h-auto object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-          />
+          <div className={`w-full ${heightClasses[height]} overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700`}>
+            <img
+              src={leftImage.src}
+              alt={leftImage.alt}
+              className="w-full h-full object-cover object-center"
+              style={{ objectPosition: 'center' }}
+            />
+          </div>
           {leftImage.caption && (
             <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3">
               {leftImage.caption}
@@ -626,11 +699,14 @@ export const ComparisonImages: React.FC<{
               {labels.right}
             </div>
           )}
-          <img
-            src={rightImage.src}
-            alt={rightImage.alt}
-            className="w-full h-auto object-cover rounded-lg shadow-md border border-gray-200 dark:border-gray-700"
-          />
+          <div className={`w-full ${heightClasses[height]} overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700`}>
+            <img
+              src={rightImage.src}
+              alt={rightImage.alt}
+              className="w-full h-full object-cover object-center"
+              style={{ objectPosition: 'center' }}
+            />
+          </div>
           {rightImage.caption && (
             <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3">
               {rightImage.caption}

@@ -1,0 +1,361 @@
+export const metadata = {
+  id: 2,
+  title: "SPA? MPA?",
+  description: "React가 선택한 Single Page Application 방식이 어떤 것인지 알아봅시다.",
+  difficulty: "쉬움",
+  tags: ["React", "SPA", "MPA", "입문", "기초"],
+  lastUpdated: "2025-07-23",
+  image: "/content/beginner/2/pageload.png"
+};
+
+import { 
+  CalloutBox, 
+  ComparisonImages, 
+  HighlightWord, 
+  Quiz, 
+  LinkCard 
+} from '@/components/CourseContent/EmbeddedComponents'
+
+
+<ComparisonImages
+  leftImage={{
+    src: "/content/beginner/2/comicbook.webp",
+    alt: "만화책",
+  }}
+  rightImage={{
+    src: "/content/beginner/2/webtoon.jpg",
+    alt: "웹툰",
+  }}
+/>
+
+여러분 만화 좋아하시나요?
+
+만화를 볼 때 클래식함과 손맛을 좋아하시는 분들은 만화책으로,
+
+다른 사람들 반응을 댓글로 보고 만화를 간편하게 보고자 하는 분들은 웹툰으로 보실텐데요,
+
+이번 회차에서 나눌 SPA와 MPA, 그 두가지가 만화책과 웹툰으로 설명드리고자 합니다.
+
+
+--- 
+## 필요한 페이지를 하나씩, MPA(Multi-Page Application)
+
+<Image
+  src="/content/beginner/2/reloading.gif"
+  alt="MPA-Image"
+  width="2/3"
+  caption="페이지 이동할 때마다 새로운 페이지를 불러오는 방식의 애플리케이션 - 예시_ebay"
+  isGif={true}
+/>
+
+기존의 전통적인 방식, MPA의 웹은 <HighlightWord>페이지 단위로 새로고침</HighlightWord>하는 구조였습니다.  
+
+페이지 간의 이동이 있을 때마다, 혹은 사용자의 행동이 들어갈 때마다 화면이 깜빡이며 새로운 페이지를 불러왔습니다.
+
+이렇게 웹 페이지를 여러개 만들어 놓고 구성한 웹어플리케이션을  <HighlightWord>MPA(Multi-Page Application)</HighlightWord>이라고 합니다.
+
+<ComparisonImages
+  leftImage={{
+    src: "/content/beginner/2/pickup.png",
+    alt: "책픽업",
+  }}
+  rightImage={{
+    src: "/content/beginner/2/pageload.png",
+    alt: "페이지 요청&수신",
+  }}
+/>
+
+만화방이나 만화 카페에서 여러 만화책을 볼 때, 여러 권을 쌓아두다가도, 
+
+다른 책을 읽을 때면 자리에서 일어나 새 책을 가지러 간 후 가지고 와야합니다.
+
+새로운 만화책이 필요할 때마다, 일어나서 가지고 와야하는 모습이 
+
+<br/>
+새 페이지가 필요할 때마다 서버에서 새로운 페이지를 받는 것과 비슷합니다.
+
+이렇게 됐을 때, 카페 손님들은 책을 직접 가지러가기 불편하고 귀찮아집니다.
+
+고르고 가져오면서 시간도 잡아먹고요.
+
+<br/>
+이와 같이 MPA는 느리고 끊기는 UX(사용자경험)를 해결하기 위해 생긴 것이 SPA입니다.
+
+--- 
+## 한 번에 받아 한 페이지에서 해결, SPA(Single-Page Application)
+
+<Image
+  src="/content/beginner/2/spa-reload.gif"
+  alt="SPA-Image"
+  width="2/3"
+  caption="페이지를 이동해도 필요한 부분만 갈아끼우며 새로고침하지 않는 애플리케이션 - 예시_Spotify"
+  isGif={true}
+/>
+
+기존의 MPA가 페이지 단위로 새로고침하는 방식이라면,
+
+SPA는 한 번에 HTML, JS 등 리소스들을 서버로부터 받아 <HighlightWord>하나의 페이지에서 해결하는</HighlightWord> 방식입니다.
+
+사용자의 이동이나 행동이 발생하더라도 전체 페이지가 새로고침되지 않고, 필요한 데이터만 받아와 화면 일부만 갈아끼워줍니다.
+
+이렇게 한 페이지 위에서 동적으로 화면이 바뀌며 동작하는 웹어플리케이션을 <HighlightWord>SPA(Single Page Application)</HighlightWord>이라고 합니다.
+
+<br/>
+SPA는 웹툰에 비유할 수 있습니다.
+
+휴대폰이나 컴퓨터로 자리에 앉아서 플랫폼에 있는 만화들을 그대로 볼 수 있습니다.
+
+다른 만화가 필요하다면 즉시 바꿔 볼 수 있죠.
+
+직접 일어나 가지러 갈 필요도 없고, 기다리는 시간도 최소화됩니다..
+<br/>
+
+React는 이 SPA 방식을 통해 중간의 새로고침 없이 자연스럽게 연결되는 화면 전환으로
+
+보다 <HighlightWord>빠르고 끊김 없는 UX(사용자 경험)</HighlightWord>를 제공합니다.
+<br/>
+---
+## MPA vs SPA 비교
+
+<ComparisonImages
+  leftImage={{
+    src: "/content/beginner/2/mpa-flow.png",
+    alt: "MPA 흐름도",
+    caption: "매번 서버에서 새 HTML을 요청"
+  }}
+  rightImage={{
+    src: "/content/beginner/2/spa-flow.png",
+    alt: "SPA 흐름도",
+    caption: "초기에 한 번 HTML을 받고 이후 자바스크립트로 UI 전환"
+  }}
+  labels={{ left: "MPA", right: "SPA" }}
+/>
+
+| 항목 | MPA | SPA |
+|------|-----|-----|
+| 화면 전환 | 전체 새로고침 | 일부만 갱신 |
+| 초기 로딩 속도 | 빠름 | 느릴 수 있음 |
+| 사용자 경험 | 깜빡임 있음 | 부드러움 |
+| SEO | 유리함 | 불리할 수 있음 |
+| 서버 요청 | 많음 | 적음 (필요한 데이터만) |
+| 복잡도 | 낮음 | 라우팅, 상태 관리 필요 |
+
+---
+
+## React에서 라우팅은 어떻게 작동할까?
+<br/>
+SPA에서 페이지를 바꿔도 **브라우저 주소(URL)** 는 변합니다.  
+하지만 <HighlightWord>실제 HTML 요청 없이</HighlightWord> 자바스크립트가 화면만 바꾸죠.
+
+React에서는 이를 위해 <HighlightWord>React Router(react-router-dom)</HighlightWord>라는 라이브러리를 사용합니다.
+<Image
+  src="/content/beginner/2/react-router.png"
+  alt="react-router"
+  width="half"
+/>
+
+사용 예시만 간단히 살펴보고 자세한 사용 방식은 뒷 회차에서 알아보겠습니다.
+
+우선 웹에서 사용하기 위해 react-router-dom을 설치합니다.
+
+버전마다 라우팅 방식이 차이가 있으니, 주의하기 바랍니다.
+
+이번 예시에서는 가장 최근 버전인 v7 방식을 사용하겠습니다.
+
+```batch
+npm install react-router-dom
+```
+
+다음과 같이 Routes 아래에 Route를 생성하고 각각에 맞는 라우팅을 설정할 수 있습니다.
+
+```js
+function App() {
+  return (
+   <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/notice" element={<Notice />} />
+        // /about 메인 페이지와 /about/team, /about/company 페이지 구성
+        <Route path="/about" element={<AboutLayout />}>
+            <Route index element={<AboutMain />} />
+            <Route path="team" element={<Team />} />
+            <Route path="company" element={<Company />} />
+        </Route>
+    </Routes>
+  );
+}
+```
+<br/>
+페이지별로 중첩(/about, /about/team)과 페이지 짜임새인 레이아웃을 지정해 같은 레이아웃을 지정하는 것이 가능합니다.
+
+```js
+export default function Home() {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate('/about'); // '/about' 페이지로 이동
+  };
+
+  return (
+    <div>
+      <h1>홈</h1>
+      <p>버튼을 클릭하면 소개 페이지로 이동합니다.</p>
+      <button onClick={handleClick}>소개 페이지로 이동</button>
+    </div>
+  );
+}
+```
+
+고정된 상단바나, 메뉴, 버튼 등을 통해서 해당 라우트로 변경할 수 있습니다.
+
+이러한 방식으로 React는 마치 다른 페이지에 이동하는 것처럼 한 페이지 내에서 사용자의 행동에 따라 다른 UI를 보여줍니다.
+<br/>
+<LinkCard title="React Router 공식 문서" url="https://reactrouter.com/" description="SPA의 라우팅 처리를 위한 필수 라이브러리" />
+
+---
+
+## CSR, SSR, SSG
+
+SPA와 MPA를 이야기할 때 빠질 수 없는 주제가 CSR, SSR, SSG입니다.
+
+위에서 많은 내용을 이야기 했기 때문에, 핵심만 쏙 추려서 설명하겠습니다.
+
+<br/>
+
+### CSR (Client Side Rendering)
+
+<Image
+  src="/content/beginner/2/SPA-CSR.png"
+  alt="SPA-CSR 비교"
+  width="full"
+/>
+
+Client(클라이언트, 여러분 브라우저) - Side(쪽에서) - Rendering(화면 그려보겠음)
+
+CSR은 클라이언트가 서버에서 데이터를 받아 화면을 렌더링하는 <HighlightWord>방식</HighlightWord>입니다.
+
+SPA는 페이지 하나로 앱을 구현하는 애플리케이션의 <HighlightWord>페이지 구조를 의미</HighlightWord>하는 개념입니다.
+
+<br/>
+즉, <HighlightWord>SPA의 대표적인 구현 방식이 CSR</HighlightWord>입니다.
+
+React나 Vue가 자바스크립트를 통해서 CSR 방식을 구현하면, 한 페이지안에서 해결되는 SPA가 만들어지겠죠.
+
+<br/>
+<CalloutBox type="info" title="CSR 방식의 장단점">
+✅ 장점: 새로고침 없이 부드러운 화면 전환이 가능하며 앱처럼 동작합니다.
+
+⚠️ 단점: 초기 로딩 속도가 느릴 수 있고, SEO에 불리할 수 있습니다.
+<br/>
+대표 예시: React와 vue의 SPA
+</CalloutBox>
+<br/>
+
+### SSR (Server Side Rendering)
+
+<Image
+  src="/content/beginner/2/MPA-SSR.png"
+  alt="MPA-SSR 비교"
+  width="full"
+/>
+
+MPA는 위에서 알아보았듯, <HighlightWord>"어플리케이션의 페이지 구조가 여러 페이지로 구성됐다"</HighlightWord>를 보여주는 방식입니다.
+
+SSR은 페이지를 <HighlightWord>서버에서 미리 렌더링해서 사용자에게 전달하는 방식</HighlightWord>입니다.
+
+사용자가 웹사이트를 요청하면 서버가 요청에 알맞은 HTML을 완성해서 보내주고, 브라우저는 그걸 받아 그대로 보여주는 방식입니다.
+
+<br/>
+
+<CalloutBox type="info" title="SSR 방식의 장단점">
+✅ 장점: 첫 페이지 로딩 속도가 빠릅니다. 검색 엔진 최적화(SEO)에 유리합니다.
+
+⚠️ 단점: 매번 요청할 때마다 서버가 페이지를 생성해야 하므로, 서버 부하가 큽니다.
+
+대표 예시: Next.js, Nuxt.js 등
+</CalloutBox>
+<br/>
+### SSG (Static Site Generation)
+
+<Image
+  src="/content/beginner/2/SSG.png"
+  alt="SSG 설명 이미지"
+  width="full"
+/>
+
+SSG는 빌드 시점에 <HighlightWord>HTML을 미리 만들어두고</HighlightWord>, 사용자가 요청할 때는 그 정적인 파일을 바로 보내주는 방식입니다.
+
+페이지가 고정된 내용이라면 한 번만 만들어놓고 계속 재사용하는 방식입니다.
+<br/>
+
+<CalloutBox type="info" title="SSR 방식의 장단점">
+✅ 장점: 미리 만들어진 페이지 파일을 불러오기 때문에 매우 빠릅니다. 서버 부하도 거의 없습니다.
+
+⚠️ 단점: 실시간 데이터 반영이 어렵습니다. 콘텐츠가 자주 바뀌면 별로죠.
+
+대표 예시: Gatsby, Astro 등
+</CalloutBox>
+
+<br/>
+---
+## 요약 비교
+
+| 용어 | 설명 | 대표 기술 |
+|------|------|-----------|
+| CSR (Client Side Rendering) | 브라우저에서 모든 렌더링을 처리 | React, Vue 등 SPA |
+| SSR (Server Side Rendering) | 서버에서 HTML 생성 후 전달 | Next.js, Nuxt.js |
+| SSG (Static Site Generation) | 빌드 시 HTML을 미리 생성 | Gatsby, Astro 등 |
+
+SPA는 보통 **CSR 기반**이지만, 최근에는 <HighlightWord>SEO 문제 등의 해결</HighlightWord>을 위해 **SSR이나 SSG**를 조합해서 사용하기도 해요.
+
+---
+📝 복습 퀴즈
+
+퀴즈를 풀면서 이번 회차 내용을 정리해봅시다.
+
+<Quiz
+ question="MPA와 SPA의 비교에서 옳지 않은 것은?"
+ options={[
+   "MPA는 전체 새로고침, SPA는 일부만 갱신",
+   "MPA는 SEO에 유리, SPA는 불리할 수 있음",
+   "MPA는 서버 요청이 적고, SPA는 서버 요청이 많음",
+   "MPA는 복잡도가 낮고, SPA는 라우팅과 상태 관리가 필요"
+ ]}
+ correctAnswer={2}
+ explanation="MPA는 페이지 이동할 때마다 서버에서 새로운 HTML을 요청하므로 서버 요청이 많습니다. 반면 SPA는 초기 로딩 후 필요한 데이터만 요청하므로 서버 요청이 적습니다."
+/>
+
+<Quiz
+ question="다음 중 SPA 방식을 사용하는 것이 가장 적합한 경우는?"
+ options={[
+   "SEO가 매우 중요한 블로그 사이트",
+   "실시간 채팅과 알림이 많은 소셜미디어 플랫폼",
+   "단순한 회사 소개 홈페이지",
+   "뉴스 기사를 보여주는 언론사 웹사이트"
+ ]}
+ correctAnswer={1}
+ explanation="SPA는 사용자와의 상호작용이 많고, 실시간 업데이트가 필요한 애플리케이션에 적합합니다. 소셜미디어 플랫폼처럼 채팅, 알림, 피드 업데이트 등이 빈번한 서비스에서 SPA의 부드러운 사용자 경험이 큰 장점이 됩니다."
+/>
+
+<Quiz
+ question="CSR(Client Side Rendering)의 특징으로 옳지 않은 것은?"
+ options={[
+   "브라우저에서 화면을 렌더링한다",
+   "SPA의 대표적인 구현 방식이다",
+   "초기 로딩 속도가 매우 빠르다",
+   "새로고침 없이 부드러운 화면 전환이 가능하다"
+ ]}
+ correctAnswer={2}
+ explanation="CSR은 초기에 모든 자바스크립트 파일을 다운로드해야 하므로 초기 로딩 속도가 느릴 수 있습니다. 하지만 이후에는 필요한 데이터만 받아와서 빠른 화면 전환이 가능합니다."
+/>
+
+
+
+
+
+
+<br/>
+---
+
+<CalloutBox type="success" title="🎉 축하합니다!">
+SPA와 MPA의 개념을 성공적으로 학습했습니다! 이제 다음 단계로 넘어갈 준비가 되었습니다. <br/>
+</CalloutBox>
