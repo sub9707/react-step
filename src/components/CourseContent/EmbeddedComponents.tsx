@@ -137,27 +137,12 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
   const displayCode = editable ? currentCode : formatCode(currentCode);
 
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden my-6">
-      {/* 헤더 */}
-      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
+    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden my-6 sm:my-4">
+      {/* 헤더 - 단순화된 타이틀만 */}
+      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-3 sm:px-3 sm:py-2">
+        <h3 className="text-base sm:text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
           {title}
-        </span>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded">
-            {isReactCode ? 'React JSX' : language}
-          </span>
-          {editable && (
-            <button
-              onClick={runCode}
-              disabled={isLoading}
-              className="flex items-center gap-1 text-xs bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-3 py-1 rounded transition-colors"
-            >
-              <Play className="w-3 h-3" />
-              {isLoading ? '실행중...' : '실행'}
-            </button>
-          )}
-        </div>
+        </h3>
       </div>
       
       {/* 코드 에디터 */}
@@ -165,7 +150,7 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
         <textarea
           value={currentCode}
           onChange={(e) => setCurrentCode(e.target.value)}
-          className="w-full h-40 p-4 font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-none resize-y focus:outline-none"
+          className="w-full h-40 sm:h-32 p-4 sm:p-3 font-mono text-xs sm:text-sm bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-none resize-y focus:outline-none"
           spellCheck={false}
           placeholder="코드를 입력하세요..."
           style={{ 
@@ -174,7 +159,7 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
           }}
         />
       ) : (
-        <pre className="p-4 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm overflow-x-auto">
+        <pre className="p-4 sm:p-3 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm sm:text-xs overflow-x-auto">
           <code style={{ 
             fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
             lineHeight: '1.5'
@@ -184,25 +169,42 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
         </pre>
       )}
       
+      {/* 하단 컨트롤 바 */}
+      <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 sm:px-3 sm:py-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <span className="text-xs sm:text-[10px] text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 sm:px-1.5 sm:py-0.5 rounded">
+          {isReactCode ? 'React JSX' : language}
+        </span>
+        {editable && (
+          <button
+            onClick={runCode}
+            disabled={isLoading}
+            className="flex items-center gap-1 text-xs sm:text-[10px] bg-green-500 hover:bg-green-600 disabled:bg-gray-400 text-white px-3 py-1.5 sm:px-2 sm:py-1 rounded transition-colors"
+          >
+            <Play className="w-3 h-3 sm:w-2.5 sm:h-2.5" />
+            {isLoading ? '실행중...' : '실행'}
+          </button>
+        )}
+      </div>
+      
       {/* 결과 출력 - 실행했을 때만 표시 */}
       {hasExecuted && (
         <>
           {isReactCode ? (
             <div className="border-t border-gray-200 dark:border-gray-700">
-              <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 text-xs text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
+              <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-[10px] text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
                 실행 결과:
               </div>
               <iframe
                 ref={iframeRef}
-                className="w-full h-64 border-none"
+                className="w-full h-64 sm:h-48 border-none"
                 title="React 실행 결과"
               />
             </div>
           ) : (
             output && (
-              <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gray-50 dark:bg-gray-800">
-                <div className="text-xs text-gray-600 dark:text-gray-400 mb-1">Output:</div>
-                <pre className="text-sm text-gray-800 dark:text-gray-200">{output}</pre>
+              <div className="border-t border-gray-200 dark:border-gray-700 p-4 sm:p-3 bg-gray-50 dark:bg-gray-800">
+                <div className="text-xs sm:text-[10px] text-gray-600 dark:text-gray-400 mb-1">Output:</div>
+                <pre className="text-sm sm:text-xs text-gray-800 dark:text-gray-200">{output}</pre>
               </div>
             )
           )}
@@ -354,7 +356,7 @@ export const Quiz: React.FC<EmbeddedComponentProps> = ({
   );
 };
 
-// 알림 박스 컴포넌트 (기존 것을 개선)
+// 알림 박스 컴포넌트 (모바일 최적화)
 export const CalloutBox: React.FC<EmbeddedComponentProps> = ({
   type = 'info',
   title,
@@ -390,15 +392,27 @@ export const CalloutBox: React.FC<EmbeddedComponentProps> = ({
   const style = styles[type as keyof typeof styles] || styles.info;
 
   return (
-    <div className={`${style.bg} ${style.border} ${style.text} border-l-4 p-4 my-6 rounded-r-lg`}>
-      <div className="flex items-start gap-3">
+    <div className={`${style.bg} ${style.border} ${style.text} border-l-4 p-4 md:p-4 sm:p-3 my-6 md:my-6 sm:my-4 rounded-r-lg sm:-mx-6`}>
+      {/* PC 레이아웃 - 아이콘과 텍스트가 나란히 */}
+      <div className="hidden md:flex items-start gap-3">
         {style.icon}
         <div className="flex-1">
           {title && (
-            <h4 className="font-semibold mb-2">{title}</h4>
+            <h4 className="font-semibold mb-2 text-base">{title}</h4>
           )}
-          <div>{children}</div>
+          <div className="text-sm leading-relaxed">{children}</div>
         </div>
+      </div>
+      
+      {/* 모바일 레이아웃 - 아이콘과 텍스트가 세로로 */}
+      <div className="md:hidden">
+        <div className="flex items-center gap-2 mb-3">
+          {style.icon}
+          {title && (
+            <h4 className="font-semibold text-sm">{title}</h4>
+          )}
+        </div>
+        <div className="text-xs leading-relaxed">{children}</div>
       </div>
     </div>
   );
@@ -514,7 +528,7 @@ const isGifImage = (src: string): boolean => {
   return src.toLowerCase().includes('.gif') || src.toLowerCase().includes('gif');
 };
 
-// 이미지 갤러리 컴포넌트
+// 이미지 갤러리 컴포넌트 (모바일 최적화)
 export const ImageGallery: React.FC<ImageGalleryProps> = ({
   images,
   width = 'full',
@@ -534,27 +548,27 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
     xl: 'rounded-xl'
   }[borderRadius];
 
-  // 너비 클래스 매핑
+  // 너비 클래스 매핑 - 모바일에서는 항상 full width
   const widthClass = {
     full: 'w-full',
-    half: 'w-1/2',
-    third: 'w-1/3',
-    quarter: 'w-1/4',
-    'two-thirds': 'w-2/3'
+    half: 'w-full sm:w-1/2',
+    third: 'w-full sm:w-1/3',
+    quarter: 'w-full sm:w-1/4',
+    'two-thirds': 'w-full sm:w-2/3'
   }[width];
 
   const containerClass = isSingleImage 
     ? `${widthClass} mx-auto` 
-    : `flex flex-wrap justify-center gap-4 ${widthClass} mx-auto`;
+    : `flex flex-wrap justify-center gap-4 sm:gap-2 ${widthClass} mx-auto`;
 
   const imageWrapperClass = isSingleImage
     ? 'w-full'
-    : 'flex-1 min-w-0 max-w-sm';
+    : 'flex-1 min-w-0 max-w-sm sm:max-w-none';
 
   return (
-    <div className="my-8 w-full flex justify-center">
+    <div className="my-8 sm:my-4 w-full flex justify-center">
       <div className={containerClass}>
-        <div className={isSingleImage ? 'w-full' : 'flex flex-wrap justify-center gap-4 w-full'}>
+        <div className={isSingleImage ? 'w-full' : 'flex flex-wrap justify-center gap-4 sm:gap-2 w-full'}>
           {images.map((image, index) => {
             const isGif = image.isGif ?? isGifImage(image.src);
             
@@ -576,7 +590,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
                   
                   {/* GIF 표시기 */}
                   {isGif && showGifIndicator && (
-                    <div className="absolute top-2 right-2 bg-black bg-opacity-70 text-white text-xs px-2 py-1 rounded-md font-medium">
+                    <div className="absolute top-2 right-2 sm:top-1 sm:right-1 bg-black bg-opacity-70 text-white text-xs sm:text-[10px] px-2 py-1 sm:px-1.5 sm:py-0.5 rounded-md font-medium">
                       GIF
                     </div>
                   )}
@@ -585,8 +599,8 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
                   {isGif && !autoplayGifs && (
                     <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="bg-white bg-opacity-90 rounded-full p-3 cursor-pointer hover:bg-opacity-100 transition-all">
-                          <svg className="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
+                        <div className="bg-white bg-opacity-90 rounded-full p-3 sm:p-2 cursor-pointer hover:bg-opacity-100 transition-all">
+                          <svg className="w-6 h-6 sm:w-4 sm:h-4 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
                           </svg>
                         </div>
@@ -597,7 +611,7 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
                 
                 {/* 이미지 설명 텍스트 */}
                 {image.caption && (
-                  <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3 px-2">
+                  <p className="text-center text-sm sm:text-xs text-gray-600 dark:text-gray-400 italic mt-3 sm:mt-2 px-2 sm:px-1 leading-tight">
                     {image.caption}
                     {isGif && ' (GIF)'}
                   </p>
@@ -654,27 +668,28 @@ export const GifImage: React.FC<{
   );
 };
 
-// 비교 이미지 컴포넌트
+// 비교 이미지 컴포넌트 (모바일 최적화)
 export const ComparisonImages: React.FC<{
   leftImage: ImageItem;
   rightImage: ImageItem;
   labels?: { left: string; right: string };
   height?: 'sm' | 'md' | 'lg' | 'xl';
-}> = ({ leftImage, rightImage, labels, height = 'md' }) => {
+}> = ({ leftImage, rightImage, labels, height = 'xl' }) => {
   
+  // 모바일 기본 높이 (작음) + PC에서 큰 높이
   const heightClasses = {
-    sm: 'h-48',    // 192px
-    md: 'h-64',    // 256px  
-    lg: 'h-80',    // 320px
-    xl: 'h-96'     // 384px
+    sm: 'h-32 sm:h-48',    // 모바일 128px -> PC 192px
+    md: 'h-40 sm:h-64',    // 모바일 160px -> PC 256px
+    lg: 'h-48 sm:h-80',    // 모바일 192px -> PC 320px
+    xl: 'h-56 sm:h-96'     // 모바일 224px -> PC 384px
   };
 
   return (
-    <div className="my-8 w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="my-8 sm:my-4 w-full">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-3">
         <div className="relative">
           {labels?.left && (
-            <div className="absolute top-4 left-4 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium z-10">
+            <div className="absolute top-4 sm:top-2 left-4 sm:left-2 bg-blue-600 text-white px-3 py-1 sm:px-2 sm:py-0.5 rounded-full text-sm sm:text-xs font-medium z-10">
               {labels.left}
             </div>
           )}
@@ -687,7 +702,7 @@ export const ComparisonImages: React.FC<{
             />
           </div>
           {leftImage.caption && (
-            <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3">
+            <p className="text-center text-sm sm:text-xs text-gray-600 dark:text-gray-400 italic mt-3 sm:mt-2 leading-tight">
               {leftImage.caption}
             </p>
           )}
@@ -695,7 +710,7 @@ export const ComparisonImages: React.FC<{
         
         <div className="relative">
           {labels?.right && (
-            <div className="absolute top-4 left-4 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium z-10">
+            <div className="absolute top-4 sm:top-2 left-4 sm:left-2 bg-green-600 text-white px-3 py-1 sm:px-2 sm:py-0.5 rounded-full text-sm sm:text-xs font-medium z-10">
               {labels.right}
             </div>
           )}
@@ -708,7 +723,7 @@ export const ComparisonImages: React.FC<{
             />
           </div>
           {rightImage.caption && (
-            <p className="text-center text-sm text-gray-600 dark:text-gray-400 italic mt-3">
+            <p className="text-center text-sm sm:text-xs text-gray-600 dark:text-gray-400 italic mt-3 sm:mt-2 leading-tight">
               {rightImage.caption}
             </p>
           )}

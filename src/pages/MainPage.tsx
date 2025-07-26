@@ -28,7 +28,7 @@ const MainPage: React.FC = () => {
         {/* 레벨 선택 버튼*/}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {LEVEL_CONFIG.map((level: levelDataProps) => (
-            <LevelButton {...level}/>
+            <LevelButton key={level.id} {...level}/>
           ))}
         </div>
       </Container>

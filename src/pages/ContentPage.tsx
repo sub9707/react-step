@@ -154,7 +154,8 @@ function ContentPage({ level = 'beginner'}: ContentPageProps) {
             </div>
           )}
 
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-2">
+          {/* 모바일에서 제목 크기 줄임 */}
+          <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-2">
             {title}
           </h1>
 
@@ -171,9 +172,9 @@ function ContentPage({ level = 'beginner'}: ContentPageProps) {
           )}
         </div>
 
-        {/* MDX 콘텐츠 */}
+        {/* MDX 콘텐츠 - 모바일에서 좌우 여백 줄임 */}
         <div className="bg-white dark:bg-[#2b2b2b] rounded-xl border border-gray-200 dark:border-[#3e3e3e] overflow-hidden shadow-lg">
-          <div className="px-12 py-6">
+          <div className="px-4 sm:px-12 py-6">
             <MDXRenderer
               components={componentRegistry}
               className="dark:prose-invert prose-headings:text-gray-900 dark:prose-headings:text-gray-100"

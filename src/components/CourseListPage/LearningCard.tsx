@@ -24,6 +24,12 @@ const LearningCard: React.FC<LearningCardProps> = ({ item, index, level }) => {
         navigate(`/courses/${level}/${item.id}`);
     }
 
+    // 제목 클릭 핸들러 추가
+    const handleTitleClick = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        handleStartLearning();
+    }
+
     return (
         <div className="group relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-200 dark:border-[#3e3e3e]">
             {/* 배경 그라데이션 */}
@@ -35,12 +41,13 @@ const LearningCard: React.FC<LearningCardProps> = ({ item, index, level }) => {
                     {index + 1}
                 </div>
 
-                {/* 이미지 */}
-                <div className="mb-4 mt-12 overflow-hidden rounded-xl h-80 flex items-center justify-center">
+                {/* 이미지 - 모바일에서 위아래 공백 제거 */}
+                <div className="mb-4 mt-12 overflow-hidden rounded-xl h-48 sm:h-80 flex items-center justify-center">
                     <img
                         src={item.image}
                         alt={item.title}
                         className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-300"
+                        style={{ objectFit: 'cover' }}
                     />
                 </div>
 
@@ -53,10 +60,14 @@ const LearningCard: React.FC<LearningCardProps> = ({ item, index, level }) => {
                 </div>
 
                 {/* 텍스트, 버튼 영역 */}
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-4">
                     {/* 제목 설명 */}
                     <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        {/* 클릭 가능한 제목 */}
+                        <h3 
+                            className="text-xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors cursor-pointer hover:underline"
+                            onClick={handleTitleClick}
+                        >
                             {item.title}
                         </h3>
 
@@ -68,7 +79,7 @@ const LearningCard: React.FC<LearningCardProps> = ({ item, index, level }) => {
                     {/* 학습 시작 버튼 */}
                     <div className="flex-shrink-0 flex items-center">
                         <button className=
-                            "bg-[#3e3e3e] hover:bg-[#2b2b2b] dark:bg-[#f8f8f8] dark:hover:bg-[#c2c2c2] text-white dark:text-[#2b2b2b] font-medium py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group-hover:shadow-lg whitespace-nowrap cursor-pointer"
+                            "bg-[#3e3e3e] hover:bg-[#2b2b2b] dark:bg-[#f8f8f8] dark:hover:bg-[#c2c2c2] text-white dark:text-[#2b2b2b] font-medium py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2 group-hover:shadow-lg whitespace-nowrap cursor-pointer w-full sm:w-auto"
                             onClick={handleStartLearning}
                         >
                             <BookOpen className="w-4 h-4" />

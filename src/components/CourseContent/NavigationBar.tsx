@@ -9,7 +9,7 @@ interface HeadingItem {
 
 interface NavigationBarProps {
   MDXComponent?: React.ComponentType;
-  markdownContent?: string; // 기존 마크다운 콘텐츠와의 호환성
+  markdownContent?: string;
 }
 
 const NavigationBar: React.FC<NavigationBarProps> = ({ 
@@ -20,8 +20,34 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   const [activeId, setActiveId] = useState<string>('');
   const [isOpen, setIsOpen] = useState(false);
 
+  // 고유한 ID 생성을 위한 카운터
+  const usedIds = new Set<string>();
+
+  const generateUniqueHeadingId = (text: string): string => {
+    const baseId = text
+      .toLowerCase()
+      .replace(/[^\w\s가-힣]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    
+    let uniqueId = baseId;
+    let counter = 1;
+    
+    // 이미 사용된 ID라면 숫자를 붙여서 고유하게 만듦
+    while (usedIds.has(uniqueId)) {
+      uniqueId = `${baseId}-${counter}`;
+      counter++;
+    }
+    
+    usedIds.add(uniqueId);
+    return uniqueId;
+  };
+
   // MDX 컴포넌트 또는 마크다운에서 헤더 추출
   useEffect(() => {
+    // 새로운 추출 시 사용된 ID 초기화
+    usedIds.clear();
+
     const extractHeadingsFromDOM = (): HeadingItem[] => {
       const headingElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
       const headings: HeadingItem[] = [];
@@ -30,11 +56,15 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         const tagName = element.tagName.toLowerCase();
         const level = parseInt(tagName.charAt(1));
         const text = element.textContent || '';
-        const id = element.id || generateHeadingId(text);
         
-        // ID가 없으면 생성해서 할당
-        if (!element.id) {
+        // 기존 ID가 있으면 사용하고, 없으면 새로 생성
+        let id = element.id;
+        if (!id) {
+          id = generateUniqueHeadingId(text);
           element.id = id;
+        } else {
+          // 기존 ID도 중복 체크에 추가
+          usedIds.add(id);
         }
         
         if (text && id) {
@@ -53,7 +83,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       while ((match = headerRegex.exec(content)) !== null) {
         const level = match[1].length;
         const text = match[2].trim();
-        const id = generateHeadingId(text);
+        const id = generateUniqueHeadingId(text);
         
         if (id) {
           headings.push({ id, text, level });
@@ -63,32 +93,22 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       return headings;
     };
 
-    const generateHeadingId = (text: string): string => {
-      return text
-        .toLowerCase()
-        .replace(/[^\w\s가-힣]/g, '')
-        .replace(/\s+/g, '-')
-        .replace(/^-+|-+$/g, '');
-    };
-
     // MDX 컴포넌트가 있는 경우 DOM에서 추출, 없으면 마크다운에서 추출
     if (MDXComponent) {
       // DOM이 업데이트된 후 헤딩 추출
       const timeoutId = setTimeout(() => {
         const extractedHeadings = extractHeadingsFromDOM();
         setHeadings(extractedHeadings);
-        console.log('MDX에서 추출된 헤더들:', extractedHeadings);
       }, 100);
 
       return () => clearTimeout(timeoutId);
     } else if (markdownContent) {
       const extractedHeadings = extractHeadingsFromMarkdown(markdownContent);
       setHeadings(extractedHeadings);
-      console.log('마크다운에서 추출된 헤더들:', extractedHeadings);
     }
   }, [MDXComponent, markdownContent]);
 
-  // 스크롤 위치에 따른 활성 헤더 감지
+  // 스크롤 위치에 따른 활성 헤더 감지 (개선됨)
   useEffect(() => {
     const handleScroll = () => {
       if (headings.length === 0) return;
@@ -100,15 +120,39 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       if (headingElements.length === 0) return;
 
       const scrollTop = window.scrollY;
+      const windowHeight = window.innerHeight;
+      const centerPoint = scrollTop + windowHeight / 2; // 화면 중앙 기준점
+      
       let activeHeading = headingElements[0].id;
+      let minDistance = Infinity;
 
+      // 화면 중앙에 가장 가까운 헤더를 찾음
       for (const { element, id } of headingElements) {
         if (element) {
           const rect = element.getBoundingClientRect();
           const elementTop = rect.top + scrollTop;
+          const distanceFromCenter = Math.abs(elementTop - centerPoint);
           
-          if (elementTop - 150 <= scrollTop) {
-            activeHeading = id;
+          // 헤더가 화면에 보이는 경우에만 고려
+          if (rect.top < windowHeight && rect.bottom > 0) {
+            if (distanceFromCenter < minDistance) {
+              minDistance = distanceFromCenter;
+              activeHeading = id;
+            }
+          }
+        }
+      }
+
+      // 만약 화면에 보이는 헤더가 없다면 기존 방식 사용
+      if (minDistance === Infinity) {
+        for (const { element, id } of headingElements) {
+          if (element) {
+            const rect = element.getBoundingClientRect();
+            const elementTop = rect.top + scrollTop;
+            
+            if (elementTop - 100 <= scrollTop) {
+              activeHeading = id;
+            }
           }
         }
       }
@@ -119,7 +163,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
     
-    const timeoutId = setTimeout(handleScroll, 500);
+    const timeoutId = setTimeout(handleScroll, 200);
     
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -133,9 +177,14 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     console.log('찾은 요소:', element);
     
     if (element) {
-      element.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
+      // 화면 중앙으로 스크롤하도록 수정
+      const elementTop = element.offsetTop;
+      const windowHeight = window.innerHeight;
+      const scrollToPosition = elementTop - (windowHeight / 2) + (element.offsetHeight / 2);
+      
+      window.scrollTo({ 
+        top: Math.max(0, scrollToPosition),
+        behavior: 'smooth'
       });
       setActiveId(id);
     } else {
@@ -170,10 +219,15 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
 
   return (
     <>
-      {/* 모바일 토글 버튼 */}
+      {/* 토글 버튼 - 네비게이션 바와 함께 움직임 */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="lg:hidden fixed top-20 right-4 z-40 p-3 bg-white dark:bg-[#2b2b2b] rounded-full shadow-lg border border-gray-200 dark:border-[#3e3e3e]"
+        className={`
+          fixed top-35 z-40 p-3 bg-white dark:bg-[#2b2b2b] rounded-l-lg shadow-lg 
+          border border-r-0 border-gray-200 dark:border-[#3e3e3e]
+          transition-all duration-300
+          ${isOpen ? 'right-75' : 'right-0'}
+        `}
         aria-label="목차 열기/닫기"
       >
         <List className="w-5 h-5 text-gray-600 dark:text-[#c2c2c2]" />
@@ -184,7 +238,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         fixed top-20 right-4 w-72 max-h-[calc(100vh-6rem)] bg-white dark:bg-[#2b2b2b] 
         border border-gray-200 dark:border-[#3e3e3e] rounded-xl shadow-lg z-30 
         transition-all duration-300 overflow-hidden
-        ${isOpen ? 'translate-x-0' : 'translate-x-full lg:translate-x-0'}
+        ${isOpen 
+          ? 'translate-x-0 opacity-100 visible' 
+          : 'translate-x-full opacity-0 invisible'
+        }
       `}>
         <div className="p-4 border-b border-gray-200 dark:border-[#3e3e3e]">
           <h3 className="text-lg font-bold text-gray-900 dark:text-[#f8f8f8] flex items-center gap-2">
@@ -218,10 +275,10 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
         </div>
       </div>
 
-      {/* 모바일 오버레이 */}
+      {/* 오버레이 */}
       {isOpen && (
         <div 
-          className="lg:hidden fixed inset-0 bg-black/20 z-20"
+          className="fixed inset-0 bg-black/20 z-20 lg:bg-transparent"
           onClick={() => setIsOpen(false)}
         />
       )}

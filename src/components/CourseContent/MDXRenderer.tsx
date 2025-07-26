@@ -24,7 +24,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
 
   return (
     <div className="relative group">
-      <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-2 text-sm rounded-t-lg border-b border-gray-200 dark:border-gray-700">
+      <div className="flex items-center justify-between bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-t-lg border-b border-gray-200 dark:border-gray-700">
         <span className="font-medium">{language || 'code'}</span>
         <button
           onClick={copyToClipboard}
@@ -32,13 +32,13 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
           title="코드 복사"
         >
           {copied ? (
-            <Check className="w-4 h-4 text-green-500 dark:text-green-400" />
+            <Check className="w-3 h-3 sm:w-4 sm:h-4 text-green-500 dark:text-green-400" />
           ) : (
-            <Copy className="w-4 h-4" />
+            <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
           )}
         </button>
       </div>
-      <pre className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 rounded-b-lg overflow-x-auto text-sm leading-relaxed border border-gray-200 dark:border-gray-700">
+      <pre className="bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-3 sm:p-4 rounded-b-lg overflow-x-auto text-xs sm:text-sm leading-relaxed border border-gray-200 dark:border-gray-700">
         <code className={className}>{children}</code>
       </pre>
     </div>
@@ -47,7 +47,7 @@ const CodeBlock: React.FC<CodeBlockProps> = ({ children, className }) => {
 
 // 인라인 코드 컴포넌트
 const InlineCode: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <code className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-1 rounded text-sm font-mono border border-blue-200 dark:border-blue-800">
+  <code className="bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-xs sm:text-sm font-mono border border-blue-200 dark:border-blue-800">
     {children}
   </code>
 );
@@ -65,12 +65,12 @@ const generateHeadingId = (text: string): string => {
 const createHeading = (level: 1 | 2 | 3 | 4 | 5 | 6) => {
   const HeadingComponent: React.FC<{ children?: React.ReactNode; id?: string }> = ({ children, id }) => {
     const sizes = {
-      1: 'text-4xl font-bold mt-8 mb-6 pb-3 border-b border-gray-200 dark:border-gray-700',
-      2: 'text-3xl font-bold mt-8 mb-4',
-      3: 'text-2xl font-semibold mt-6 mb-3',
-      4: 'text-xl font-semibold mt-4 mb-2',
-      5: 'text-lg font-medium mt-4 mb-2',
-      6: 'text-base font-medium mt-3 mb-2'
+      1: 'text-2xl sm:text-4xl font-bold mt-6 sm:mt-8 mb-4 sm:mb-6 pb-2 sm:pb-3 border-b border-gray-200 dark:border-gray-700',
+      2: 'text-xl sm:text-3xl font-bold mt-6 sm:mt-8 mb-3 sm:mb-4',
+      3: 'text-lg sm:text-2xl font-semibold mt-4 sm:mt-6 mb-2 sm:mb-3',
+      4: 'text-base sm:text-xl font-semibold mt-3 sm:mt-4 mb-2',
+      5: 'text-sm sm:text-lg font-medium mt-3 sm:mt-4 mb-2',
+      6: 'text-sm sm:text-base font-medium mt-2 sm:mt-3 mb-2'
     };
 
     const headingId = id || (typeof children === 'string' ? generateHeadingId(children) : undefined);
@@ -105,7 +105,7 @@ const mdxComponents = {
   
   // 텍스트
   p: ({ children }: any) => (
-    <p className="text-gray-800 dark:text-gray-200 leading-relaxed my-4">
+    <p className="text-gray-800 dark:text-gray-200 leading-relaxed my-3 sm:my-4 text-sm sm:text-base">
       {children}
     </p>
   ),
@@ -134,7 +134,7 @@ const mdxComponents = {
   
   // 테이블
   table: ({ children }: any) => (
-    <div className="overflow-x-auto my-6 rounded-lg border border-gray-200 dark:border-gray-700">
+    <div className="overflow-x-auto my-4 sm:my-6 rounded-lg border border-gray-200 dark:border-gray-700">
       <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
         {children}
       </table>
@@ -160,26 +160,26 @@ const mdxComponents = {
   ),
   
   th: ({ children }: any) => (
-    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+    <th className="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
       {children}
     </th>
   ),
   
   td: ({ children }: any) => (
-    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+    <td className="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm text-gray-900 dark:text-gray-100">
       {children}
     </td>
   ),
   
-  // 리스트
+  // 리스트 - 모바일에서 들여쓰기 줄임
   ol: ({ children }: any) => (
-    <ol className="list-decimal list-inside space-y-2 my-4 ml-4 text-gray-800 dark:text-gray-200">
+    <ol className="list-decimal list-inside space-y-1 sm:space-y-2 my-3 sm:my-4 ml-2 sm:ml-4 text-gray-800 dark:text-gray-200 text-sm sm:text-base">
       {children}
     </ol>
   ),
   
   ul: ({ children }: any) => (
-    <ul className="list-disc list-inside space-y-2 my-4 ml-4 text-gray-800 dark:text-gray-200">
+    <ul className="list-disc list-inside space-y-1 sm:space-y-2 my-3 sm:my-4 ml-2 sm:ml-4 text-gray-800 dark:text-gray-200 text-sm sm:text-base">
       {children}
     </ul>
   ),
@@ -192,8 +192,8 @@ const mdxComponents = {
   
   // 인용문
   blockquote: ({ children }: any) => (
-    <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-4 my-6 rounded-r-lg">
-      <div className="text-blue-800 dark:text-blue-200">{children}</div>
+    <blockquote className="border-l-4 border-blue-500 bg-blue-50 dark:bg-blue-900/20 p-3 sm:p-4 my-4 sm:my-6 rounded-r-lg">
+      <div className="text-blue-800 dark:text-blue-200 text-sm sm:text-base">{children}</div>
     </blockquote>
   ),
   
@@ -206,7 +206,7 @@ const mdxComponents = {
         href={href}
         target={isExternal ? '_blank' : undefined}
         rel={isExternal ? 'noopener noreferrer' : undefined}
-        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline decoration-2 underline-offset-2 hover:decoration-blue-600 dark:hover:decoration-blue-400 transition-colors inline-flex items-center gap-1"
+        className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline decoration-2 underline-offset-2 hover:decoration-blue-600 dark:hover:decoration-blue-400 transition-colors inline-flex items-center gap-1 text-sm sm:text-base"
       >
         {children}
         {isExternal && <ExternalLink className="w-3 h-3" />}
@@ -216,19 +216,19 @@ const mdxComponents = {
   
   // 구분선
   hr: () => (
-    <hr className="my-8 border-t-2 border-gray-200 dark:border-gray-700" />
+    <hr className="my-6 sm:my-8 border-t-2 border-gray-200 dark:border-gray-700" />
   ),
   
   // 이미지
   img: ({ src, alt }: any) => (
-    <div className="my-6">
+    <div className="my-4 sm:my-6">
       <img 
         src={src} 
         alt={alt} 
         className="max-w-full h-auto rounded-lg shadow-lg border border-gray-200 dark:border-gray-700"
       />
       {alt && (
-        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
+        <p className="text-center text-xs sm:text-sm text-gray-600 dark:text-gray-400 mt-2 italic">
           {alt}
         </p>
       )}
