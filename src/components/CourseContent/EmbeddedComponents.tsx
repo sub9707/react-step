@@ -1,4 +1,4 @@
-import React, { useRef, useState, type ReactNode } from 'react';
+import React, { useRef, useState, type ReactNode, useEffect } from 'react';
 import { 
   Play, 
   Download, 
@@ -19,12 +19,17 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
   code, 
   language = 'javascript', 
   title = 'Code Example',
-  editable = false 
+  editable = false,
+  hideCode = false,
+  minHeight = 200,
+  maxHeight = 600,
+  autoHeight = true
 }) => {
   const [currentCode, setCurrentCode] = useState(code || '');
   const [output, setOutput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [hasExecuted, setHasExecuted] = useState(false); // 실행 여부 추가
+  const [hasExecuted, setHasExecuted] = useState(false);
+  const [iframeHeight, setIframeHeight] = useState(minHeight); // 동적 높이 상태
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // 코드 포맷팅 함수
@@ -37,14 +42,12 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
       const trimmed = line.trim();
       if (!trimmed) return '';
       
-      // 닫는 괄호나 중괄호가 있으면 들여쓰기 감소
       if (trimmed.includes('}') || trimmed.includes(')')) {
         indentLevel = Math.max(0, indentLevel - 1);
       }
       
       const indentedLine = '  '.repeat(indentLevel) + trimmed;
       
-      // 여는 괄호나 중괄호가 있으면 들여쓰기 증가
       if (trimmed.includes('{') || trimmed.includes('(')) {
         indentLevel++;
       }
@@ -58,6 +61,37 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
   // React 코드인지 확인
   const isReactCode = currentCode.includes('function ') && 
                      (currentCode.includes('<') || currentCode.includes('return ('));
+
+  // iframe 높이 자동 조정 함수
+  const adjustIframeHeight = () => {
+    if (!iframeRef.current || !autoHeight) return;
+    
+    try {
+      const iframe = iframeRef.current;
+      const iframeDoc = iframe.contentDocument || iframe.contentWindow?.document;
+      
+      if (iframeDoc) {
+        // 컨텐츠의 실제 높이 계산
+        const body = iframeDoc.body;
+        const html = iframeDoc.documentElement;
+        
+        const contentHeight = Math.max(
+          body?.scrollHeight || 0,
+          body?.offsetHeight || 0,
+          html?.clientHeight || 0,
+          html?.scrollHeight || 0,
+          html?.offsetHeight || 0
+        );
+        
+        // 최소/최대 높이 제한 적용
+        const newHeight = Math.min(Math.max(contentHeight + 40, minHeight), maxHeight);
+        setIframeHeight(newHeight);
+      }
+    } catch (error) {
+      console.warn('높이 조정 중 오류:', error);
+      setIframeHeight(minHeight);
+    }
+  };
 
   const runReactCode = () => {
     if (!iframeRef.current) return;
@@ -74,6 +108,7 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
       font-family: system-ui, -apple-system, sans-serif; 
       margin: 20px; 
       background: white;
+      padding-bottom: 20px;
     }
     button {
       padding: 8px 16px;
@@ -86,6 +121,11 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
     }
     h3 { color: #333; margin-top: 0; }
     p { color: #666; }
+    
+    /* 컨텐츠가 화면에 맞게 자동 조정되도록 */
+    #root {
+      min-height: fit-content;
+    }
   </style>
 </head>
 <body>
@@ -98,8 +138,22 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
     if (typeof App !== 'undefined') {
       const root = ReactDOM.createRoot(document.getElementById('root'));
       root.render(<App />);
+      
+      // 렌더링 완료 후 높이 조정 신호 전송
+      setTimeout(() => {
+        if (window.parent) {
+          window.parent.postMessage({ type: 'IFRAME_READY' }, '*');
+        }
+      }, 100);
     } else {
       document.getElementById('root').innerHTML = '<p style="color: red;">App 컴포넌트를 찾을 수 없습니다.</p>';
+      
+      // 에러 메시지 표시 후에도 높이 조정
+      setTimeout(() => {
+        if (window.parent) {
+          window.parent.postMessage({ type: 'IFRAME_READY' }, '*');
+        }
+      }, 100);
     }
   </script>
 </body>
@@ -108,6 +162,33 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
     const iframe = iframeRef.current;
     iframe.srcdoc = htmlContent;
   };
+
+  // iframe 로드 이벤트 및 메시지 리스너
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'IFRAME_READY') {
+        // 약간의 지연 후 높이 조정 (렌더링 완료 대기)
+        setTimeout(adjustIframeHeight, 200);
+      }
+    };
+
+    const handleIframeLoad = () => {
+      setTimeout(adjustIframeHeight, 300);
+    };
+
+    window.addEventListener('message', handleMessage);
+    
+    if (iframeRef.current) {
+      iframeRef.current.addEventListener('load', handleIframeLoad);
+    }
+
+    return () => {
+      window.removeEventListener('message', handleMessage);
+      if (iframeRef.current) {
+        iframeRef.current.removeEventListener('load', handleIframeLoad);
+      }
+    };
+  }, [hasExecuted, currentCode]);
 
   const runJavaScript = () => {
     try {
@@ -121,7 +202,7 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
   const runCode = () => {
     setIsLoading(true);
     setOutput('');
-    setHasExecuted(true); // 실행했음을 표시
+    setHasExecuted(true);
     
     setTimeout(() => {
       if (isReactCode) {
@@ -133,48 +214,57 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
     }, 100);
   };
 
-  // 코드 표시용 (읽기 전용일 때 포맷팅 적용)
   const displayCode = editable ? currentCode : formatCode(currentCode);
 
   return (
     <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden my-6 sm:my-4">
-      {/* 헤더 - 단순화된 타이틀만 */}
-      <div className="bg-gray-100 dark:bg-gray-800 px-4 py-3 sm:px-3 sm:py-2">
-        <h3 className="text-base sm:text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
-          {title}
-        </h3>
-      </div>
+      {/* 헤더 */}
+      {!hideCode && (
+        <div className="bg-gray-100 dark:bg-gray-800 px-4 py-3 sm:px-3 sm:py-2">
+          <h3 className="text-base sm:text-sm font-medium text-gray-700 dark:text-gray-200 leading-relaxed">
+            {title}
+          </h3>
+        </div>
+      )}
       
       {/* 코드 에디터 */}
-      {editable ? (
-        <textarea
-          value={currentCode}
-          onChange={(e) => setCurrentCode(e.target.value)}
-          className="w-full h-40 sm:h-32 p-4 sm:p-3 font-mono text-xs sm:text-sm bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-none resize-y focus:outline-none"
-          spellCheck={false}
-          placeholder="코드를 입력하세요..."
-          style={{ 
-            tabSize: 2,
-            fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace'
-          }}
-        />
-      ) : (
-        <pre className="p-4 sm:p-3 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm sm:text-xs overflow-x-auto">
-          <code style={{ 
-            fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
-            lineHeight: '1.5'
-          }}>
-            {displayCode}
-          </code>
-        </pre>
+      {!hideCode && (
+        <>
+          {editable ? (
+            <textarea
+              value={currentCode}
+              onChange={(e) => setCurrentCode(e.target.value)}
+              className="w-full h-40 sm:h-32 p-4 sm:p-3 font-mono text-xs sm:text-sm bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-none resize-y focus:outline-none"
+              spellCheck={false}
+              placeholder="코드를 입력하세요..."
+              style={{ 
+                tabSize: 2,
+                fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace'
+              }}
+            />
+          ) : (
+            <pre className="p-4 sm:p-3 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm sm:text-xs overflow-x-auto">
+              <code style={{ 
+                fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                lineHeight: '1.5'
+              }}>
+                {displayCode}
+              </code>
+            </pre>
+          )}
+        </>
       )}
       
       {/* 하단 컨트롤 바 */}
-      <div className="bg-gray-50 dark:bg-gray-800 px-4 py-3 sm:px-3 sm:py-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
-        <span className="text-xs sm:text-[10px] text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 sm:px-1.5 sm:py-0.5 rounded">
-          {isReactCode ? 'React JSX' : language}
-        </span>
-        {editable && (
+      <div className={`bg-gray-50 dark:bg-gray-800 px-4 py-3 sm:px-3 sm:py-2 ${!hideCode ? 'border-t border-gray-200 dark:border-gray-700' : ''} flex items-center justify-between`}>
+        {!hideCode && (
+          <span className="text-xs sm:text-[10px] text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 px-2 py-1 sm:px-1.5 sm:py-0.5 rounded">
+            {isReactCode ? 'React JSX' : language}
+          </span>
+        )}
+        {hideCode && <div></div>}
+        
+        {(editable || hideCode) && (
           <button
             onClick={runCode}
             disabled={isLoading}
@@ -186,17 +276,18 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
         )}
       </div>
       
-      {/* 결과 출력 - 실행했을 때만 표시 */}
+      {/* 결과 출력 */}
       {hasExecuted && (
         <>
           {isReactCode ? (
             <div className="border-t border-gray-200 dark:border-gray-700">
-              <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-[10px] text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700">
-                실행 결과:
+              <div className="bg-gray-50 dark:bg-gray-800 px-4 py-2 sm:px-3 sm:py-1.5 text-xs sm:text-[10px] text-gray-600 dark:text-gray-400 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+                <span>실행 결과:</span>
               </div>
               <iframe
                 ref={iframeRef}
-                className="w-full h-64 sm:h-48 border-none"
+                className="w-full border-none transition-all duration-300 ease-in-out"
+                style={{ height: `${iframeHeight}px` }}
                 title="React 실행 결과"
               />
             </div>

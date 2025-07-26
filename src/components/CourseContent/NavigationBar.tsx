@@ -172,9 +172,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
   }, [headings]);
 
   const scrollToHeading = (id: string) => {
-    console.log('스크롤 시도:', id);
     const element = document.getElementById(id);
-    console.log('찾은 요소:', element);
     
     if (element) {
       // 화면 중앙으로 스크롤하도록 수정
@@ -190,8 +188,6 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
     } else {
       console.warn(`ID "${id}"를 가진 요소를 찾을 수 없습니다.`);
     }
-    
-    setIsOpen(false);
   };
 
   const getIndentClass = (level: number) => {
@@ -278,7 +274,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       {/* 오버레이 */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/20 z-20 lg:bg-transparent"
+          className="fixed inset-0 bg-black/30 z-20 lg:bg-transparent"
           onClick={() => setIsOpen(false)}
         />
       )}
