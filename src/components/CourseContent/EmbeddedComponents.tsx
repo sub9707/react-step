@@ -19,7 +19,7 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
   code, 
   language = 'javascript', 
   title = 'Code Example',
-  editable = false,
+  editable = true,
   hideCode = false,
   minHeight = 200,
   maxHeight = 600,
@@ -30,7 +30,9 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [hasExecuted, setHasExecuted] = useState(false);
   const [iframeHeight, setIframeHeight] = useState(minHeight); // 동적 높이 상태
+  const [codeHeight, setCodeHeight] = useState('auto'); // 코드 영역 높이 상태
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // 코드 포맷팅 함수
   const formatCode = (code: string) => {
@@ -57,6 +59,45 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
     
     return formattedLines.join('\n');
   };
+
+  // 텍스트 영역 높이 자동 조정 함수
+  const adjustTextareaHeight = () => {
+    if (textareaRef.current) {
+      const textarea = textareaRef.current;
+      textarea.style.height = 'auto';
+      // 실제 스크롤 높이에서 여분의 패딩 제거
+      const scrollHeight = Math.max(textarea.scrollHeight + 4, 120); // 최소 높이 120px
+      textarea.style.height = `${scrollHeight}px`;
+      setCodeHeight(`${scrollHeight}px`);
+    }
+  };
+
+  // pre 태그 높이 계산 함수
+  const calculatePreHeight = () => {
+    const lines = currentCode.split('\n').length;
+    const lineHeight = 20; // 줄 높이를 더 정확하게 조정
+    const padding = 24; // 상하 패딩을 줄임
+    const calculatedHeight = Math.max(lines * lineHeight + padding, 120);
+    setCodeHeight(`${calculatedHeight}px`);
+  };
+
+  // 코드 변경 시 높이 조정
+  useEffect(() => {
+    if (editable) {
+      adjustTextareaHeight();
+    } else {
+      calculatePreHeight();
+    }
+  }, [currentCode, editable]);
+
+  // 초기 로드 시 높이 설정
+  useEffect(() => {
+    if (editable) {
+      adjustTextareaHeight();
+    } else {
+      calculatePreHeight();
+    }
+  }, []);
 
   // React 코드인지 확인
   const isReactCode = currentCode.includes('function ') && 
@@ -232,21 +273,34 @@ export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({
         <>
           {editable ? (
             <textarea
+              ref={textareaRef}
               value={currentCode}
-              onChange={(e) => setCurrentCode(e.target.value)}
-              className="w-full h-40 sm:h-32 p-4 sm:p-3 font-mono text-xs sm:text-sm bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-none resize-y focus:outline-none"
+              onChange={(e) => {
+                setCurrentCode(e.target.value);
+              }}
+              className="w-full p-3 font-mono text-sm bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 border-none resize-none focus:outline-none"
               spellCheck={false}
               placeholder="코드를 입력하세요..."
               style={{ 
                 tabSize: 2,
-                fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace'
+                fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
+                height: codeHeight,
+                lineHeight: '1.4',
+                overflow: 'hidden'
               }}
             />
           ) : (
-            <pre className="p-4 sm:p-3 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm sm:text-xs overflow-x-auto">
-              <code style={{ 
+            <pre 
+              className="p-3 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 text-sm overflow-x-auto m-0"
+              style={{ 
+                height: codeHeight,
                 fontFamily: 'Monaco, Menlo, "Ubuntu Mono", monospace',
-                lineHeight: '1.5'
+                lineHeight: '1.4'
+              }}
+            >
+              <code style={{ 
+                fontFamily: 'inherit',
+                lineHeight: 'inherit'
               }}>
                 {displayCode}
               </code>
@@ -784,11 +838,11 @@ export const ComparisonImages: React.FC<{
               {labels.left}
             </div>
           )}
-          <div className={`w-full ${heightClasses[height]} overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700`}>
+          <div className={`w-full ${heightClasses[height]} overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center`}>
             <img
               src={leftImage.src}
               alt={leftImage.alt}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover"
               style={{ objectPosition: 'center' }}
             />
           </div>
@@ -805,11 +859,11 @@ export const ComparisonImages: React.FC<{
               {labels.right}
             </div>
           )}
-          <div className={`w-full ${heightClasses[height]} overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700`}>
+          <div className={`w-full ${heightClasses[height]} overflow-hidden rounded-lg shadow-md border border-gray-200 dark:border-gray-700 flex items-center justify-center`}>
             <img
               src={rightImage.src}
               alt={rightImage.alt}
-              className="w-full h-full object-cover object-center"
+              className="w-full h-full object-cover"
               style={{ objectPosition: 'center' }}
             />
           </div>
