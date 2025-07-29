@@ -543,7 +543,7 @@ export const CalloutBox: React.FC<EmbeddedComponentProps> = ({
         {style.icon}
         <div className="flex-1">
           {title && (
-            <h4 className="font-semibold mb-2 text-base">{title}</h4>
+            <div className="font-semibold mb-2 text-base">{title}</div>
           )}
           <div className="text-sm leading-relaxed">{children}</div>
         </div>
@@ -554,7 +554,7 @@ export const CalloutBox: React.FC<EmbeddedComponentProps> = ({
         <div className="flex items-center gap-2 mb-3">
           {style.icon}
           {title && (
-            <h4 className="font-semibold text-sm">{title}</h4>
+            <div className="font-semibold text-sm">{title}</div>
           )}
         </div>
         <div className="text-xs leading-relaxed">{children}</div>

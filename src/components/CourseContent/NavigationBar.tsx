@@ -219,7 +219,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          fixed top-35 z-40 p-3 bg-white dark:bg-[#2b2b2b] rounded-l-lg shadow-lg 
+          fixed top-50 z-40 p-3 bg-white dark:bg-[#2b2b2b] rounded-l-lg
           border border-r-0 border-gray-200 dark:border-[#3e3e3e]
           transition-all duration-300
           ${isOpen ? 'right-75' : 'right-0'}
