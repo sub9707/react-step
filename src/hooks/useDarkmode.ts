@@ -1,50 +1,43 @@
 import { useState, useEffect, useCallback } from "react";
 
 export default function useDarkMode() {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
-    // 서버 사이드 렌더링 환경에서는 기본값 false (light) 반환
-    if (typeof window === 'undefined') return false;
-    
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      return savedTheme === "dark";
-    }
-    
-    // localStorage에 저장된 값이 없으면 기본값으로 light 사용
-    // (시스템 설정 무시하고 항상 light가 기본)
-    return false;
-  });
+  // 초기 상태를 undefined로 설정 (초기화 완료 전까지)
+  const [isDarkMode, setIsDarkMode] = useState<boolean | undefined>(undefined);
 
-  // 컴포넌트 마운트 시 DOM과 localStorage 동기화
-  useEffect(() => {
+  // 초기화 함수
+  const initializeTheme = useCallback(() => {
+    if (typeof window === 'undefined') return;
+    
     const html = document.documentElement;
     const savedTheme = localStorage.getItem("theme");
-    
     let shouldBeDark = false;
     
     if (savedTheme) {
       shouldBeDark = savedTheme === "dark";
     } else {
-      // localStorage에 값이 없으면 기본값 light로 설정하고 저장
-      shouldBeDark = false;
-      localStorage.setItem("theme", "light");
+      shouldBeDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
     }
-
-    // 상태 업데이트 (필요한 경우만)
-    if (shouldBeDark !== isDarkMode) {
-      setIsDarkMode(shouldBeDark);
-    }
-
-    // DOM 클래스 설정
+    
+    // DOM 먼저 설정
     if (shouldBeDark) {
       html.classList.add("dark");
     } else {
       html.classList.remove("dark");
     }
-  }, []); // 마운트 시에만 실행
+    
+    // 상태 설정
+    setIsDarkMode(shouldBeDark);
+  }, []);
+
+  // 컴포넌트 마운트 시 초기화
+  useEffect(() => {
+    initializeTheme();
+  }, [initializeTheme]);
 
   // Toggle dark mode
   const toggleDarkMode = useCallback(() => {
+    if (isDarkMode === undefined) return; 
+    
     setIsDarkMode((prev) => {
       const newMode = !prev;
       const html = document.documentElement;
@@ -59,10 +52,12 @@ export default function useDarkMode() {
       
       return newMode;
     });
-  }, []);
+  }, [isDarkMode]);
 
-  // isDarkMode 상태 변경 시 DOM 동기화
+  // 상태 변경 시 DOM 동기화 (안전장치)
   useEffect(() => {
+    if (isDarkMode === undefined) return;
+    
     const html = document.documentElement;
     if (isDarkMode) {
       html.classList.add("dark");
@@ -71,5 +66,9 @@ export default function useDarkMode() {
     }
   }, [isDarkMode]);
 
-  return { isDarkMode, toggleDarkMode };
+  return { 
+    isDarkMode: isDarkMode ?? false, // undefined면 false 반환
+    toggleDarkMode,
+    isInitialized: isDarkMode !== undefined
+  };
 }
