@@ -28,30 +28,32 @@ const App: React.FC = () => {
     trackPageView(window.location.pathname + window.location.search);
   }, []);
   return (
-    <Routes>
+    <>
       <Analytics />
-      <Route path="/" element={
-        <Layout>
-          <MainPage />
-        </Layout>
-      } />
-      <Route path="/courses/:level" element={
-        <Layout>
-          <CourseListPage />
-        </Layout>
-      } />
-      <Route path="/courses/:level/:lessonId" element={
-        <Layout>
-          <CoursePage />
-        </Layout>
-      } />
-      <Route path="/dashboard" element={
-        <Layout>
-          <DashboardPage />
-        </Layout>
-      } />
-      {/* <Route path="*" element={<NotFoundPage />} /> */}
-    </Routes>
+      <Routes>
+        <Route path="/" element={
+          <Layout>
+            <MainPage />
+          </Layout>
+        } />
+        <Route path="/courses/:level" element={
+          <Layout>
+            <CourseListPage />
+          </Layout>
+        } />
+        <Route path="/courses/:level/:lessonId" element={
+          <Layout>
+            <CoursePage />
+          </Layout>
+        } />
+        <Route path="/dashboard" element={
+          <Layout>
+            <DashboardPage />
+          </Layout>
+        } />
+        {/* <Route path="*" element={<NotFoundPage />} /> */}
+      </Routes>
+    </>
   );
 };
 
