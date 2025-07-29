@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 
 export default function useDarkMode() {
-  // 초기 상태를 undefined로 설정 (초기화 완료 전까지)
+  // 초기 상태 undefined
   const [isDarkMode, setIsDarkMode] = useState<boolean | undefined>(undefined);
 
   // 초기화 함수
