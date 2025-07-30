@@ -13,7 +13,6 @@ export const initGA = () => {
       testMode: process.env.NODE_ENV === 'test',
       gtagOptions: {
         debug_mode: process.env.NODE_ENV === 'development',
-        send_page_view: false,
       },
     });
     
@@ -25,10 +24,9 @@ export const initGA = () => {
 
 // 페이지뷰 추적
 export const trackPageView = (path: string, title?: string) => {
-  ReactGA.send({
-    hitType: 'pageview',
-    page: path,
-    title: title,
+  ReactGA.gtag('event', 'page_view', {
+    page_path: path,
+    page_title: title,
   });
 };
 
@@ -39,11 +37,10 @@ export const trackEvent = (
   label?: string,
   value?: number
 ) => {
-  ReactGA.event({
-    action,
-    category,
-    label,
-    value,
+  ReactGA.gtag('event', action, {
+    event_category: category,
+    event_label: label,
+    value: value,
   });
 };
 

@@ -19,48 +19,63 @@ import {
 } from '@/components/CourseContent/EmbeddedComponents'
 
 <Image
-  src="/content/beginner/5/remote-control.png"
-  alt="TV 리모컨"
-  width="half"
-  caption="TV 리모컨으로 채널을 바꾸는 모습"
+  src="/content/beginner/5/state-intro.gif"
+  alt="state-intro"
+  width="full"
+  caption="react - vite로 프로젝트 시작 시 볼 수 있는 state counter 예제"
+  isGif={true}
 />
-
+<br/>
 지난 회차에서는 React의 컴포넌트에 대해 알아보았습니다.
 
 각 컴포넌트는 역할과 기능으로 분리하여 더 큰 컴포넌트를 만들어 앱을 구성합니다.
 
 컴포넌트는 단순히 화면에 무언가를 보여주는 것에서 그치지 않고, 사용자와의 상호작용에 따라 변화하는 정보를 처리해야 합니다.
-
+<br/>
 예를 들어 버튼을 클릭하면 숫자가 증가하거나, 입력창에 문자를 입력하면 화면에 실시간으로 반영되는 등 동적인 동작이 필요하죠.
 
-이러한 동작을 구현하려면 컴포넌트 내부에서 데이터를 저장하고 변경할 수 있는 방법이 필요합니다.
+이러한 동작을 구현하려면 <HighlightWord>컴포넌트가 특정 정보를 기억하고, 그 정보가 변할 때마다 화면에도 반영</HighlightWord>되도록 해야 합니다.
 
-그렇다면 컴포넌트는 자기 안에 있는 변수, 데이터를 어떻게 기억할까요?
+그렇다면 컴포넌트는 자기 안에 있는 데이터를 어떻게 기억할까요?
 
+또, 그냥 지역 변수나 전역 변수를 간단히 쓰면 안되는 걸까요?
+
+<br/>
 ---
 
 ## State란 무엇인가?
 
-<HighlightWord>State(상태)</HighlightWord>는 React 컴포넌트가 기억하고 있는 **데이터**입니다.
+<HighlightWord>State(상태)</HighlightWord>는 React 컴포넌트가 <HighlightWord>변화를 추적하기 위해 관리하는 데이터</HighlightWord>입니다.
 
-시간이 지나면서 변할 수 있는 모든 정보가 State가 될 수 있어요.
+쉽게 말해, <HighlightWord>컴포넌트가 렌더링 될 때마다 변할 수 있는 데이터 </HighlightWord>가 있다면 그게 state가 되겠죠.
+
+시간이 지나면서 변할 수 있는 모든 정보가 컴포넌트의 State가 될 수 있습니다.
 
 <Image
-  src="/content/beginner/5/state-concept.png"
-  alt="State 개념 설명"
+  src="/content/beginner/5/state-cycle.png"
+  alt="State 사이클 설명"
   width="full"
-  caption="State는 컴포넌트가 기억하는 변화 가능한 데이터"
+  caption="React 컴포넌트에서 state 변화에 따른 렌더링 흐름을 단계별로 시각화한 예시"
 />
+<br/>
+위 이미지는 React 컴포넌트에서 상태(state)의 변화가 어떻게 렌더링에 영향을 주는지를 단계적으로 보여줍니다.
 
+초기 컴포넌트의 렌더링 후 사용자의 상호작용(위에선 클릭 이벤트)으로 인해 ``setState``가 호출되면, 
+
+<HighlightWord>내부 상태 값이 변경되며 자동으로 컴포넌트가 다시 렌더링</HighlightWord>됩니다.
+
+이러한 흐름은 React의 핵심 개념 중 하나로, <HighlightWord>UI와 데이터 상태가 항상 일치하도록 유지하는 데 중요</HighlightWord>한 역할을 합니다.
+<br/>
 State의 특징:
 - **기억 가능**: 컴포넌트가 데이터를 기억하고 있음
 - **변화 가능**: 사용자 행동이나 시간에 따라 값이 바뀔 수 있음
 - **반응형**: State가 바뀌면 화면이 자동으로 다시 그려짐
 
+<br/>
 <CalloutBox type="info" title="State의 예시">
 웹사이트에서 볼 수 있는 State들:
 
-**카운터**: 0, 1, 2, 3... (숫자가 변함)
+**댓글 목록**: 기존 댓글 목록을 불러온 뒤, state에 리스트로 담아두고 사용자가 작성한 댓글을 추가하면 즉시 목록에 추가된 것처럼 보여 UX 향상이 됩니다.
 
 **로그인 상태**: "로그인됨" 또는 "로그아웃됨"
 
