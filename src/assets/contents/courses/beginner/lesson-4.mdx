@@ -126,6 +126,31 @@ JSX를 반환할 것: return 문에서 JSX를 반환해야 함
 
 ### 자주 재사용하는 버튼 컴포넌트
 
+```js
+function Button({ type = 'confirm', onClick, children }) {
+ return (
+   <button onClick={onClick}>
+     {children}
+   </button>
+ );
+}
+
+function App() {
+ return (
+   <div>
+   {/* type과 onClick 이벤트 함수를 prop으로 Button 컴포넌트에 넘겨주어 어떤 스타일과 형태를 띌지 결정합니다. */}
+     <Button type="confirm" onClick={() => alert('확인!')}>
+       확인
+     </Button>
+     
+     <Button type="cancel" onClick={() => alert('취소!')}>
+       취소
+     </Button>
+   </div>
+ );
+}
+```
+
 <CodeSandbox
   code={`
 function Button({ type = 'confirm', onClick, children }) {
@@ -172,6 +197,7 @@ function App() {
 }`}
   title="재사용 가능한 버튼 컴포넌트"
   language="jsx"
+  hideCode={true}
 />
 
 ---
@@ -202,6 +228,36 @@ Props로 넘길 때는 객체 전체를 spread하여 ```<Button {...data}/> ```�
 각각의 값을 명시적으로 ``` <Button text={"Hello"} color={"red"} /> ```처럼 전달할 수도 있습니다.
 <br/>
 
+```js
+{/* Props를 받는 컴포넌트 */}
+function Greeting(props) {
+  return <h2>안녕하세요, {props.name}님!</h2>;
+}
+
+{/* 구조분해할당으로 더 깔끔하게 Prop들을 컴포넌트 내에서 사용할 수 있습니다 */}
+function UserCard({ name, age, hobby }) {
+  return (
+    <div>
+      <h3>{name}</h3>
+      <p>나이: {age}세</p>
+      <p>취미: {hobby}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Greeting name="철수" />
+      <Greeting name="영희" />
+      
+      <UserCard name="김철수" age={25} hobby="게임" />
+      <UserCard name="이영희" age={30} hobby="독서" />
+      <UserCard name="박민수" age={28} hobby="요리" />
+    </div>
+  );
+}
+```
 <CodeSandbox
   code={`
   {/* Props를 받는 컴포넌트 */}
@@ -240,6 +296,7 @@ function App() {
 }`}
   title="Props로 데이터 전달하기"
   language="jsx"
+  hideCode={true}
 />
 
 <br/>
