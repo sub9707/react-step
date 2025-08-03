@@ -24,11 +24,11 @@ export const LEVEL_CONFIG = [
 
 
 export const SITE_CONFIG = {
-    name: 'React 학습 서비스',
+    name: 'React Steps',
     description: '리액트를 단계별로 학습할 수 있는 웹서비스',
     author: 'React Learning Team',
     contact: {
-        email: 'contact@reactlearning.com',
-        github: 'https://github.com/reactlearning'
+        email: 'sub9707@naver.com',
+        github: 'https://github.com/sub9707'
     }
 };

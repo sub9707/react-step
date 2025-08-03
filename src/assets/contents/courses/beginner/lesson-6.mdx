@@ -1,0 +1,805 @@
+export const metadata = {
+  id: 6,
+  title: "클래스형 컴포넌트와 함수형 컴포넌트",
+  description: "React의 클래스형 컴포넌트와 함수형 컴포넌트의 차이점과 변화 과정을 알아봅시다.",
+  difficulty: "쉬움",
+  tags: ["React", "컴포넌트", "클래스형", "함수형", "생명주기", "입문"],
+  lastUpdated: "2025-08-02",
+  image: "/content/beginner/6/lesson-6-bg.png"
+};
+
+import { 
+  CalloutBox, 
+  ComparisonImages, 
+  HighlightWord, 
+  Quiz, 
+  LinkCard 
+} from '@/components/CourseContent/EmbeddedComponents'
+
+<ComparisonImages
+  leftImage={{
+    src: "/content/beginner/6/class-comp.png",
+    alt: "클래스형 컴포넌트",
+  }}
+  rightImage={{
+    src: "/content/beginner/6/function-comp.png",
+    alt: "함수형 컴포넌트",
+  }}
+  labels={{left:"클래스형", right:"함수형"}}
+  height={'lg'}
+/>
+<br/>
+React에서 컴포넌트를 만드는 방법에는 크게 두 가지가 있습니다.
+
+바로 **클래스형 컴포넌트**와 **함수형 컴포넌트**입니다.
+
+React가 처음 나왔을 때는 클래스형만 사용할 수 있었지만, 시간이 지나면서 함수형 컴포넌트가 등장하고 발전해왔습니다.
+
+오늘은 이 두 방식의 차이점과 React가 어떻게 발전해왔는지 알아보겠습니다.
+
+---
+
+## 클래스형 컴포넌트 (Class Components)
+
+클래스형 컴포넌트는 <HighlightWord>ES6의 class 문법을 사용해서 만드는 컴포넌트</HighlightWord>입니다.
+
+React가 처음 나왔을 때부터 사용되던 전통적인 방식이에요.
+
+```jsx
+import React, { Component } from 'react';
+
+class Welcome extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      count: 0,
+      message: '안녕하세요!'
+    };
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState({ count: this.state.count + 1 });
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>{this.state.message}</h1>
+        <p>클릭 횟수: {this.state.count}</p>
+        <button onClick={this.handleClick}>클릭</button>
+      </div>
+    );
+  }
+}
+
+export default Welcome;
+```
+<br/>
+```class Welcome extends Component {}``` <br/>
+
+Welcome이라는 이름의 컴포넌트를 만들면서, 
+
+```Component```라는 React의 기본 컴포넌트 전용 클래스를 가져다 쓰는 방식입니다.
+
+Welcome이라는 이름의 클래스를 만들면서 이 Component 클래스를 상속(extends)하면,  
+
+React가 이 <HighlightWord>컴포넌트를 인식하고 처리</HighlightWord>할 수 있게 됩니다.
+
+React의 기본 Component를 extends(상속, 확장)하여 ```render()```같은 기능을 사용할 수 있습니다.
+<br/>
+```constructor(props)```
+
+이 컴포넌트가 <HighlightWord>처음 만들어질 때 한 번 실행</HighlightWord>됩니다.
+
+props는 부모 컴포넌트에서 받은 값이고, 이 안에서 state, 컴포넌트의 내부 데이터도 설정합니다.
+
+예전에는 ```contructor```를 사용해서 this 바인딩 등을 처리했지만, 
+
+최근에는 화살표 함수와 클래스 필드 문법(class fields)을 사용하면
+
+this 바인딩을 명시적으로 하지 않아도 되기 때문에 코드가 더 간단해졌습니다.
+<br/>
+
+```this.state```, ```this.setState```
+
+```this.state```는 클래스형 컴포넌트에서 사용하는 상태(state)를 의미합니다.  
+
+```this.setState```를 사용하면 state 값을 업데이트할 수 있습니다.  
+
+함수형 컴포넌트의 useState Hook과 비슷한 목적을 가진 기능이죠.
+
+```state```는 컴포넌트에 종속된 state 값을 접근하게끔 하고, ```setState```로 state 값을 업데이트 시킵니다.
+<br/>
+```render()```
+
+최근 React 함수형 컴포넌트가 반환하는 JSX 부분, return 아래 부분과 일치합니다.
+
+다만 함수의 반환 대신, 컴포넌트의 render 메서드가 이를 수행하는 것이죠.
+
+<HighlightWord>화면에 실제로 보여질 JSX 코드를 반환</HighlightWord>하는 메서드입니다.
+
+상태값(this.state)을 사용해서 동적인 화면을 만들 수 있습니다.
+<br/>
+
+위의 복잡한 구 클래스 컴포넌트 코드는 아래와 같이 간단히 수정할 수 있습니다.
+<br/>
+
+```js
+import React, { Component } from 'react';
+
+class Welcome extends Component {
+  state = {
+    count: 0,
+    message: '안녕하세요!'
+  };
+
+  handleClick = () => {
+    this.setState({ count: this.state.count + 1 });
+  };
+
+  render() {
+    const { message, count } = this.state;
+
+    return (
+      <div>
+        <h1>{message}</h1>
+        <p>클릭 횟수: {count}</p>
+        <button onClick={this.handleClick}>클릭</button>
+      </div>
+    );
+  }
+}
+
+export default Welcome;
+```
+<br/>
+```contructor```를 통한 state 설정과 메서드에 ```this``` 바인딩을 따로 해줄 필요없이 선언만 해주면 됩니다.
+<br/>
+
+### 클래스형 컴포넌트의 특징
+
+<CalloutBox type="info" title="클래스형 컴포넌트의 특징">
+**state 관리**: `this.state`와 `this.setState()` 사용
+
+**생명주기**: 클래스형 컴포넌트만의 `componentDidMount`, `componentDidUpdate` 등 생명주기 로직 사용 가능
+
+**this 키워드**: 컴포넌트 내부 데이터에 `this`로 접근
+</CalloutBox>
+
+<br/>
+### 클래스형 컴포넌트의 생명주기 (Life Cycle)
+
+컴포넌트의 **생명주기**란 <HighlightWord>컴포넌트가 생성되고, 업데이트되고, 제거되는 과정</HighlightWord>을 말합니다.
+
+<Image
+  src="/content/beginner/6/class-cycle.png"
+  alt="클래스형 컴포넌트의 생명주기"
+  width="full"
+  caption="클래스형 컴포넌트의 생명주기"
+/>
+
+React 클래스형 컴포넌트는 네 가지의 생명주기 주요 단계를 거칩니다
+
+```초기화```, ```Mount```, ```Update```, ```Unmount```입니다.
+<br/>
+```초기화```단계에서는 컴포넌트가 생성되며 <HighlightWord>초기 상태(state)와 props를 설정</HighlightWord>합니다.
+
+```Mount``` 단계에서는 컴포넌트가 처음 화면에 표시되며, <HighlightWord>DOM 조작이나 외부 API 호출 등의 초기 작업</HighlightWord>이 수행됩니다.
+
+```Update``` 단계는 props나 state가 변경되어 <HighlightWord>컴포넌트가 다시 렌더링</HighlightWord>될 때 진행됩니다.
+
+```Unmount``` 단계는 컴포넌트가 DOM에서 제거되기 전 <HighlightWord>정리 작업</HighlightWord>이 일어나는 단계입니다.
+<br/>
+이러한 생명주기를 이해하면, <HighlightWord>컴포넌트의 적절한 시점에 맞춰 로직을 실행하거나 리소스를 정리</HighlightWord>할 수 있어 
+
+더욱 안정적이고 최적화된 애플리케이션을 만들 수 있습니다.
+<br/>
+### 클래스형 컴포넌트 생명주기 사용
+
+```jsx
+class LifeCycleExample extends Component {
+  // 초기 상태와 props 세팅
+  constructor(props) {
+    super(props);
+    this.state = { data: null };
+    console.log('1. constructor - 컴포넌트 생성');
+  }
+
+ // 컴포넌트 렌더링된 직후
+  componentDidMount() {
+    console.log('2. componentDidMount - 화면에 나타남');
+    // API 호출, 데이터 가져오기
+    // DOM 조작도 여기서 수행
+    this.fetchData();
+  }
+
+// 컴포넌트 업데이트 수행(state나 props 변화에 의함)
+  componentDidUpdate() {
+    console.log('3. componentDidUpdate - 업데이트됨');
+    // 컴포넌트 다시 렌더링
+  }
+
+  // DOM 제거 전
+  componentWillUnmount() {
+    console.log('4. componentWillUnmount - 제거되기 직전');
+    // 정리 작업 (타이머 해제 등)
+  }
+
+  fetchData = () => {
+    // 데이터 가져오는 로직
+  };
+
+  render() {
+    return <div>클래스형 컴포넌트</div>;
+  }
+}
+```
+<br/>
+각각의 생명주기에 맞는 <HighlightWord>메서드</HighlightWord>를 적절히 사용하면, 
+
+<HighlightWord>컴포넌트의 동작 시점에 따라 원하는 로직을 실행</HighlightWord>할 수 있습니다.
+
+---
+
+## 함수형 컴포넌트 (Function Components)
+
+함수형 컴포넌트는 <HighlightWord>일반 JavaScript 함수와 React Hook으로 만드는 컴포넌트</HighlightWord>입니다.
+
+처음에는 단순히 화면만 그리는 용도였지만, React Hooks가 나오면서 모든 기능을 사용할 수 있게 되었습니다.
+
+```jsx
+import React, { useState } from 'react';
+
+function Welcome() {
+  const [count, setCount] = useState(0);
+  const [message, setMessage] = useState('안녕하세요!');
+
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+
+  return (
+    <div>
+      <h1>{message}</h1>
+      <p>클릭 횟수: {count}</p>
+      <button onClick={handleClick}>클릭</button>
+    </div>
+  );
+}
+
+export default Welcome;
+```
+<br/>
+기존의 클래스형 컴포넌트 코드보다 분량이 많이 줄고 가독성이 좋아지지 않았나요?
+<br/>
+기존의 클래스형 컴포넌트에서 state를 정의하던 ```constructor``` 요소는
+
+→ 함수형 컴포넌트에서는 <HighlightWord>useState Hook</HighlightWord>으로 역할을 대체하게 되었습니다.
+<br/>
+렌더링을 담당하던 ```render()``` 요소는
+
+→ 함수형 컴포넌트에서는 <HighlightWord>함수 자체가 반환 JSX를 포함</HighlightWord>함으로써 그 역할을 대신하게 되었습니다.
+<br/>
+생명주기를 관리하던 ```componentDidMount```, ```componentDidUpdate```, ```componentWillUnmount``` 요소는
+
+→ 함수형 컴포넌트에서는 <HighlightWord>useEffect Hook</HighlightWord>을 사용하여 동일한 타이밍에 side effect를 처리할 수 있습니다.
+<br/>
+이처럼 함수형 컴포넌트는 클래스형보다 <HighlightWord>구조가 간결하고 직관적</HighlightWord>이며, React 최신 문법과도 더 잘 어울립니다.
+<br/>
+### 함수형 컴포넌트의 특징
+
+<CalloutBox type="info" title="함수형 컴포넌트의 특징">
+**Hooks 사용**: `useState`, `useEffect` 등으로 기능 구현
+
+**간결한 문법**: class, constructor, render 등이 필요 없음
+
+**성능 최적화**: React에서 더 효율적으로 처리
+
+**함수형 프로그래밍**: 코드와 구조가 더 직관적이고 이해하기 쉬움
+</CalloutBox>
+
+---
+
+### 함수형 컴포넌트의 생명주기 (Hooks 사용)
+<Image
+  src="/content/beginner/5/react-flow.png"
+  alt="함수형 컴포넌트의 생명주기"
+  width="full"
+  caption="함수형 컴포넌트의 생명주기"
+/>
+
+<br/>
+```초기화 단계```<br/>
+컴포넌트가 생성되고 렌더링을 준비하는 시점입니다.
+
+useState: <HighlightWord>컴포넌트의 상태를 정의</HighlightWord>하고 초기값을 설정합니다.
+
+useRef: 재렌더링과 무관한 <HighlightWord>참조값이나 DOM 요소 접근</HighlightWord>에 사용됩니다.
+<br/>
+```Mount 단계```<br/>
+컴포넌트가 처음 화면에 렌더링될 때 실행됩니다.
+
+컴포넌트 함수가 실행되고 JSX를 반환하여 화면에 표시됩니다.
+
+```useEffect(() => { ... }, [])```: <HighlightWord>한 번만 실행</HighlightWord>되며, 초기 렌더 이후 작업(API 호출, 이벤트 등록 등)에 적합합니다.
+
+기억할 것은, 이 때 useEffect에는 빈 의존 배열이 전달된다는 것입니다.
+<br/>
+```Update 단계```<br/>
+state나 props가 변경되어 컴포넌트가 다시 렌더링될 때 발생합니다.
+
+```useEffect(() => { return () => { ... } })```: 이전 effect의 <HighlightWord>cleanup 함수가 먼저 실행</HighlightWord>되어 메모리 누수 등을 방지합니다.
+
+이후 ```useEffect(() => { ... })```가 <HighlightWord>재실행</HighlightWord>되어 변경에 따른 side-effect를 처리합니다.
+<br/>
+```Unmount 단계```<br/>
+컴포넌트가 화면에서 제거될 때 실행됩니다.
+
+```useEffect(() => { return () => { ... } }, [])```: <HighlightWord>unmount 시 단 한 번 호출</HighlightWord>되며, 타이머 해제, 이벤트 제거 등 정리 작업을 수행합니다.
+<br/>
+이처럼 함수형 컴포넌트는 ```useEffect```를 중심으로 <HighlightWord>각 생명주기 시점에 맞는 작업을 선언적으로 관리</HighlightWord>할 수 있습니다.
+
+결과적으로 코드가 <HighlightWord>간결하고 예측 가능</HighlightWord>해지며 유지보수가 쉬워집니다.
+<br/>
+```jsx
+import React, { useState, useEffect } from 'react';
+
+function LifeCycleExample() {
+  const [data, setData] = useState(null);
+
+  // componentDidMount + componentDidUpdate
+  useEffect(() => {
+    console.log('컴포넌트가 마운트되거나 업데이트됨');
+    fetchData();
+  });
+
+  // componentDidMount (빈 배열 사용)
+  useEffect(() => {
+    console.log('컴포넌트가 처음 나타남');
+    fetchData();
+  }, []); // 빈 배열이 핵심
+
+  // componentWillUnmount (cleanup function)
+  useEffect(() => {
+    return () => {
+      console.log('컴포넌트가 제거되기 직전');
+      // 정리 작업
+    };
+  }, []);
+
+  const fetchData = () => {
+    // 데이터 가져오는 로직
+  };
+
+  return <div>함수형 컴포넌트</div>;
+}
+```
+<br/>
+이처럼 useEffect의 사용 방법에 따라 클래스형의 ```componentDidMount```, ```componentDidUpdate```, ```componentWillUnmount```를 
+
+<HighlightWord>하나의 Hook으로 대체</HighlightWord>할 수 있습니다.
+
+결과적으로, 함수형 컴포넌트는 <HighlightWord>더 직관적이고 유연한 방식으로 생명주기를 제어</HighlightWord>할 수 있게 해줍니다.
+
+<CalloutBox type="warning" title="생명주기 비교">
+**클래스형**: 여러 메서드로 각각 관리 (`componentDidMount`, `componentDidUpdate` 등)
+
+**함수형**: `useEffect` 하나로 모든 생명주기 관리 (의존성 배열로 제어)
+</CalloutBox>
+
+---
+
+## 클래스형 → 함수형 변환 예시
+
+같은 기능을 가진 컴포넌트를 두 방식의 예제로 구현해보겠습니다.
+
+### 클래스형 버전
+
+```jsx
+class TodoApp extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      todos: [],
+      inputValue: ''
+    };
+  }
+
+  componentDidMount() {
+    // 페이지 로드 시 데이터 가져오기
+    this.loadTodos();
+  }
+
+  loadTodos = () => {
+    // API에서 할 일 목록 가져오기
+    const savedTodos = JSON.parse(localStorage.getItem('todos') || '[]');
+    this.setState({ todos: savedTodos });
+  };
+
+  addTodo = () => {
+    if (this.state.inputValue.trim()) {
+      const newTodos = [...this.state.todos, this.state.inputValue];
+      this.setState({ 
+        todos: newTodos, 
+        inputValue: '' 
+      });
+      localStorage.setItem('todos', JSON.stringify(newTodos));
+    }
+  };
+
+  render() {
+    return (
+      <div>
+        <input 
+          value={this.state.inputValue}
+          onChange={(e) => this.setState({ inputValue: e.target.value })}
+        />
+        <button onClick={this.addTodo}>추가</button>
+        <ul>
+          {this.state.todos.map((todo, index) => (
+            <li key={index}>{todo}</li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
+}
+```
+
+### 함수형 버전 (현재 추천 방식)
+
+```jsx
+import React, { useState, useEffect } from 'react';
+
+function TodoApp() {
+  const [todos, setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+
+  // 페이지 로드 시 데이터 가져오기 (componentDidMount 역할)
+  useEffect(() => {
+    const savedTodos = JSON.parse(localStorage.getItem('todos') || '[]');
+    setTodos(savedTodos);
+  }, []); // 빈 배열 = 처음 한 번만 실행
+
+  const addTodo = () => {
+    if (inputValue.trim()) {
+      const newTodos = [...todos, inputValue];
+      setTodos(newTodos);
+      setInputValue('');
+      localStorage.setItem('todos', JSON.stringify(newTodos));
+    }
+  };
+
+  return (
+    <div>
+      <input 
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
+      />
+      <button onClick={addTodo}>추가</button>
+      <ul>
+        {todos.map((todo, index) => (
+          <li key={index}>{todo}</li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+```
+
+---
+
+## 현재는 어떤 방식을 사용할까?
+
+<CalloutBox type="success" title="현재 React 개발 트렌드">
+🎯 **함수형 컴포넌트가 표준**: React 팀에서 공식 권장
+
+📚 **새로운 프로젝트**: 99% 함수형 컴포넌트로 개발
+
+🔄 **기존 프로젝트**: 점진적으로 함수형으로 마이그레이션
+
+📖 **학습**: 함수형 컴포넌트 위주로 학습 권장
+</CalloutBox>
+
+### 왜 함수형 컴포넌트가 인기일까?
+
+| 비교 항목 | 클래스형 | 함수형 |
+|-----------|----------|--------|
+| **코드 길이** | 길고 복잡 | 짧고 간결 |
+| **성능** | 보통 | 더 최적화됨 |
+| **러닝 커브** | 어려움 | 쉬움 |
+| **React 지원** | 유지보수 모드 | 적극 개발 |
+
+---
+
+### 그럼에도 클래스형 컴포넌트를 알아둬야하는 이유
+<br/>
+✅ 1. 레거시 코드 유지보수<br/>
+
+많은 기업의 실제 프로젝트나 오픈소스에서는 여전히 클래스형 컴포넌트를 사용하고 있습니다.
+
+또한 기존의 유용한 프로젝트나 라이브러리들도 업데이트 혹은 마이그레이션이 돼있지 않는 이상 
+
+레거시 코드로 구성돼있는 경우가 빈번합니다.
+
+따라서 <HighlightWord>기존 코드를 이해하고 수정하거나 기능을 추가하기 위해</HighlightWord> 클래스형에 대한 이해는 필수입니다.
+<br/>
+✅ 2. 생명주기(Lifecycle) 개념의 직관적 이해<br/>
+
+```componentDidMount```, ```componentDidUpdate```, ```componentWillUnmount``` 등 생명주기 메서드를 통해
+
+→ <HighlightWord>React의 렌더링 흐름을 명확히 파악</HighlightWord>할 수 있습니다.
+
+이를 이해하고 나면 useEffect의 사용에 대해 더 정확하게 파악할 수 있습니다.
+
+<br/>
+✅ 3. Hook을 깊이 이해하기 위한 비교 대상<br/>
+
+→ useState, useEffect, useRef 등 함수형 Hook은 사실
+
+<HighlightWord>클래스형의 기능을 함수형으로 옮긴 결과물</HighlightWord>입니다.
+
+비교 학습을 하면 Hook의 동작 원리를 더 깊이 이해할 수 있습니다.
+
+---
+
+## this 바인딩과 이벤트 처리
+
+클래스형 컴포넌트에서 가장 헷갈리는 부분 중 하나가 **this 바인딩** 문제입니다.
+
+### 클래스형에서의 this 바인딩 문제
+
+```jsx
+class ButtonComponent extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { count: 0 };
+    
+    // 방법 1: constructor에서 바인딩
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  // 일반 메서드 - this가 undefined가 될 수 있음
+  handleClick() {
+    this.setState({ count: this.state.count + 1 }); // 에러 발생 가능!
+  }
+
+  // 방법 2: 화살표 함수 사용 (권장)
+  handleClickArrow = () => {
+    this.setState({ count: this.state.count + 1 }); // 안전함
+  };
+
+  render() {
+    return (
+      <div>
+        {/* 방법 3: 인라인에서 바인딩 (성능상 비추천) */}
+        <button onClick={this.handleClick.bind(this)}>
+          일반 메서드: {this.state.count}
+        </button>
+        
+        <button onClick={this.handleClickArrow}>
+          화살표 함수: {this.state.count}
+        </button>
+      </div>
+    );
+  }
+}
+```
+
+### 함수형에서는 this 문제 없음
+
+```jsx
+function ButtonComponent() {
+  const [count, setCount] = useState(0);
+
+  // this 걱정 없이 자유롭게 함수 정의
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+
+  // 여러 개의 핸들러도 간단하게
+  const handleReset = () => setCount(0);
+  const handleDouble = () => setCount(count * 2);
+
+  return (
+    <div>
+      <p>카운트: {count}</p>
+      <button onClick={handleClick}>증가</button>
+      <button onClick={handleReset}>리셋</button>
+      <button onClick={handleDouble}>2배</button>
+    </div>
+  );
+}
+```
+
+<CalloutBox type="warning" title="this 바인딩이 왜 필요한가요?">
+JavaScript의 **this**는 함수가 어떻게 호출되는지에 따라 달라집니다. 
+
+클래스 메서드가 이벤트 핸들러로 전달될 때, this가 컴포넌트 인스턴스가 아닌 undefined가 되는 경우가 많습니다.
+
+함수형 컴포넌트는 this를 사용하지 않아서 이런 문제가 전혀 없습니다.
+</CalloutBox>
+
+---
+
+## 상태 업데이트 방식의 차이
+
+### 클래스형: setState의 특징
+
+```jsx
+class StateExample extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: '홍길동',
+      age: 25,
+      hobbies: ['독서', '영화감상']
+    };
+  }
+
+  updateAge = () => {
+    // setState는 객체를 합병(merge)합니다
+    this.setState({ age: 26 }); // name과 hobbies는 그대로 유지
+  };
+
+  addHobby = () => {
+    // 배열이나 객체를 업데이트할 때는 새로운 객체 생성 필요
+    this.setState({
+      hobbies: [...this.state.hobbies, '운동']
+    });
+  };
+
+  // setState는 비동기입니다!
+  handleAsyncUpdate = () => {
+    console.log('업데이트 전:', this.state.age); // 25
+    this.setState({ age: 30 });
+    console.log('업데이트 후:', this.state.age); // 여전히 25! (비동기)
+    
+    // 콜백으로 업데이트 완료 후 실행
+    this.setState({ age: 30 }, () => {
+      console.log('실제 업데이트 후:', this.state.age); // 30
+    });
+  };
+}
+```
+
+### 함수형: useState의 특징
+
+```jsx
+function StateExample() {
+  const [name, setName] = useState('홍길동');
+  const [age, setAge] = useState(25);
+  const [hobbies, setHobbies] = useState(['독서', '영화감상']);
+
+  const updateAge = () => {
+    setAge(26); // 각각 독립적으로 관리
+  };
+
+  const addHobby = () => {
+    setHobbies([...hobbies, '운동']); // 마찬가지로 새로운 배열 생성
+  };
+
+  // useState도 비동기입니다!
+  const handleAsyncUpdate = () => {
+    console.log('업데이트 전:', age); // 25
+    setAge(30);
+    console.log('업데이트 후:', age); // 여전히 25! (비동기)
+  };
+
+  // useEffect로 업데이트 감지
+  useEffect(() => {
+    console.log('age가 변경됨:', age);
+  }, [age]);
+}
+```
+
+<CalloutBox type="info" title="상태 관리 차이점">
+**클래스형**: 
+- 모든 state를 하나의 객체로 관리
+- setState는 객체 합병 방식
+- 콜백 함수로 업데이트 완료 감지
+
+**함수형**: 
+- 각 state를 독립적으로 관리
+- 각각의 setter 함수 사용
+- useEffect로 변경사항 감지
+</CalloutBox>
+
+---
+
+## 마이그레이션 가이드
+
+기존 클래스형 컴포넌트를 함수형으로 바꿀 때 참고하세요:
+
+| 클래스형 | 함수형 | 추가 설명 |
+|----------|--------|-----------|
+| `this.state` | `useState()` | 각 상태를 독립적으로 관리 |
+| `this.setState()` | `setStateName()` | 함수형으로 업데이트 가능 |
+| `componentDidMount()` | `useEffect(() => {}, [])` | 빈 배열이 핵심 |
+| `componentDidUpdate()` | `useEffect(() => {})` | 의존성 배열로 제어 |
+| `componentWillUnmount()` | `useEffect(() => { return cleanup }, [])` | cleanup 함수 반환 |
+| `this.inputRef = createRef()` | `useRef()` | 더 간단한 문법 |
+| `Context.Consumer` | `useContext()` | 중첩 없이 깔끔하게 |
+| `shouldComponentUpdate()` | `React.memo()` | 컴포넌트 래핑 |
+| `PureComponent` | `React.memo()` | 자동 얕은 비교 |
+
+<CalloutBox type="info" title="마이그레이션 팁">
+**점진적 접근**: 한 번에 모든 컴포넌트를 바꾸지 말고 하나씩
+
+**테스트 우선**: 변환 후 기능이 정상 작동하는지 확인
+
+**Hooks 학습**: useState, useEffect, useContext 등 핵심 Hook부터
+
+**에러 바운더리**: 일부 기능은 아직 클래스형에서만 가능
+
+**성능 최적화**: React.memo, useMemo, useCallback 활용
+
+**this 제거**: 바인딩 문제가 사라져 코드가 더 간단해짐
+</CalloutBox>
+
+<LinkCard 
+  title="React Hooks 더 자세히 알아보기" 
+  url="https://react.dev/reference/react" 
+  description="React 공식 문서에서 Hooks에 대해 더 알아보세요" 
+/>
+
+---
+
+📝 복습 퀴즈
+
+<Quiz
+ question="클래스형 컴포넌트에서 state를 변경할 때 사용하는 메서드는?"
+ options={[
+   "useState()",
+   "setState()",
+   "this.setState()",
+   "changeState()"
+ ]}
+ correctAnswer={2}
+ explanation="클래스형 컴포넌트에서는 this.setState()를 사용해서 state를 변경합니다. useState()는 함수형 컴포넌트에서 사용하는 Hook입니다."
+/>
+
+<Quiz
+  question="함수형 컴포넌트에서 componentDidMount와 같은 기능을 구현하려면?"
+  options={[
+    "useEffect(() => {}, [])",
+    "useEffect(() => {})",
+    "componentDidMount()",
+    "useState()"
+  ]}
+  correctAnswer={0}
+  explanation="함수형 컴포넌트에서 componentDidMount와 같은 기능을 구현하려면 useEffect(() => {}, [])를 사용합니다. 빈 배열([])이 핵심으로, 이는 컴포넌트가 처음 마운트될 때만 실행됨을 의미합니다."
+/>
+
+<Quiz   
+ question="현재 React에서 권장하는 컴포넌트 작성 방식은?"
+ options={[
+   "클래스형 컴포넌트",
+   "함수형 컴포넌트", 
+   "둘 다 동일하게 권장",
+   "상황에 따라 다름"
+ ]}
+ correctAnswer={1}
+ explanation="현재 React 팀에서는 함수형 컴포넌트와 Hooks 사용을 공식적으로 권장하고 있습니다. 새로운 기능들도 함수형 컴포넌트 위주로 개발되고 있습니다."
+/>
+
+<Quiz
+ question="클래스형 컴포넌트의 componentWillUnmount를 함수형에서 구현하려면?"
+ options={[
+   "useEffect(() => { cleanup(); })",
+   "useEffect(() => { return cleanup; }, [])",
+   "useUnmount(() => { cleanup(); })",
+   "componentWillUnmount()"
+ ]}
+ correctAnswer={1}
+ explanation="함수형 컴포넌트에서 componentWillUnmount 기능을 구현하려면 useEffect에서 cleanup function을 반환해야 합니다: useEffect(() => { return () => { cleanup(); } }, [])"
+/>
+
+---
+
+<CalloutBox type="success" title="🎉 축하합니다!">
+React의 클래스형, 함수형 컴포넌트의 차이점을 이해하셨습니다! <br/>
+다음 회차에서는 React Hooks에 대해 더 자세히 알아보겠습니다.
+</CalloutBox>

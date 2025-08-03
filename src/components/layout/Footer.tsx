@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
         <div className="py-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-gray-600 dark:text-gray-300">
-              © 2024 {SITE_CONFIG.name}. All rights reserved.
+              © 2025 {SITE_CONFIG.name}. All rights reserved.
             </div>
             <div className="flex space-x-6 text-sm">
               <a 
