@@ -1,4 +1,4 @@
-import './App.css';
+import './styles/App.css';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import Layout from './components/layout/Layout';
 import MainPage from './pages/MainPage';
