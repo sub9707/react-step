@@ -160,7 +160,7 @@ function ContentPage({ level = 'beginner'}: ContentPageProps) {
           </h1>
 
           {metadata?.description && (
-            <p className="text-lg text-gray-600 dark:text-[#c2c2c2] mt-2">
+            <p className="text-sm sm:text-lg text-gray-600 dark:text-[#c2c2c2] mt-2">
               {metadata.description}
             </p>
           )}

@@ -42,7 +42,7 @@ const LearningCard: React.FC<LearningCardProps> = ({ item, index, level }) => {
                 </div>
 
                 {/* 이미지 - 모바일에서 위아래 공백 제거 */}
-                <div className="mb-4 mt-12 overflow-hidden rounded-xl h-48 sm:h-80 flex items-center justify-center">
+                <div className="mb-2 mt-6 sm:mb-4 sm:mt-12 overflow-hidden rounded-xl h-48 sm:h-80 flex items-center justify-center">
                     <img
                         src={item.image}
                         alt={item.title}
