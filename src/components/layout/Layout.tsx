@@ -1,7 +1,8 @@
+import { useEffect } from 'react';
 import ScrollToTopButton from "../common/ScrollToTop";
 import Footer from "./Footer";
 import Header from "./Header";
-import { useEffect } from 'react';
+
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     useEffect(() => {

@@ -7,6 +7,7 @@ import CoursePage from './pages/ContentPage';
 import DashboardPage from './pages/DashboardPage';
 import { useEffect } from 'react';
 import { initGA, trackPageView } from './utils/analytics';
+import Lenis from '@studio-freight/lenis'
 
 const Analytics: React.FC = () => {
   const location = useLocation();
@@ -20,13 +21,30 @@ const Analytics: React.FC = () => {
 };
 
 const App: React.FC = () => {
-    useEffect(() => {
+  useEffect(() => {
     // GA4 초기화
     initGA();
-    
+
     // 초기 페이지뷰 추적
     trackPageView(window.location.pathname + window.location.search);
   }, []);
+
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+    })
+
+    function raf(time: number) {
+      lenis.raf(time)
+      requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+
+    return () => {
+      lenis.destroy()
+    }
+  }, [])
   return (
     <>
       <Analytics />
