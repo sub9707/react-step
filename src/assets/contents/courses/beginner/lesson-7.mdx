@@ -362,24 +362,6 @@ parcel index.html
 
 ---
 
-### 개발 중 파일 수정 시
-
-<ComparisonImages
-  leftImage={{
-    src: "/content/beginner/7/cra-reload.png",
-    alt: "CRA 리로딩",
-    caption: "CRA: 2-5초 정도의 리로딩 시간"
-  }}
-  rightImage={{
-    src: "/content/beginner/7/vite-reload.png",
-    alt: "Vite 리로딩",
-    caption: "Vite: 거의 즉시 반영되는 변경사항"
-  }}
-  height="md"
-/>
-
----
-
 ## 각 도구의 특별한 기능들
 
 ### CRA의 특별한 기능
@@ -500,7 +482,12 @@ export default defineConfig({
 ## 차세대 도구들 미리보기
 
 ### Turbopack
-
+<ImageGallery
+  images={[
+    { src: '/content/beginner/7/turbopack.png', alt: 'turbopack' },
+    { src: '/content/beginner/7/turbo-test.jpg', alt: 'turbopack-test' },
+  ]}
+/>
 Next.js 팀에서 개발 중인 차세대 번들러로, Rust로 만들어져 매우 빠릅니다.
 
 ```bash
@@ -511,7 +498,12 @@ npm run dev -- --turbo
 ```
 
 ### Bun
-
+<ImageGallery
+  images={[
+    { src: '/content/beginner/7/bun.jpg', alt: 'bun' },
+    { src: '/content/beginner/7/bun-test.png', alt: 'bun-test' },
+  ]}
+/>
 JavaScript 런타임부터 패키지 매니저, 번들러까지 모든 것을 제공하는 올인원 도구입니다.
 
 ```bash
@@ -525,7 +517,12 @@ bun dev
 ```
 
 ### Rspack
-
+<ImageGallery
+  images={[
+    { src: '/content/beginner/7/rspack.png', alt: 'Rspack' },
+    { src: '/content/beginner/7/rspack-test.png', alt: 'Rspack-test' },
+  ]}
+/>
 ByteDance에서 개발한 Rust 기반 번들러로 Webpack과 호환되면서 훨씬 빠릅니다.
 
 ### 앞으로의 변화
