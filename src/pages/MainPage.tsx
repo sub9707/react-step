@@ -3,6 +3,9 @@ import Container from "../components/common/Container";
 import MetaData from "../components/common/MetaData";
 import LevelButton, { type levelDataProps } from "../components/MainPage/LevelButton";
 
+// 로고 불러오기
+import reactLogo from "../assets/react.svg";
+
 const MainPage: React.FC = () => {
   return (
     <>
@@ -12,12 +15,17 @@ const MainPage: React.FC = () => {
         keywords="React, 리액트, 학습, 튜토리얼, 프로그래밍, 초급, 중급, 고급"
       />
 
-      <Container className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-90px)]">
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
+      <Container className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-90px)] pt-8 md:pt-0">
+        <div className="text-center mb-8 md:mb-16">
+          <h1 className="flex items-center justify-center gap-3 text-5xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
+            <img
+              src={reactLogo}
+              alt="React Logo"
+              className="w-12 h-12 mr-4 spin-react hover:[animation-duration:1.5s]"
+            />
             ReactJS Steps
           </h1>
-          <p className="text-xl font-bold max-w-2xl mx-auto text-gray-600 dark:text-gray-300">
+          <p className="text-lg md:text-xl font-bold max-w-2xl mx-auto text-gray-600 dark:text-gray-300">
             초급부터 고급까지, 단계별로 리액트를 정복해보세요!
           </p>
           <p className="text-md max-w-2xl mt-3 mx-auto text-gray-600 dark:text-gray-300">
@@ -25,10 +33,10 @@ const MainPage: React.FC = () => {
           </p>
         </div>
 
-        {/* 레벨 선택 버튼*/}
+        {/* 레벨 선택 버튼 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {LEVEL_CONFIG.map((level: levelDataProps) => (
-            <LevelButton key={level.id} {...level}/>
+            <LevelButton key={level.id} {...level} />
           ))}
         </div>
       </Container>
