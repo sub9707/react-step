@@ -274,7 +274,7 @@ const NavigationBar: React.FC<NavigationBarProps> = ({
       {/* 오버레이 */}
       {isOpen && (
         <div 
-          className="fixed inset-0 bg-black/30 z-20 lg:bg-transparent"
+          className="fixed inset-0 bg-black/30 z-20 lg:bg-black/30"
           onClick={() => setIsOpen(false)}
         />
       )}

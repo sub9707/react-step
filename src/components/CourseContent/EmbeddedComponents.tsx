@@ -1,3 +1,4 @@
+// EmbeddedComponents.tsx
 import React, { useRef, useState, type ReactNode, useEffect } from 'react';
 import { 
   Play, 
@@ -13,6 +14,7 @@ import {
   Video
 } from 'lucide-react';
 import type { EmbeddedComponentProps } from '../../types/mdx';
+import { ImageModal } from '../common/Modal/ImageModal';
 
 // 인터랙티브 코드 샌드박스
 export const CodeSandbox: React.FC<EmbeddedComponentProps> = ({ 
@@ -684,6 +686,20 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
   showGifIndicator = true
 }) => {
   const isSingleImage = images.length === 1;
+
+  // Added state for modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
+
+  const openModal = (image: ImageItem) => {
+    setSelectedImage(image);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedImage(null);
+  };
   
   const borderRadiusClass = {
     none: 'rounded-none',
@@ -711,66 +727,81 @@ export const ImageGallery: React.FC<ImageGalleryProps> = ({
     : 'flex-1 min-w-0 max-w-sm sm:max-w-none';
 
   return (
-    <div className="my-8 sm:my-4 w-full flex justify-center">
-      <div className={containerClass}>
-        <div className={isSingleImage ? 'w-full' : 'flex flex-wrap justify-center gap-4 sm:gap-2 w-full'}>
-          {images.map((image, index) => {
-            const isGif = image.isGif ?? isGifImage(image.src);
-            
-            return (
-              <div key={index} className={imageWrapperClass}>
-                <div className="relative group">
-                  <img
-                    src={image.src}
-                    alt={image.alt}
-                    className={`
-                      w-full h-auto object-cover transition-all duration-300 
-                      ${borderRadiusClass}
-                      ${shadow ? 'shadow-md hover:shadow-lg' : ''}
-                      ${border ? 'border border-gray-200 dark:border-gray-700' : ''}
-                      ${isGif && !autoplayGifs ? 'cursor-pointer' : ''}
-                    `}
-                    loading="lazy"
-                  />
-                  
-                  {/* GIF 표시기 */}
-                  {isGif && showGifIndicator && (
-                    <div className="absolute top-2 right-2 sm:top-1 sm:right-1 bg-black bg-opacity-70 text-white text-xs sm:text-[10px] px-2 py-1 sm:px-1.5 sm:py-0.5 rounded-md font-medium">
-                      GIF
-                    </div>
-                  )}
-                  
-                  {/* 호버 시 재생/일시정지 버튼 (GIF용) */}
-                  {isGif && !autoplayGifs && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300">
-                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <div className="bg-white bg-opacity-90 rounded-full p-3 sm:p-2 cursor-pointer hover:bg-opacity-100 transition-all">
-                          <svg className="w-6 h-6 sm:w-4 sm:h-4 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-                          </svg>
+    <>
+      <div className="my-8 sm:my-4 w-full flex justify-center">
+        <div className={containerClass}>
+          <div className={isSingleImage ? 'w-full' : 'flex flex-wrap justify-center gap-4 sm:gap-2 w-full'}>
+            {images.map((image, index) => {
+              const isGif = image.isGif ?? isGifImage(image.src);
+              
+              return (
+                <div 
+                  key={index} 
+                  className={`${imageWrapperClass} cursor-pointer`}
+                  onClick={() => openModal(image)}
+                >
+                  <div className="relative group">
+                    <img
+                      src={image.src}
+                      alt={image.alt}
+                      className={`
+                        w-full h-auto object-cover transition-all duration-300 
+                        ${borderRadiusClass}
+                        ${shadow ? 'shadow-md hover:shadow-lg' : ''}
+                        ${border ? 'border border-gray-200 dark:border-gray-700' : ''}
+                      `}
+                      loading="lazy"
+                    />
+                    
+                    {/* GIF 표시기 */}
+                    {isGif && showGifIndicator && (
+                      <div className="absolute top-2 right-2 sm:top-1 sm:right-1 bg-black bg-opacity-70 text-white text-xs sm:text-[10px] px-2 py-1 sm:px-1.5 sm:py-0.5 rounded-md font-medium">
+                        GIF
+                      </div>
+                    )}
+                    
+                    {/* 호버 시 재생/일시정지 버튼 (GIF용) */}
+                    {isGif && !autoplayGifs && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300">
+                        <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                          <div className="bg-white bg-opacity-90 rounded-full p-3 sm:p-2 cursor-pointer hover:bg-opacity-100 transition-all">
+                            <svg className="w-6 h-6 sm:w-4 sm:h-4 text-gray-800" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+                            </svg>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    )}
+                  </div>
+                  
+                  {/* 이미지 설명 텍스트 */}
+                  {image.caption && (
+                    <p className="text-center text-sm sm:text-xs text-gray-600 dark:text-gray-400 italic mt-3 sm:mt-2 px-2 sm:px-1 leading-tight">
+                      {image.caption}
+                      {isGif && ' (GIF)'}
+                    </p>
                   )}
                 </div>
-                
-                {/* 이미지 설명 텍스트 */}
-                {image.caption && (
-                  <p className="text-center text-sm sm:text-xs text-gray-600 dark:text-gray-400 italic mt-3 sm:mt-2 px-2 sm:px-1 leading-tight">
-                    {image.caption}
-                    {isGif && ' (GIF)'}
-                  </p>
-                )}
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
-    </div>
+      
+      {/* Render the modal if an image is selected */}
+      {isModalOpen && selectedImage && (
+        <ImageModal
+          src={selectedImage.src}
+          alt={selectedImage.alt}
+          caption={selectedImage.caption}
+          onClose={closeModal}
+        />
+      )}
+    </>
   );
 };
 
-// 단일 이미지를 위한 편의 컴포넌트
+// 단일 이미지 컴포넌트
 export const Image: React.FC<{
   src: string;
   alt: string;
