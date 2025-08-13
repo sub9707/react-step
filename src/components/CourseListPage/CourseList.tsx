@@ -20,7 +20,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
     // 로딩 상태
     if (loading) {
         return (
-            <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] flex items-center justify-center">
+            <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                     <div className="text-center">
@@ -41,7 +41,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
         const folderName = level === '초급' ? 'beginner' : level === '중급' ? 'intermediate' : 'advanced';
         
         return (
-            <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] transition-colors duration-200">
+            <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] transition-colors duration-200">
                 <div className="max-w-4xl mx-auto px-4 py-8">
                     <div className="mb-8">
                         <button
@@ -156,7 +156,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
 
     // 성공적으로 데이터를 로드한 경우
     return (
-        <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] transition-colors duration-200">
+        <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] transition-colors duration-200">
             <div className="max-w-4xl mx-auto px-4 py-8">
                 <div className="mb-8">
                     <button

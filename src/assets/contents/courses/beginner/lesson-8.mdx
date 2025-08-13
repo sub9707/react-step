@@ -2,7 +2,7 @@ export const metadata = {
   id: 8,
   title: "데이터 가져오기 - useEffect와 함께하는 API 통신",
   description: "React에서 외부 데이터를 가져오고 관리하는 방법을 useEffect Hook을 중심으로 학습합니다.",
-  difficulty: "쉬움",
+  difficulty: "보통",
   tags: ["React", "useEffect", "API", "데이터 페칭", "비동기", "HTTP", "입문"],
   lastUpdated: "2025-08-05",
   image: "/content/beginner/8/lesson-8-bg.png"
@@ -69,43 +69,40 @@ function MyComponent() {
   return <div>Hello World</div>;
 }
 ```
+자, 자세히 살펴볼까요?
 
-<CodeSandbox
-title="기본 useEffect 예제"
-code={`
-import { useEffect, useState } from 'react';
+우선 useEffect의 기본 형태는 아래와 같이 생겼습니다.
 
-function BasicEffectExample() {
-  const [count, setCount] = useState(0);
+```js
+import { useEffect } from 'react';
 
-  useEffect(() => {
-    console.log('컴포넌트가 렌더링되었습니다!');
-    console.log('현재 count:', count);
-  });
+useEffect();
+```
+react에서 제공하는 함수 형태입니다.
 
-  return (
-    <div style={{ padding: '20px', textAlign: 'center' }}>
-      <p>Count: {count}</p>
-      <button onClick={() => setCount(count + 1)}>
-        클릭
-      </button>
-      <p style={{ fontSize: '12px', color: '#666' }}>
-        버튼을 클릭하고 콘솔을 확인해보세요!
-      </p>
-    </div>
-  );
-}
+```js
+import { useEffect } from 'react';
 
-function App() {
-  return <BasicEffectExample />;
-}`}
-/>
+useEffect(()=>{});
+```
+
+여기에 첫번째 인자로 화살표 함수, 즉 또다른 콜백 함수를 전달하네요.
+
+이렇게되면, react 컴포넌트는 렌더링된 바로 직후에 이 코드를 실행시킵니다.
+
+return문 뒤의 JSX를 가상 DOM과 실제 DOM에 적용한 뒤 화면이 그려진 후에야 useEffect 내부의 콜백이 실행되는거예요.
+
+<br/>
+
+여기서, useEffect 함수의 <HighlightWord>두번째 인자</HighlightWord>로 빈배열을 넘겨준다면 어떻게 될까요?
 
 ---
 
 ## 의존성 배열(Dependency Array)
 
-useEffect는 두 번째 인자로 <HighlightWord>의존성 배열</HighlightWord>을 받을 수 있습니다. 이 배열이 useEffect가 언제 실행될지를 결정합니다.
+useEffect는 두 번째 인자로 <HighlightWord>의존성 배열</HighlightWord>을 받을 수 있습니다. 이 배열은 useEffect가 <HighlightWord>언제 실행될지를 결정</HighlightWord>합니다.
+
+이 배열에 요소를 넣으면 <HighlightWord>"이 요소가 바뀔 때만 useEffect를 수행하겠다"</HighlightWord>는 의미입니다.
 
 ### 1. 의존성 배열 없음 - 매번 실행
 
@@ -131,6 +128,20 @@ useEffect(() => {
 }, [count]);
 ```
 
+형태를 보면, 의존성 배열을 전달하지 않은 useEffect는 컴포넌트를 처음 렌더링할 때 마다 계속 실행합니다.
+
+의존성 배열을 전달하지 않으니 제약된 것이 없기에 무조건 수행하는 식입니다.
+<br/>
+빈 배열을 전달한다면 어떨까요.
+
+빈 배열을 전달하면 컴포넌트가 처음 렌더링 됐을 때 초기에 한번 수행합니다.
+
+그러나 의존성 배열을 암만 뒤져보아도 바꿀 요소가 없기에 그 다음 렌더링부터는 수행할 필요가 없다고 미리 알려줍니다.
+<br/>
+배열에 요소를 넣으면 이 요소가 변할 때마다 useEffect는 마침내 수행됩니다.
+
+값이 그대로면 렌더링하고도 수행되지 않아요.
+
 ---
 
 ## 데이터 가져오기의 기본 패턴
@@ -142,7 +153,6 @@ import { useState, useEffect } from 'react';
 
 function UserList() {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // 비동기 함수로 데이터 가져오기
@@ -153,15 +163,12 @@ function UserList() {
         setUsers(userData);
       } catch (error) {
         console.error('데이터 가져오기 실패:', error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchUsers();
   }, []); // 빈 배열로 최초 한 번만 실행
 
-  if (loading) return <div>로딩중...</div>;
 
   return (
     <ul>
@@ -172,20 +179,33 @@ function UserList() {
   );
 }
 ```
+
+보통의 웹에서 유저 정보를 처음 한 번 가져오고 그 데이터를 토대로 화면을 구성하는 방식입니다.
+
+유저 정보는 실시간으로 계속 변하도록 기획하지 않는 이상, 처음 한 번만 받아오고 화면에 그려냅니다.
+
+<HighlightWord>처음 한 번</HighlightWord> 한꺼번에 데이터를 받고 이를 사용하면 되겠죠?
+
+<HighlightWord>처음 한 번</HighlightWord>에 어울리는 useEffect 구성 방식은 <HighlightWord>의존성 배열이 빈 형태</HighlightWord>입니다.
+
+위와 같이 구성하면 페이지에 접속하고, UserList 컴포넌트가 처음 렌더링되고나면 그 때 수행됩니다.
+
 ---
 
 ## 로딩 상태와 에러 처리
 
 실제 애플리케이션에서는 데이터를 가져오는 동안의 로딩 상태와 에러 상황을 적절히 처리해야 합니다.
 
-<Image
-  src="/content/beginner/8/loading-states.png"
-  alt="로딩 상태 관리"
-  width="full"
-  caption="데이터 페칭 시 고려해야 할 세 가지 상태: 로딩, 성공, 에러"
-/>
+최신 React에서 활동 상태, 그러니까 데이터를 가져오면서 진행중인 상태에 대해 더 효율적이고 가독성 높은 방식을 제공하고,
 
-### 완전한 데이터 페칭 패턴
+이와 비슷한 기능을 제공하는 다수의 라이브러리들도 존재하지만,
+
+초급 과정에서는 useState와 useEffect로만 단순하게 이 로딩, 에러 상태들을 출력하고 
+
+상황에 맞게 UI를 구성하는 전통적인 패턴을 살펴보겠습니다.
+<br/>
+
+### 기본 데이터 페칭 패턴
 
 ```js
 function DataComponent() {
@@ -223,13 +243,56 @@ function DataComponent() {
   return <DataDisplay data={data} />;
 }
 ```
-/>
+
+자 코드를 하나씩 살펴봅시다.
+
+```js
+const [data, setData] = useState(null);
+const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
+```
+먼저, 
+
+data → 서버에서 받아올 실제 데이터를 state로 기억합니다.
+
+loading → "지금 데이터를 불러오는 중인지"를 나타내는 boolean 값입니다.
+
+error → 에러가 생겼을 때 메시지라던가, 기억해야하는 상태 등을 나타냅니다.
+
+이렇게 상태를 나누면 상황별로 UI를 다르게 보여줄 수 있습니다.
+
+<br/>
+
+그 아래 fetchData 함수를 봅시다.
+
+```setLoading(true)```로 데이터 가져오기 시작 전, 로딩 상태를 true로 변경합니다.
+
+로딩 중에 어떤 UI로 화면을 구성하는지 선택할 수 있게됩니다.
+<br/>
+```<LoadingSpinner />``` 같은 로딩 스피너라든지 로딩 중 보일 UI를 설정할 수 있죠.
+<br/>
+```setError(null)```  이전 요청에서 에러가 있었을 수 있으니, 에러 상태를 초기화해줍니다.
+<br/>
+```fetch('/api/data')```로 /api/data 주소로 GET 요청을 보냅니다.
+<br/>
+응답이 ok가 아니면(404, 500 같은 상태) ```throw new Error()```로 강제로 에러를 발생시킵니다.
+<br/>
+```await response.json()```에서는 응답을 JSON 형식으로 변환 후 data 상태에 저장합니다.
+
+
+성공하면 data 상태에 결과를 저장하고, 실패하면 아래 에러 처리를 따릅니다.
+<br/>
+이 과정이 모두 완료되면 로딩 중 상태를 해제하고 결과를 보여주게 되는 것입니다.
 
 ---
 
 ## useEffect 정리(Cleanup) 함수
 
-useEffect에서 설정한 구독이나 타이머 등은 컴포넌트가 사라질 때 정리해줘야 합니다. 이를 위해 <HighlightWord>정리 함수(cleanup function)</HighlightWord>를 사용합니다.
+useEffect에서 설정한 구독이나 타이머 등은 컴포넌트가 사라질 때 정리해줘야 합니다. 
+
+제대로 정리해주지 않으면 컴포넌트가 화면에서 사라졌는데도 계속 타이머나 구독 기능이 돌아가면서 메모리와 CPU가 누수되는 현상이 발생합니다.
+
+이를 위해 useEffect의 return을 말미에 넣어 <HighlightWord>정리 함수(cleanup function)</HighlightWord>로 사용합니다.
 
 ```js
 useEffect(() => {
@@ -251,6 +314,8 @@ useEffect(() => {
 ## 조건부 데이터 가져오기
 
 때로는 특정 조건이 만족될 때만 데이터를 가져와야 합니다. 예를 들어, 사용자 ID가 있을 때만 사용자 정보를 가져오는 경우입니다.
+
+요소가 변할때마다 콜백 함수를 수행하는 <HighlightWord>의존성 배열을 추가한 useEffect</HighlightWord>를 활용하면 되겠죠.
 
 ```js
 function UserProfile({ userId }) {
@@ -288,14 +353,21 @@ function UserProfile({ userId }) {
 }
 ```
 
+이렇게 되면 페이지 사용 도중 로그아웃을 한다거나, 유효시간이 끝나 유저 정보가 변하게 되면
+
+페이지의 접근을 막거나 특정 컴포넌트의 표시를 제한할 수 있습니다.
+
 ---
 
 ## 커스텀 Hook으로 데이터 페칭 로직 재사용하기
 
 데이터 페칭 로직을 커스텀 Hook으로 분리하면 여러 컴포넌트에서 재사용할 수 있습니다.
 
+또한 코드 분량이 줄어드니 코드 가독성이 높아지고 나중에 유지보수를 하게될 때 유용하죠.
+
 ```js
 // 커스텀 Hook
+// 보통 src/hooks 폴더에 useFetch.js 와 같이 분리하고 이를 import하는 방식으로 많이 사용합니다.
 function useFetch(url) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -329,8 +401,9 @@ function useFetch(url) {
   return { data, loading, error };
 }
 
-// 사용
+// 사용 컴포넌트
 function PostList() {
+  // 커스텀 훅에서 정의한 요소만 쏙 가져올 수 있습니다.
   const { data: posts, loading, error } = useFetch('/api/posts');
 
   if (loading) return <div>로딩중...</div>;
@@ -345,167 +418,6 @@ function PostList() {
   );
 }
 ```
-
----
-
-## 폼 데이터 전송하기
-
-데이터를 가져오는 것뿐만 아니라 서버로 데이터를 전송하는 것도 중요합니다.
-
-```js
-function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    message: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [result, setResult] = useState(null);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setResult(null);
-
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-
-      if (!response.ok) {
-        throw new Error('전송 실패');
-      }
-
-      const data = await response.json();
-      setResult({ success: true, message: '성공적으로 전송되었습니다!' });
-      setFormData({ name: '', email: '', message: '' }); // 폼 초기화
-    } catch (error) {
-      setResult({ success: false, message: error.message });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        value={formData.name}
-        onChange={(e) => setFormData({...formData, name: e.target.value})}
-        placeholder="이름"
-        required
-      />
-      <input
-        type="email"
-        value={formData.email}
-        onChange={(e) => setFormData({...formData, email: e.target.value})}
-        placeholder="이메일"
-        required
-      />
-      <textarea
-        value={formData.message}
-        onChange={(e) => setFormData({...formData, message: e.target.value})}
-        placeholder="메시지"
-        required
-      />
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? '전송중...' : '전송'}
-      </button>
-      
-      {result && (
-        <div style={{ color: result.success ? 'green' : 'red' }}>
-          {result.message}
-        </div>
-      )}
-    </form>
-  );
-}
-```
-
----
-
-## 자주 발생하는 문제와 해결방법
-
-### 1. 메모리 누수 방지
-
-컴포넌트가 언마운트된 후에도 비동기 작업이 완료되어 setState를 호출하는 경우 메모리 누수가 발생할 수 있습니다.
-
-```js
-function SafeComponent() {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let isMounted = true; // 마운트 상태 추적
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/data');
-        const result = await response.json();
-        
-        // 컴포넌트가 여전히 마운트되어 있을 때만 상태 업데이트
-        if (isMounted) {
-          setData(result);
-          setLoading(false);
-        }
-      } catch (error) {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
-    };
-
-    fetchData();
-
-    // 정리 함수에서 플래그 설정
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  if (loading) return <div>로딩중...</div>;
-  return <div>{JSON.stringify(data)}</div>;
-}
-```
-
-### 2. AbortController로 요청 취소하기
-
-```js
-function CancellableRequest() {
-  const [data, setData] = useState(null);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/data', {
-          signal: controller.signal
-        });
-        const result = await response.json();
-        setData(result);
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          console.error('Fetch error:', error);
-        }
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      controller.abort(); // 컴포넌트 언마운트 시 요청 취소
-    };
-  }, []);
-
-  return <div>{data ? JSON.stringify(data) : '로딩중...'}</div>;
-}
-```
-
 ---
 
 ## 성능 최적화 팁
@@ -530,11 +442,13 @@ function CancellableRequest() {
 
 실제 프로젝트에서는 더 강력한 데이터 페칭 라이브러리들을 사용하는 경우가 많습니다:
 
-<Image
-  src="/content/beginner/8/data-fetching-libraries.png"
-  alt="데이터 페칭 라이브러리들"
-  width="full"
-  caption="인기 있는 React 데이터 페칭 라이브러리들"
+<ImageGallery
+  images={[
+    { src: '/content/beginner/8/react-query.png', alt: 'react-query' },
+    { src: '/content/beginner/8/SWR.jpg', alt: 'SWR' },
+    { src: '/content/beginner/8/apollo.png', alt: 'apollo' },
+    { src: '/content/beginner/8/axios.png', alt: 'axios' },
+  ]}
 />
 
 <LinkCard 
@@ -628,8 +542,6 @@ function CancellableRequest() {
 
 ---
 
-<CalloutBox type="success" title="축하합니다!">
-React에서 외부 데이터를 가져오고 관리하는 방법을 완벽하게 학습했습니다! useEffect Hook을 활용한 데이터 페칭부터 실시간 업데이트, 무한 스크롤까지 다양한 패턴을 익혔습니다. 
-
-다음 회차에서는 React Router를 활용한 페이지 라우팅에 대해 알아보겠습니다.
+<CalloutBox type="success" title="🎉 축하합니다!">
+React에서 useEffect를 원하는 상황에 활용하고 데이터를 가져오는 방식에 대해 학습했습니다.
 </CalloutBox>

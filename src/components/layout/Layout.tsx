@@ -14,7 +14,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     
 
     return (
-        <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-dark-3">
+        <div className="min-h-screen flex flex-col bg-slate-100 dark:bg-dark-3">
           <Header/>
           <main className="flex-1">
             {/* 좌측 광고 영역 */}

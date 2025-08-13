@@ -104,7 +104,7 @@ function ContentPage({ level = 'beginner'}: ContentPageProps) {
 
   // 성공적으로 데이터를 불러온 경우
   return (
-    <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] transition-colors duration-200">
+    <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] transition-colors duration-200">
       {/* 마크다운 네비게이션 - MDX 컴포넌트에서 헤딩 추출 */}
       <NavigationBar MDXComponent={MDXComponent} />
 
