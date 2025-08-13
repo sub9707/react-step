@@ -17,7 +17,7 @@ const MainPage: React.FC = () => {
 
       <Container className="flex flex-col items-center justify-center min-h-[calc(100vh-64px-90px)] pt-8 md:pt-0">
         <div className="text-center mb-8 md:mb-16">
-          <h1 className="flex items-center justify-center gap-3 text-5xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
+          <h1 className="flex items-center justify-center gap-3 text-4xl md:text-6xl font-bold mb-8 text-gray-900 dark:text-white">
             <img
               src={reactLogo}
               alt="React Logo"
@@ -25,7 +25,7 @@ const MainPage: React.FC = () => {
             />
             ReactJS Steps
           </h1>
-          <p className="text-lg md:text-xl font-bold max-w-2xl mx-auto text-gray-600 dark:text-gray-300">
+          <p className="text-md md:text-xl font-bold max-w-2xl mx-auto text-gray-600 dark:text-gray-300">
             초급부터 고급까지, 단계별로 리액트를 정복해보세요!
           </p>
           <p className="text-md max-w-2xl mt-3 mx-auto text-gray-600 dark:text-gray-300">
