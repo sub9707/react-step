@@ -1,11 +1,11 @@
 export const metadata = {
-  id: 5,
-  title: "React State 이해하기",
-  description: "React 컴포넌트의 상태 관리 핵심 개념인 State와 useState Hook에 대해 학습합니다.",
+  id: 4,
+  title: "컴포넌트",
+  description: "React의 핵심인 컴포넌트가 무엇인지, 어떻게 만들고 사용하는지 벽돌틀 비유로 쉽게 알아봅시다.",
   difficulty: "쉬움",
-  tags: ["React", "State", "useState", "Hook", "상태관리", "입문", "기초"],
-  lastUpdated: "2025-07-28",
-  image: "/content/beginner/5/state-bg.png"
+  tags: ["React", "컴포넌트", "JSX", "props", "입문", "기초"],
+  lastUpdated: "2025-07-27",
+  image: "/content/beginner/5/5_thumb.png"
 };
 
 import { 
@@ -15,971 +15,736 @@ import {
   Quiz, 
   LinkCard,
   CodeSandbox,
-  Image,
-  ImageGallery
+  Image
 } from '@/components/CourseContent/EmbeddedComponents'
 
-<Image
-  src="/content/beginner/5/state-intro.gif"
-  alt="state-intro"
-  width="full"
-  caption="react - vite로 프로젝트 시작 시 볼 수 있는 state counter 예제"
-  isGif={true}
+
+<br/>
+<ComparisonImages
+  leftImage={{
+    src: "/content/beginner/5/brick-mold.png",
+    alt: "벽돌틀",
+  }}
+  rightImage={{
+    src: "/content/beginner/5/brick-house.png",
+    alt: "벽돌로 집 짓기",
+  }}
+  height={'lg'}
 />
 <br/>
-지난 회차에서는 React의 컴포넌트에 대해 알아보았습니다.
+기계를 쓰는 요즘과 달리 과거에는 벽돌 하나를 찍어내기 위해 벽돌틀을 사용했습니다.
 
-각 컴포넌트는 역할과 기능으로 분리하여 더 큰 컴포넌트를 만들어 앱을 구성합니다.
+똑같은 모양의 벽돌을 만들기 위해 틀을 사용해 같은 모양의 여러 색상, 재질의 벽돌을 찍어냈죠.
 
-컴포넌트는 단순히 화면에 무언가를 보여주는 것에서 그치지 않고, <HighlightWord>사용자와의 상호작용에 따라 변화하는 정보를 처리</HighlightWord>해야 합니다.
-<br/>
-예를 들어 버튼을 클릭하면 숫자가 증가하거나, 입력창에 문자를 입력하면 화면에 실시간으로 반영되는 등 동적인 동작이 필요하죠.
+이 벽돌들을 조합해서 집 전체를 만들어갑니다.
 
-이러한 동작을 구현하려면 <HighlightWord>컴포넌트가 특정 정보를 기억하고, 그 정보가 변할 때마다 화면에도 반영</HighlightWord>되도록 해야 합니다.
+React의 컴포넌트도 마찬가지입니다.
 
-그렇다면 컴포넌트는 자기 안에 있는 데이터를 어떻게 기억할까요?
-
-또, 그냥 지역 변수나 전역 변수를 간단히 쓰면 안되는 걸까요?
-
-<br/>
----
-
-## State란 무엇인가?
-
-<HighlightWord>State(상태)</HighlightWord>는 React 컴포넌트가 <HighlightWord>변화를 추적하기 위해 관리하는 데이터</HighlightWord>입니다.
-
-쉽게 말해, <HighlightWord>컴포넌트가 렌더링 될 때마다 변할 수 있는 데이터 </HighlightWord>가 있다면 그게 state가 되겠죠.
-
-시간이 지나면서 변할 수 있는 모든 정보가 컴포넌트의 State가 될 수 있습니다.
-
-<Image
-  src="/content/beginner/5/state-cycle.png"
-  alt="State 사이클 설명"
-  width="full"
-  caption="React 컴포넌트에서 state 변화에 따른 렌더링 흐름을 단계별로 시각화한 예시"
-/>
-<br/>
-위 이미지는 React 컴포넌트에서 상태(state)의 변화가 어떻게 렌더링에 영향을 주는지를 단계적으로 보여줍니다.
-
-초기 컴포넌트의 렌더링 후 사용자의 상호작용(위에선 클릭 이벤트)으로 인해 ``setState``가 호출되면, 
-
-<HighlightWord>내부 상태 값이 변경되며 자동으로 컴포넌트가 다시 렌더링</HighlightWord>됩니다.
-
-이러한 흐름은 React의 핵심 개념 중 하나로, <HighlightWord>UI와 데이터 상태가 항상 일치하도록 유지하는 데 중요</HighlightWord>한 역할을 합니다.
-
-<br/>
-<CalloutBox type="info" title="State의 예시">
-웹사이트에서 볼 수 있는 State들:
-
-**댓글 목록**: 기존 댓글 목록을 불러온 뒤, state에 리스트로 담아두고 사용자가 작성한 댓글을 추가하면 즉시 목록에 추가된 것처럼 보여 UX 향상이 됩니다.
-
-**로그인 상태**: "로그인됨" 또는 "로그아웃됨"
-
-**장바구니**: 담긴 상품들의 목록
-
-**다크모드**: "밝은 테마" 또는 "어두운 테마"
-
-**입력 폼**: 사용자가 입력하는 텍스트, 입력이 완료되고 전송 시 저장된 state 값을 요청에 담아 보냅니다.
-</CalloutBox>
+<HighlightWord>여러번 재사용하며 UI를 그려낼 수 있는 코드들의 집합</HighlightWord>을 컴포넌트라고 부릅니다.
 
 ---
 
-## State가 없다면?
+## 컴포넌트란? 재사용 가능한 UI 벽돌틀
+<br/>
+<Image
+  src="/content/beginner/5/component-example.png"
+  alt="컴포넌트 개념 설명"
+  width="full"
+  caption="컴포넌트는 UI를 만드는 재사용 가능한 조각들입니다. 헤더나 갤러리 또한 재사용이 가능합니다."
+/>
+<br/>
+React에서 <HighlightWord>컴포넌트(Component)</HighlightWord>는 UI를 구성하는 독립적이고 재사용 가능한 코드 조각입니다.
 
-State 없이 자바스크립트 변수로만 만든 컴포넌트를 먼저 살펴보겠습니다.
+벽돌틀이 벽돌을 찍어내는 것처럼, 컴포넌트는 동일한 UI 요소를 반복해서 만들어낼 수 있는 "UI 틀"입니다.
+<br/>
+---
+### 컴포넌트의 특징
+
+- **재사용성**: 한 번 만들면 여러 곳에서 사용 가능
+- **독립성**: 각각이 독립적으로 동작
+- **조합성**: 작은 컴포넌트들을 조합해 큰 UI 구성
+
+<br/>
+
+집을 짓는 과정을 생각해보세요:
+1. 벽돌틀로 벽돌을 만들고
+2. 벽돌들로 벽을 쌓고
+3. 벽들로 방을 만들고
+4. 방들로 집을 완성합니다
+
+React도 마찬가지입니다:
+1. 작은 컴포넌트를 만들고
+2. 컴포넌트들로 섹션을 만들고
+3. 섹션들로 페이지를 만들고
+4. 페이지들로 웹사이트를 완성합니다
+
+---
+
+## 컴포넌트 만들어보기
+
+### 가장 간단한 컴포넌트
+
+React 컴포넌트는 <HighlightWord>JSX를 반환하는 JavaScript 함수</HighlightWord>입니다.
 
 <CodeSandbox
-title="State 없는 컴포넌트 - 버튼을 눌러도 변화 없음"
-code={`function NoStateCounter() {
-  let count = 0; // 일반 변수
+  code={`
+function Welcome() {
+  return <h1>안녕하세요!</h1>;
+}
 
-  const handleClick = () => {
-    count = count + 1;
-    console.log('현재 count:', count);
-  };
-
+// 이 컴포넌트를 사용하는 App
+function App() {
   return (
-    <div style={{padding: '20px', textAlign: 'center', backgroundColor: '#f8fafc', borderRadius: '8px'}}>
-      <h3>State 없는 카운터</h3>
-      <p style={{fontSize: '24px'}}>현재 숫자: {count}</p>
-      <button onClick={handleClick} style={{padding: '10px 20px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '6px'}}>
-        +1 증가
-      </button>
-      <p style={{fontSize: '12px', color: '#666'}}>버튼을 클릭해보세요! (화면에는 변화가 없습니다)</p>
+    <div>
+      <Welcome />
+      <Welcome />
+      <Welcome />
     </div>
   );
+}`}
+  title="첫 번째 컴포넌트 만들기"
+  language="jsx"
+/>
+
+Welcome이라는 Javascript 함수는 return문에서 JSX를 반환합니다.
+
+이것이 React의 컴포넌트가 되고,
+
+이를 똑같이 반복하여 호출하여 출력할 수 있습니다. 재사용한 것이죠.
+
+<CalloutBox type="info" title="컴포넌트 규칙">
+**이름은 대문자로 시작할 것**: `Welcome`, `Button`, `Header` (소문자는 HTML 태그로 인식)
+
+JSX를 반환할 것: return 문에서 JSX를 반환해야 함
+
+숫자로 시작 금지: 1Button ❌, Button1 ✅
+
+특수문자 사용 금지: Button!, My-Button ❌, MyButton ✅
+
+예약어 피하기: class, function, if 등은 컴포넌트 이름으로 사용 불가
+</CalloutBox>
+
+### 자주 재사용하는 버튼 컴포넌트
+
+```js
+function Button({ type = 'confirm', onClick, children }) {
+ return (
+   <button onClick={onClick}>
+     {children}
+   </button>
+ );
 }
 
 function App() {
-  return <NoStateCounter />;
-}`}
-/>
-<br/>
-버튼을 클릭해보세요. 개발자 도구의 콘솔에는 숫자가 증가하지만, 화면의 숫자는 그대로 0입니다.
-
-이는 변수 자체는 업데이트되어 값이 변하고 있지만, 화면 상에 렌더링되는 컴포넌트에서는 달라진 값을 실시간으로 보이지 못한다는 것입니다.
-<br/>
-<CalloutBox type="warning" title="일반 변수의 문제점">
-**화면이 업데이트되지 않음**: 변수값이 바뀌어도 React가 모름
-
-**값이 유지되지 않음**: 컴포넌트가 다시 렌더링되면 변수는 초기값으로 돌아감
-
-**React의 특징을 활용 못함**: Virtual DOM의 최적화 혜택을 받을 수 없음
-</CalloutBox>
-
----
-
-## useState Hook
-<br/>
-이 문제를 해결하기 위해 React는 <HighlightWord>useState Hook</HighlightWord>을 제공합니다.
-
-Hook이란 무엇일까요.
-
-React 생명주기를 잠깐 살펴보겠습니다.
-
-React 생명주기란 React 앱에서 컴포넌트 생애주기를 의미합니다.
-
-컴포넌트가 생성되고, 화면에 나타나고, 변화가 일어나 화면에 다시 나타났다가 이후 사라지는 전체 과정을 말합니다.
-<br/>
-<Image
-  src="/content/beginner/5/react-flow.png"
-  alt="React life-cycle"
-  width="full"
-  caption="React 생명주기"
-/>
-<br/>
-
-React 컴포넌트는 위에서 말했던 대로 초기화 → 마운트 → 업데이트 → 언마운트의 단계를 거치며 동작합니다.
-
-```useState```는 이 흐름 속에서 초기화 단계에 사용되어 <HighlightWord>컴포넌트가 처음 생성될 때 상태(state)를 정의</HighlightWord>하고, 
-
-이 <HighlightWord>상태값이 변경될 때마다 자동으로 업데이트 단계를 거치도록</HighlightWord>합니다.
-<br/>
-즉, useState는 다음과 같은 역할을 합니다.
-
-<CalloutBox type="info" title="useState의 역할">
-컴포넌트에 상태값(state) 을 부여
-
-이 상태값은 사용자 입력이나 외부 이벤트 등에 따라 변경될 수 있음
-
-상태가 변경되면 React는 컴포넌트를 자동으로 다시 렌더링(Update 단계 되풀이)
-</CalloutBox>
-
-위에서 javascript 변수로 구성했던 예제를 이제는 ```useState```를 활용한 예제로 바꾸어 살펴보겠습니다.
-
-```javascript
-import { useState } from 'react';
-
-function App() {
-  const [count, setCount] = useState(0); // 초기값: 0
-
-  return (
-    <div>
-      <p>현재 값: {count}</p>
-      <button onClick={() => setCount(count + 1)}>증가</button>
-    </div>
-  );
+ return (
+   <div>
+   {/* type과 onClick 이벤트 함수를 prop으로 Button 컴포넌트에 넘겨주어 어떤 스타일과 형태를 띌지 결정합니다. */}
+     <Button type="confirm" onClick={() => alert('확인!')}>
+       확인
+     </Button>
+     
+     <Button type="cancel" onClick={() => alert('취소!')}>
+       취소
+     </Button>
+   </div>
+ );
 }
 ```
+
 <CodeSandbox
-title="State 없는 컴포넌트 - 버튼을 눌러도 변화 없음"
-code={`import { useState } from 'react';
+  code={`
+function Button({ type = 'confirm', onClick, children }) {
+ return (
+   <button 
+     style={{
+       backgroundColor: type === 'confirm' ? '#10b981' : '#6b7280',
+       color: 'white',
+       padding: '12px 24px',
+       border: 'none',
+       borderRadius: '8px',
+       fontSize: '16px',
+       cursor: 'pointer',
+       margin: '0 8px'
+     }}
+     onClick={onClick}
+   >
+     {children}
+   </button>
+ );
+}
 
 function App() {
-  const [count, setCount] = useState(0); // 초기값: 0
+ return (
+   <div style={{ padding: '20px' }}>
 
-  return (
-    <div>
-      <p>현재 값: {count}</p>
-      <button onClick={() => setCount(count + 1)}>증가</button>
-    </div>
-  );
+   {/* type과 onClick 이벤트 함수를 prop으로 Button 컴포넌트에 넘겨주어 어떤 스타일과 형태를 띌지 결정합니다. */}
+
+     <Button 
+       type="confirm" 
+       onClick={() => alert('확인!')}
+     >
+       확인
+     </Button>
+     
+     <Button 
+       type="cancel" 
+       onClick={() => alert('취소!')}
+     >
+       취소
+     </Button>
+   </div>
+ );
 }`}
-hideCode={true}
+  title="재사용 가능한 버튼 컴포넌트"
+  language="jsx"
+  hideCode={true}
 />
-<br/>
-위 코드에서 ```useState```는 count라는 상태값을 만들고, setCount로 값을 변경할 수 있게 해줍니다. 
-
-버튼을 클릭할 때마다 상태가 바뀌고, 컴포넌트가 다시 렌더링됩니다.
-<br/>
-이처럼 ```useState```는 <HighlightWord>React 컴포넌트가 동적인 사용자 경험을 제공</HighlightWord>할 수 있도록 해주는 핵심적인 Hook입니다.
-
-<Image
-  src="/content/beginner/5/usestate-hook.png"
-  alt="useState 구조 분석"
-  width="full"
-  caption="useState Hook의 구조와 반환값"
-/>
-<br/>
-위 이미지는 useState의 선언 형태입니다.
-
-```useState```호출하고 파라미터로 초기값을 전달합니다.
-
-state의 초기값은 해당값으로 시작합니다.
-
-setState를 함수내에서, 혹은 단독적으로 호출하여 state값을 갱신합니다.
-
-```setState(prev => prev + 1)```
-
-또한, useState와 같은 React Hook은 <HighlightWord>함수형 컴포넌트에서만 사용가능</HighlightWord>합니다. 
 
 ---
 
-## State 업데이트 과정
-
-State가 어떻게 업데이트되는지 단계별로 살펴보겠습니다.
-
+## Props: 컴포넌트에 정보 전달하기
+<br/>
 <Image
-  src="/content/beginner/5/state-update.png"
-  alt="State 업데이트 과정"
+  src="/content/beginner/5/props-component.png"
+  alt="컴포넌트 Props 전달"
   width="two-thirds"
-  caption="State 업데이트가 일어나는 과정"
-/>
-
-### 1단계: 이벤트 발생
-```javascript
-<button onClick={handleIncrement}>+1</button>
-// 사용자가 버튼 클릭
-```
-등록한 이벤트 함수를 호출하여 이벤트를 발생시킵니다.
-<br/>
-
-### 2단계: setState 함수 호출
-```javascript
-const handleIncrement = () => {
-  setCount(count + 1); // setCount 호출
-};
-```
-setState를 호출하여 기존의 state를 변경합니다.
-<br/>
-### 3단계: React가 상태 변화 감지
-React는 setState가 호출된 것을 감지하고 해당 <HighlightWord>컴포넌트를 리렌더링 대기열에 추가</HighlightWord>합니다.
-<br/>
-### 4단계: 컴포넌트 리렌더링
-재렌더링은 컴포넌트 함수를 다시 실행하여 반환된 변경 JSX를 생성하는 과정을 말합니다.
-
-React가 컴포넌트 함수를 다시 실행하고, <HighlightWord>새로운 count 값으로 Virtual DOM을 업데이트한 후 실제 DOM에 반영</HighlightWord>합니다.
-
-React는 Virtual DOM을 통해 실제로 바뀐 부분만 업데이트하여 최적화할 수 있습니다.
-<br/>
-
----
-
-## 다양한 타입의 State
-
-State는 숫자뿐만 아니라 다양한 데이터 타입을 저장할 수 있습니다.
-
-<CodeSandbox
-title="다양한 타입의 State 예제"
-code={`function VariousStates() {
-  const [message, setMessage] = React.useState('안녕하세요!');
-  const [isVisible, setIsVisible] = React.useState(true);
-  const [items, setItems] = React.useState(['사과', '바나나']);
-  const [user, setUser] = React.useState({ name: '김리액트', age: 25 });
-
-  return (
-    <div style={{padding: '20px', backgroundColor: '#f9fafb', borderRadius: '12px'}}>
-      <h3>다양한 State 타입들</h3>
-      
-      {/* 문자열 State */}
-      <div style={{marginBottom: '15px', padding: '10px', backgroundColor: 'white', borderRadius: '6px'}}>
-        <h4>문자열: {message}</h4>
-        <button onClick={() => setMessage('메시지가 바뀌었어요!')}>변경</button>
-      </div>
-
-      {/* 불린 State */}
-      <div style={{marginBottom: '15px', padding: '10px', backgroundColor: 'white', borderRadius: '6px'}}>
-        <h4>불린: {isVisible && <span>보입니다!</span>}</h4>
-        <button onClick={() => setIsVisible(!isVisible)}>{isVisible ? '숨기기' : '보이기'}</button>
-      </div>
-
-      {/* 배열 State */}
-      <div style={{marginBottom: '15px', padding: '10px', backgroundColor: 'white', borderRadius: '6px'}}>
-        <h4>배열: {items.join(', ')}</h4>
-        <button onClick={() => setItems([...items, '오렌지'])}>과일 추가</button>
-      </div>
-
-      {/* 객체 State */}
-      <div style={{padding: '10px', backgroundColor: 'white', borderRadius: '6px'}}>
-        <h4>객체: {user.name} ({user.age}세)</h4>
-        <button onClick={() => setUser({...user, age: user.age + 1})}>나이 +1</button>
-      </div>
-    </div>
-  );
-}
-
-function App() {
-  return <VariousStates />;
-}`}
-/>
-
-<CalloutBox type="warning" title="객체와 배열 State 주의사항">
-**불변성 유지**: 기존 객체/배열을 직접 수정하지 말고 새로운 객체/배열을 만들어야 함
-
-**스프레드 연산자 활용**: `...` 연산자로 기존 데이터를 복사한 후 수정
-
-**잘못된 예**: `user.age = 26` (직접 수정)
-
-**올바른 예**: `setUser({...user, age: 26})` (새 객체 생성)
-</CalloutBox>
-
----
-
-## State 업데이트 시 주의사항
-
-### 1. State는 비동기적으로 업데이트됩니다
-
-<CodeSandbox
-title="State 비동기 업데이트 이해하기"
-code={`function AsyncStateExample() {
-  const [count, setCount] = React.useState(0);
-
-  const handleWrongUpdate = () => {
-    console.log('업데이트 전:', count);
-    setCount(count + 1);
-    console.log('setCount 호출 직후:', count); // 여전히 이전 값!
-  };
-
-  const handleMultipleUpdates = () => {
-    setCount(count + 1); // 모두 같은 값 기준으로 계산됨
-    setCount(count + 1);
-    setCount(count + 1);
-  };
-
-  const handleCorrectMultipleUpdates = () => {
-    setCount(prev => prev + 1); // 이전 값을 기준으로 계산
-    setCount(prev => prev + 1);
-    setCount(prev => prev + 1);
-  };
-
-  return (
-    <div style={{padding: '20px', backgroundColor: '#fef3c7', borderRadius: '12px'}}>
-      <h3>State 비동기 업데이트</h3>
-      <p style={{fontSize: '24px', textAlign: 'center'}}>현재 count: {count}</p>
-      
-      <div style={{display: 'flex', flexDirection: 'column', gap: '8px'}}>
-        <button onClick={handleWrongUpdate} style={{padding: '8px', backgroundColor: '#f59e0b', color: 'white', border: 'none', borderRadius: '4px'}}>
-          일반 업데이트 (+1)
-        </button>
-        <button onClick={handleMultipleUpdates} style={{padding: '8px', backgroundColor: '#ef4444', color: 'white', border: 'none', borderRadius: '4px'}}>
-          잘못된 다중 업데이트 (+1만 됨!)
-        </button>
-        <button onClick={handleCorrectMultipleUpdates} style={{padding: '8px', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px'}}>
-          올바른 다중 업데이트 (+3)
-        </button>
-      </div>
-      
-      <p style={{fontSize: '12px', color: '#92400e', marginTop: '10px'}}>
-        콘솔을 확인하여 각 버튼의 동작을 비교해보세요!
-      </p>
-    </div>
-  );
-}
-
-function App() {
-  return <AsyncStateExample />;
-}`}
+  caption="React에서 데이터는 단방향으로 흐르기에 부모 컴포넌트 -> 자식 컴포넌트로 데이터를 넘겨줄 수 있습니다."
 />
 <br/>
-```setState```는 바로바로 반영되지 않고, 나중에 한꺼번에 모아서 처리됩니다. 
+벽돌틀에 다른 재료를 넣으면 다른 색깔의 벽돌이 나오는 것처럼, 컴포넌트에도 다른 정보를 전달할 수 있습니다.
 
-이 때문에 예상치 못한 문제가 생길 수 있죠.
+이것을 <HighlightWord>Props(Properties)</HighlightWord>라고 합니다.
 
-첫부분을 볼까요?
+Props는 부모 컴포넌트가 자식 컴포넌트로 전달하는 <HighlightWord>읽기 전용 데이터</HighlightWord>에 가깝습니다.
+
+자식 컴포넌트에서는 부모로부터 받은 props 데이터를 읽어서 활용하는 데에 그치죠.
+
+자식 컴포넌트에서 이 값을 수정하려거나 조작하려면 React의 데이터 단방향 흐름을 바꾸는 다른 방법들을 사용해야합니다. 
+
+이 방법은 이후 뒷회차에서 차근히 살펴보도록 하겠습니다.
+
+Props로 넘길 때는 객체 전체를 spread하여 ```<Button {...data}/> ```의 형태로 객체 자체를 넘길수도 있고,
+
+각각의 값을 명시적으로 ``` <Button text={"Hello"} color={"red"} /> ```처럼 전달할 수도 있습니다.
 <br/>
-```JavaScript
-// 현재 count가 0이라고 가정
-const handleMultipleUpdates = () => {
-    setCount(count + 1); // count는 여전히 0. 즉, setCount(0 + 1)
-    setCount(count + 1); // count는 여전히 0. 즉, setCount(0 + 1)
-    setCount(count + 1); // count는 여전히 0. 즉, setCount(0 + 1)
-};
-```
-<br/>
-기존 javascript나 다른 언어에서 위처럼 작성하면 순차적으로 하나씩 연산이 이루어집니다.
-
-이렇게 방해받지않고 순서대로 진행되는 것을 '동기적'이다, 라고 합니다.
-<br/>
-하지만 React는 이들을 한 번에 모아서 나중에 처리합니다. 
-
-이를 동기적이지 않다고 해서 '비동기적'인 방식이라고 하죠.
-<br/>
-세 번의 setCount 호출 모두 count가 0이었던 시점을 기준으로 반복적으로 계속 계산하기 때문에 결과는 1이 됩니다. 
-
-즉, 0 + 1만 세 번 요청한 셈이죠.
-<br/>
-잘 알아두셔야합니다.
-
-React의 비동기적 처리방식으로 인한 컴포넌트의 작업 순서는 뒷 회차에서 자세히 알아보겠습니다.
-
-<br/>
-
-### 2. 함수형 업데이트 사용하기
-
-위 문제를 해결하기 위해, 함수형 업데이트를 사용할 수 있습니다.
-
-```javascript
-// 잘못된 방법
-setCount(count + 1);
-
-// 올바른 방법
-setCount(prevCount => prevCount + 1);
-```
-<br/>
-이를 통해 예상치 못한 버그를 미연에 방지할 수 있습니다.
-
-setCount에 함수를 전달하면, React는 <HighlightWord>이 함수를 이전 상태(prevCount)를 인자로 호출</HighlightWord>합니다. 
-
-이 prevCount는 항상 가장 최근에 업데이트된 값을 나타냅니다.
-
-호출시점이 정해져 반복만 하는 위 방법에 비해, <HighlightWord>setState 호출 때마다 늘 업데이트된 최신값을 가져와 상태를 보장</HighlightWord>하죠.
-
-이를 통해 예상치 못한 버그를 미연에 방지할 수 있습니다.
-<br/>
-
-<CalloutBox type="success" title="함수형 업데이트의 장점">
-**정확한 업데이트**: 항상 최신 상태값을 기준으로 계산
-
-**다중 업데이트 안전**: 여러 번 호출해도 정상 작동
-
-**성능 최적화**: React의 배치 업데이트와 잘 동작
-</CalloutBox>
-<br/>
----
-## 여러 컴포넌트 간 State 공유
-
-때로는 여러 컴포넌트가 같은 State를 공유해야 할 때가 있습니다. 
-
-이때는 <HighlightWord>State를 상위 컴포넌트로 끌어올리기(State Lifting)</HighlightWord>를 사용합니다.
-
-<CodeSandbox
-title="State 끌어올리기 최소 예시"
-code={`function ChildA({ count }) {
-  return (
-    <div style={{padding: '10px', border: '1px solid #ccc'}}>
-      <h4>자식 A (읽기 전용)</h4>
-      <p>현재 카운트: {count}</p>
-    </div>
-  );
-}
-
-function ChildB({ onIncrement }) {
-  return (
-    <div style={{padding: '10px', border: '1px solid #ccc'}}>
-      <h4>자식 B (상태 변경)</h4>
-      <button onClick={onIncrement}>+ 1</button>
-    </div>
-  );
-}
-
-function ParentComponent() {
-  const [count, setCount] = React.useState(0);
-
-  const handleIncrement = () => {
-    setCount(prevCount => prevCount + 1);
-  };
-
-  return (
-    <div style={{padding: '20px', backgroundColor: '#f0f0f0', border: '1px solid #aaa'}}>
-      <h3>부모 컴포넌트</h3>
-      <ChildA count={count} />
-      <ChildB onIncrement={handleIncrement} />
-    </div>
-  );
-}
-
-function App() {
-  return <ParentComponent />;
-}`}
-/>
-<br/>
-ParentComponent를 보면 count라는 state가 정의되어 있습니다. 
-
-이 count state를 자식 A와 자식 B가 모두 사용합니다.
-
-<br/>
-왜 부모가 state를 관리할까요?
 
 ```js
-function ParentComponent() {
-  const [count, setCount] = React.useState(0);
-
-  const handleIncrement = () => {
-    setCount(prevCount => prevCount + 1);
-  };
-
-  return (
-    <div>
-      <h3>부모 컴포넌트</h3>
-      <ChildA count={count} />
-      <ChildB onIncrement={handleIncrement} />
-    </div>
-  );
-}
-```
-
-코드를 보면, 부모가 count를 관리하고, 모든 자식 컴포넌트는 부모로부터 count를 props로 받습니다.
-<br/>
-```js
-function ChildA({ count }) {
-  return (
-    <div>
-      <h4>자식 A (읽기 전용)</h4>
-      <p>현재 카운트: {count}</p>
-    </div>
-  );
+{/* Props를 받는 컴포넌트 */}
+function Greeting(props) {
+  return <h2>안녕하세요, {props.name}님!</h2>;
 }
 
-function ChildB({ onIncrement }) {
-  return (
-    <div>
-      <h4>자식 B (state 변경)</h4>
-      <button onClick={onIncrement}>+ 1</button>
-    </div>
-  );
-}
-```
-
-자식 A는 count를 받아서 화면에 보여주기만 하고,
-
-자식 B는 onIncrement라는 함수를 받아 버튼을 클릭할 때 부모의 count를 변경합니다.
-
-이 덕분에 모든 컴포넌트는 항상 같은 count 값을 보게 됩니다.
-
-<br/>
-
-state는 항상 부모에서 자식으로만 전달됩니다. 
-
-자식 B가 onIncrement 함수를 호출하면, 부모의 setCount가 실행되어 state를 업데이트하고, 
-
-이 변경된 count는 다시 자식들에게 props로 전달됩니다. 
-
-이처럼 <HighlightWord>데이터의 흐름이 한 방향</HighlightWord>으로만 움직이기 때문에 코드의 흐름을 쉽게 파악하고 버그를 줄일 수 있습니다.
-
-<br/>
-
-이렇게 state를 공유하는 컴포넌트들의 가장 가까운 공통 부모에 state를 두고, 
-
-그 <HighlightWord>state와 state를 변경하는 함수를 props로 내려주는 방식을 "State 끌어올리기"</HighlightWord>라고 합니다.
-
-위 예제에서 중요한 점은 **State를 공유해야 하는 컴포넌트들의 가장 가까운 공통 부모에서 State를 관리**한다는 것입니다.
-<br/>
-<CalloutBox type="success" title="State 끌어올리기의 장점">
-**데이터 일관성**: 모든 컴포넌트가 같은 데이터를 보게 됨
-
-**단일 소스**: State가 한 곳에서만 관리되어 버그 방지
-
-**예측 가능한 데이터 흐름**: 부모→자식으로만 데이터가 흐름
-
-**컴포넌트 재사용성**: 자식 컴포넌트들이 독립적으로 재사용 가능
-</CalloutBox>
-
----
-
-## State 어떻게 관리하는게 좋을까?
-
-### 1. State 구조 설계하기
-
-<CalloutBox type="info" title="좋은 State 구조의 원칙">
-**단순하게 유지**: 가능한 한 간단한 구조로 설계
-
-**정규화**: 중복 데이터를 피하고 단일 소스 유지
-
-**최소한의 State**: 계산 가능한 값은 State로 저장하지 않기
-
-**논리적 그룹핑**: 관련된 데이터는 하나의 객체로 묶기
-</CalloutBox>
-
-```javascript
-// 좋지 않은 예 - 중복 데이터
-const [firstName, setFirstName] = useState('김');
-const [lastName, setLastName] = useState('리액트');
-const [fullName, setFullName] = useState('김리액트'); // 불필요!
-
-// 좋은 예 - 필요한 것만 State로
-const [firstName, setFirstName] = useState('김');
-const [lastName, setLastName] = useState('리액트');
-const fullName = `${firstName}${lastName}`; // 계산된 값
-```
-
-### 2. State 업데이트 패턴
-
-<ComparisonImages
-  leftImage={{
-    src: "/content/beginner/5/wrong-state-update.png",
-    alt: "잘못된 State 업데이트",
-    caption: "직접 수정 - React가 변화를 감지하지 못함"
-  }}
-  rightImage={{
-    src: "/content/beginner/5/correct-state-update.png",
-    alt: "올바른 State 업데이트",
-    caption: "새 객체/배열 생성 - React가 변화를 정확히 감지"
-  }}
-  labels={{ left: "잘못된 방법", right: "올바른 방법" }}
-/>
-
-```javascript
-// 배열 State 업데이트 패턴
-const [todos, setTodos] = useState([]);
-
-// 추가
-setTodos([...todos, newTodo]);
-
-// 수정
-setTodos(todos.map(todo => 
-  todo.id === targetId ? { ...todo, completed: true } : todo
-));
-
-// 삭제
-setTodos(todos.filter(todo => todo.id !== targetId));
-
-// 객체 State 업데이트 패턴
-const [user, setUser] = useState({ name: '', age: 0 });
-
-// 부분 업데이트
-setUser({ ...user, age: 25 });
-```
-
----
-
-## 자주 사용하는 State 패턴
-
-### 로딩 상태 관리
-
-<CodeSandbox
-title="로딩 상태 관리 패턴"
-code={`function LoadingExample() {
-  const [data, setData] = React.useState(null);
-  const [loading, setLoading] = React.useState(false);
-
-  const fetchData = async () => {
-    setLoading(true);
-    await new Promise((r) => setTimeout(r, 1000));
-    setData('데이터 로드 완료!');
-    setLoading(false);
-  };
-
+{/* 구조분해할당으로 더 깔끔하게 Prop들을 컴포넌트 내에서 사용할 수 있습니다 */}
+function UserCard({ name, age, hobby }) {
   return (
     <div>
-      <button onClick={fetchData} disabled={loading}>
-        {loading ? '로딩중...' : '불러오기'}
-      </button>
-      <div style={{ marginTop: 10 }}>
-        {loading && <p>로딩 중입니다...</p>}
-        {data && <p>{data}</p>}
-      </div>
+      <h3>{name}</h3>
+      <p>나이: {age}세</p>
+      <p>취미: {hobby}</p>
     </div>
   );
 }
 
 function App() {
-  return <LoadingExample />;
+  return (
+    <div>
+      <Greeting name="철수" />
+      <Greeting name="영희" />
+      
+      <UserCard name="김철수" age={25} hobby="게임" />
+      <UserCard name="이영희" age={30} hobby="독서" />
+      <UserCard name="박민수" age={28} hobby="요리" />
+    </div>
+  );
+}
+```
+<CodeSandbox
+  code={`
+  {/* Props를 받는 컴포넌트 */}
+function Greeting(props) {
+  return <h2>안녕하세요, {props.name}님!</h2>;
+}
+
+{/* 구조분해할당으로 더 깔끔하게 Prop들을 컴포넌트 내에서 사용할 수 있습니다 */}
+function UserCard({ name, age, hobby }) {
+  return (
+    <div style={{
+      border: '2px solid #e5e7eb',
+      borderRadius: '12px',
+      padding: '20px',
+      margin: '10px',
+      backgroundColor: '#f9fafb'
+    }}>
+      <h3>{name}</h3>
+      <p>나이: {age}세</p>
+      <p>취미: {hobby}</p>
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <div>
+      <Greeting name="철수" />
+      <Greeting name="영희" />
+      
+      <UserCard name="김철수" age={25} hobby="게임" />
+      <UserCard name="이영희" age={30} hobby="독서" />
+      <UserCard name="박민수" age={28} hobby="요리" />
+    </div>
+  );
 }`}
+  title="Props로 데이터 전달하기"
+  language="jsx"
+  hideCode={true}
 />
 
-### 폼 유효성 검사
+<br/>
+---
+
+## 컴포넌트 합성: 벽돌이 벽으로, 벽이 건물로
+<br/>
+작은 컴포넌트들을 조합해서 더 큰 컴포넌트를 만드는 것을 <HighlightWord>컴포넌트 합성(Component Composition)</HighlightWord>이라고 합니다.
+
+React 앱에는 컴포넌트가 큰 컴포넌트를 이루고, 큰 컴포넌트들이 페이지를 이루어 애플리케이션을 완성합니다.
+```js
+{/* 작은 컴포넌트들 - 이 3개의 컴포넌트를 조합해 UserCard라는 큰 컴포넌트를 구성합니다. */}
+function Avatar({ src, name }) {
+ return (
+   <img 
+     src={src} 
+     alt={name}
+   />
+ );
+}
+
+function UserName({ name }) {
+ return <h3>{name}</h3>;
+}
+
+function UserEmail({ email }) {
+ return <p>{email}</p>;
+}
+
+// 큰 컴포넌트: 작은 컴포넌트들을 조합
+function UserCard({ user }) {
+ return (
+   <div>
+     <Avatar src={user.avatar} name={user.name} />
+     <div>
+       <UserName name={user.name} />
+       <UserEmail email={user.email} />
+     </div>
+   </div>
+ );
+}
+
+function App() {
+ const user = {
+   name: '김철수',
+   email: 'kim@example.com',
+   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+ };
+
+ return (
+   <div>
+     <UserCard user={user} />
+   </div>
+ );
+```
+<CodeSandbox
+  code={`
+function Avatar({ src, name }) {
+ return (
+   <img 
+     src={src} 
+     alt={name}
+     style={{
+       width: '50px',
+       height: '50px',
+       borderRadius: '50%'
+     }}
+   />
+ );
+}
+
+function UserName({ name }) {
+ return <h3 style={{ margin: '0 0 5px 0' }}>{name}</h3>;
+}
+
+function UserEmail({ email }) {
+ return <p style={{ margin: 0, color: '#666' }}>{email}</p>;
+}
+
+function UserCard({ user }) {
+ return (
+   <div style={{
+     display: 'flex',
+     alignItems: 'center',
+     gap: '15px',
+     padding: '20px',
+     border: '1px solid #ddd',
+     borderRadius: '8px'
+   }}>
+     <Avatar src={user.avatar} name={user.name} />
+     <div>
+       <UserName name={user.name} />
+       <UserEmail email={user.email} />
+     </div>
+   </div>
+ );
+}
+
+function App() {
+ const user = {
+   name: '김철수',
+   email: 'kim@example.com',
+   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
+ };
+
+ return (
+   <div style={{ padding: '20px' }}>
+     <UserCard user={user} />
+   </div>
+ );
+}`}
+  title="컴포넌트 합성 예제 - 프로필 카드"
+  language="jsx"
+  hideCode={true}
+/>
+
+<Image
+  src="/content/beginner/5/component-tree.png"
+  alt="컴포넌트 계층 구조"
+  width="two-thirds"
+  caption="작은 컴포넌트들이 모여 큰 컴포넌트를 만드는 계층 구조"
+/>
+
+---
+
+## 조건부 렌더링: 상황에 따라 다른 벽돌 선택하기
+
+때로는 상황에 따라 다른 UI를 보여줘야 합니다. 이를 <HighlightWord>조건부 렌더링</HighlightWord>이라고 합니다.
 
 <CodeSandbox
-title="폼 유효성 검사 패턴"
-code={`function FormExample() {
-  const [name, setName] = React.useState('');
-  const [error, setError] = React.useState('');
+  code={`
+function Status({ isOnline }) {
+ return (
+   <div style={{ padding: '20px', textAlign: 'center' }}>
+     {isOnline ? (
+       <div style={{ color: 'green' }}>
+         <h2>🟢 온라인</h2>
+         <p>사용자가 접속 중입니다</p>
+       </div>
+     ) : (
+       <div style={{ color: 'red' }}>
+         <h2>🔴 오프라인</h2>
+         <p>사용자가 접속하지 않았습니다</p>
+       </div>
+     )}
+   </div>
+ );
+}
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!name.trim()) {
-      setError('이름을 입력해주세요.');
-    } else {
-      setError('');
-      alert("안녕하세요, "+ name);
+function App() {
+ return (
+   <div>
+     <Status isOnline={true} />
+     <Status isOnline={false} />
+   </div>
+ );
+}`}
+  title="조건부 렌더링 예제"
+  language="jsx"
+/>
+위의 예제에서는 같은 컴포넌트를 재사용하지만 조건에 따라 다른 UI를 보여줍니다.
+
+때에 아래처럼 따라서는 변수나, state에 따라 컴포넌트 자체를 조건부 렌더링할 수도 있습니다.
+```js
+    {
+        isOnline ?? <Status />
     }
-  };
+```
+<br/>
+---
 
-  return (
-    <form onSubmit={handleSubmit}>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="이름"
-      />
-      <button type="submit">제출</button>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-    </form>
-  );
-}
+## 리스트 렌더링: 벽돌을 줄지어 배치하기
+
+같은 형태의 컴포넌트를 여러 개 반복해서 렌더링할 때는 <HighlightWord>리스트 렌더링</HighlightWord>을 사용합니다.
+
+<CodeSandbox
+  code={`
+function TodoItem({ todo }) {
+    return (
+    <div style={{
+        padding: '10px',
+        margin: '5px 0',
+        backgroundColor: '#f0f0f0',
+        borderRadius: '5px'
+    }}>
+        {todo}
+    </div>
+    );
+    }
 
 function App() {
-  return <FormExample />;
-}
-`}
+    const todos = [
+    'React 공부하기',
+    '컴포넌트 만들기',
+    '프로젝트 완성하기'
+    ];
+
+    return (
+    <div style={{ padding: '20px' }}>
+        <h2>할 일 목록</h2>
+        {todos.map((todo, index) => (
+        <TodoItem key={index} todo={todo} />
+        ))}
+    </div>
+    );
+}`}
+  title="리스트 렌더링 예제"
+  language="jsx"
 />
 
----
+주로 list를 다룰 때 순회하는 map을 사용하여 컴포넌트를 반복 렌더링합니다.
 
-## State 성능 최적화
+반복 렌더링을 할 때는 key prop을 자식 컴포넌트에 선언하지 않아도 속성과 같이 부여할 수 있습니다.
 
-대규모 애플리케이션에서는 State 업데이트로 인한 성능 문제를 고려해야 합니다.
+반복 렌더링된 컴포넌트는 key를 부여해야 서로 독립적인 컴포넌트로 동작할 수 있습니다.
 
-<CalloutBox type="warning" title="성능 문제의 원인">
-**과도한 State**: 너무 많은 State를 하나의 컴포넌트에서 관리
+<CalloutBox type="warning" title="Key Prop 주의사항">
+**key prop은 필수**: 리스트를 렌더링할 때는 각 아이템에 고유한 `key` prop을 제공해야 합니다.
 
-**빈번한 업데이트**: 짧은 시간에 많은 State 변경
+**고유값 사용**: 보통 데이터의 `id` 값을 사용하며, 배열의 인덱스는 가급적 피해주세요.
+중복되거나 방해되는 값이 발생하면 오류가 발생합니다.
 
-**큰 객체/배열**: 거대한 데이터 구조를 State로 관리
-
-**불필요한 리계산**: 매 렌더링마다 복잡한 계산 수행
+**성능 최적화**: React가 어떤 아이템이 변경되었는지 key값을 통해서 효율적으로 파악할 수 있게 해줍니다.
 </CalloutBox>
-
-### State 분할하기
-
-```javascript
-// 좋지 않은 예 - 모든 것을 하나의 객체로
-const [appState, setAppState] = useState({
-  user: { name: '', email: '' },
-  todos: [],
-  filters: { completed: false },
-  ui: { loading: false, theme: 'light' }
-});
-
-// 좋은 예 - 관련된 것끼리 분할
-const [user, setUser] = useState({ name: '', email: '' });
-const [todos, setTodos] = useState([]);
-const [filters, setFilters] = useState({ completed: false });
-const [ui, setUi] = useState({ loading: false, theme: 'light' });
-```
-
+<br/>
 ---
-
-## State vs Props 비교
-
-State와 Props의 차이점을 명확히 이해하는 것이 중요합니다.
-
-| 구분 | State | Props |
-|------|-------|-------|
-| **소유권** | 컴포넌트가 직접 소유 | 부모 컴포넌트가 전달 |
-| **변경 가능성** | 컴포넌트 내에서 변경 가능 | 읽기 전용 (불변) |
-| **용도** | 컴포넌트의 내부 상태 관리 | 컴포넌트 간 데이터 전달 |
-| **리렌더링** | 변경시 자동 리렌더링 | 변경시 자동 리렌더링 |
-
-<ComparisonImages
-  leftImage={{
-    src: "/content/beginner/5/state-flow.png",
-    alt: "State 데이터 흐름",
-    caption: "State는 컴포넌트 내부에서 관리"
-  }}
-  rightImage={{
-    src: "/content/beginner/5/props-flow.png",
-    alt: "Props 데이터 흐름",
-    caption: "Props는 부모에서 자식으로 전달"
-  }}
-  labels={{ left: "State", right: "Props" }}
-/>
-
----
-
-## 고급 State 패턴 맛보기
-
-### 1. Reducer 패턴 (useReducer)
-
-복잡한 State 로직의 경우 useState 대신 useReducer를 사용할 수 있습니다.
-
-```javascript
-import React, { useReducer } from 'react';
-
-const initialState = 0;
-
-function reducer(state, action) {
-  switch (action) {
-    case 'increment':
-      return state + 1;
-    case 'decrement':
-      return state - 1;
-    case 'reset':
-      return initialState;
-    default:
-      return state;
-  }
-}
-
-function Counter() {
-  const [count, dispatch] = useReducer(reducer, initialState);
-
-  return (
-    <div>
-      <p>Count: {count}</p>
-      <button onClick={() => dispatch('increment')}>+</button>
-      <button onClick={() => dispatch('decrement')}>-</button>
-      <button onClick={() => dispatch('reset')}>Reset</button>
-    </div>
-  );
-}
-
-export default Counter;
-```
-useState로도 가능하지만,
-
-여러 액션(increment, decrement, reset 등)이 위 경우처럼 명확히 구분되며 로직이 커질 여지가 있을 때
-
-```useReducer```가 더 읽기 쉽고 확장하기 좋습니다.
-
-```useState```는 간단한 상태 변경에 적합하지만,
-
-여러 상태가 서로 연관되거나 복잡한 업데이트 로직이 필요한 경우에는 코드가 길고 지저분해질 수 있습니다.
-
-이럴 때 ```useReducer```를 사용하면
 <br/>
-상태 업데이트 로직을 한 곳에 모아 관리할 수 있어 가독성이 좋아지고,
+## 컴포넌트 설계 원칙
 
-상태 변경의 흐름을 명확히 추적할 수 있으며,
-
-Redux처럼 액션 기반(state + action) 패턴으로 확장이 쉬워집니다.
+좋은 컴포넌트를 만들기 위한 원칙들을 알아봅시다.
 <br/>
-정리하면, 복잡하거나 조건이 많은 상태 관리에서는 ```useReducer```가 상태 처리 로직을 더 구조적으로 만들 수 있습니다.
-<br/>
-### 2. 커스텀 Hook으로 State 로직 분리
-<br/>
-커스텀 Hook은 ```useState```, ```useEffect```, ```useReducer``` 등 기본 Hook을 활용해
+### 1. 단일 책임 원칙
 
-여러 컴포넌트에서 공통으로 사용할 수 있는 로직을 모아둔 함수입니다.
-
-이름은 반드시 ```use```로 시작해야 하며, React의 Hook 규칙을 따릅니다.
-
-```javascript
-// 재사용 가능한 State 로직을 커스텀 Hook으로
-function useCounter(initialValue = 0) {
-  const [count, setCount] = useState(initialValue);
-  
-  const increment = () => setCount(c => c + 1);
-  const decrement = () => setCount(c => c - 1);
-  const reset = () => setCount(initialValue);
-  
-  return { count, increment, decrement, reset };
-}
-
-// 사용
-function MyComponent() {
-  const counter = useCounter(10);
-  
-  return (
-    <div>
-      <p>{counter.count}</p>
-      <button onClick={counter.increment}>+</button>
-      <button onClick={counter.decrement}>-</button>
-      <button onClick={counter.reset}>Reset</button>
-    </div>
-  );
-}
-```
-자 코드를 살펴봅시다.
+각 컴포넌트는 하나의 명확한 역할을 가져야 합니다.
 
 ```js
-function useCounter(initialValue = 0) { ... }
+// 권장하지 않는 설계 예시 - 너무 많은 역할을 하는 하나의 컴포넌트
+const BadComponent = () => {
+  const [name, setName] = useState('김개발');
+  const [email, setEmail] = useState('kim@example.com');
+  const [posts, setPosts] = useState(['글1', '글2']);
+  const [theme, setTheme] = useState('light');
+
+  return (
+    <div className={theme === 'dark' ? 'bg-gray-800 text-white p-4' : 'bg-white p-4'}>
+      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+        테마 변경
+      </button>
+      <h2>{name}</h2>
+      <p>{email}</p>
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <div>
+        {posts.map((post, i) => <div key={i}>{post}</div>)}
+      </div>
+    </div>
+  );
+};
 ```
-count, increment, decrement, reset 로직을 하나의 함수로 묶어 캡슐화하였습니다.
+<br/>
+하나의 컴포넌트에 너무 많은 기능과 역할을 부여하면 어떻게 될까요?
 
-여러 컴포넌트에서 useCounter()만 호출하면 같은 로직을 쉽게 호출하고 짧은 코드 분량으로도 재사용 가능합니다.
+나중에 유지보수할 때 특정 기능을 수정하게 되면, 
+
+이 컴포넌트를 재사용하는 다른 페이지나 컴포넌트에서 예상치 못한 문제가 발생할 수 있습니다.
+<br/>
+벽돌을 하나하나 쌓는 대신 귀찮다고 여러 벽돌을 통째로 뭉쳐서 큰 덩어리로 만들었다고 가정해봅시다. 
+
+이 벽 덩어리를 거실에 설치하고, 나중에 화장실에도 똑같은 벽을 재사용했습니다.
+
+그런데 거실을 리모델링한다고 미지의 힘으로 거실에 맞게 벽을 수정해버리면 어떻게 될까요?
+
+화장실의 벽도 동시에 바뀌어버려서 대참사가 일어나겠죠?
+<br/>
+컴포넌트도 마찬가지입니다. 
+
+너무 많은 기능을 하나에 몰아넣으면 한 곳을 고쳤을 때 다른 곳에서 문제가 생길 수 있어요.
+
+좋은 설계 예시를 살펴볼게요.
+<br/>
+```js
+ // 권장 설계 예시 - 각각이 명확한 역할을 가진 컴포넌트들
+  // 1. 사용자 정보
+const UserCard = ({ name, email, onNameChange }) => (
+  <div className="border p-2">
+    <h2>{name}</h2>
+    <p>{email}</p>
+    <input value={name} onChange={(e) => onNameChange(e.target.value)} />
+  </div>
+);
+
+// 2. 게시글
+const Posts = ({ posts }) => (
+  <div>
+    {posts.map((post, i) => <div key={i} className="border p-1">{post}</div>)}
+  </div>
+);
+
+// 3. 테마 버튼
+const ThemeButton = ({ theme, onToggle }) => (
+  <button onClick={onToggle} className="bg-blue-500 text-white px-2 py-1">
+    {theme === 'light' ? '다크' : '라이트'}
+  </button>
+);
+
+// 4. 위의 모든 컴포넌트 조합
+const GoodComponent = () => {
+  const [name, setName] = useState('김개발');
+  const [posts] = useState(['글1', '글2']);
+  const [theme, setTheme] = useState('light');
+
+  return (
+    <div className={theme === 'dark' ? 'bg-gray-800 text-white p-4' : 'bg-white p-4'}>
+      <ThemeButton theme={theme} onToggle={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
+      <UserCard name={name} email="kim@example.com" onNameChange={setName} />
+      <Posts posts={posts} />
+    </div>
+  );
+};
+```
+<br/>
+이렇게 설계해놓으면 수정이 필요한 부분만 따로 수정이 가능하니까,
+
+나중을 생각했을 때 많이 편리하겠죠?
 
 <br/>
 
-커스텀 훅이란 이런 훅들을 사용한 것들을 용도별로 모아두고 불러와서 사용하는 것.
+### 2. Props는 최소한으로
 
-코드 분량을 줄이면서 반복되는 로직들을 쉽게 재사용할 수 있게끔 정리해주는 역할을 합니다.
+너무 많은 props를 받는 컴포넌트는 복잡해집니다.
 
+```jsx
+// ❌ 너무 많은 props
+function UserProfile({ 
+  name, age, email, phone, address, company, 
+  role, department, salary, hireDate, manager 
+}) {
+  // ...
+}
+
+// ✅ 객체로 그룹화
+function UserProfile({ personalInfo, workInfo }) {
+  // 컴포넌트 내부에서 구조분해할당 활용
+  const { name, age, email } = personalInfo;
+  const { company, role, department } = workInfo;
+  
+  return (
+    <div>
+      <h2>{name} ({age}세)</h2>
+      <p>이메일: {email}</p>
+      <p>회사: {company}</p>
+      <p>직책: {role}</p>
+    </div>
+  );
+}
+
+// 사용할 때는 spread 연산자로 간편하게
+function App() {
+  const userData = {
+    personalInfo: { name: '김철수', age: 30, email: 'kim@example.com' },
+    workInfo: { company: '테크회사', role: '개발자', department: 'IT팀' }
+  };
+
+  return <UserProfile {...userData} />;
+}
+```
 <br/>
+객체를 spread 연산자를 통해 직접 전달할 수 있습니다.
 
-여러분의 컴포넌트 파일이 길어진다면, ```useState```, ```useEffect``` 등의 코드를 기능별로 모아 사용자훅으로 만들어 사용하는 것을 추천드립니다.
+보기에도 간결하고 다른 컴포넌트에 전달할 때도 간단하게 전달할 수 있겠네요.
 
----
+또한 객체를 전달받은 자식 컴포넌트에서 구조분해할당을 활용해 사용할 때 편하고 가시성있게 설계를 할 수 있습니다.
+<br/>
+### 3. 컴포넌트는 작게, 조합은 크게
 
-## 실제 프로젝트에서의 State 관리
+<CalloutBox type="success" title="컴포넌트 설계 팁">
+**작은 벽돌**: 각 컴포넌트는 작고 집중된 기능을 가지세요
 
-<ImageGallery
-  images={[
-    { src: '/content/beginner/5/contextAPI.png', alt: '이미지1' },
-    { src: '/content/beginner/5/redux.webp', alt: 'GIF 이미지'},
-    { src: '/content/beginner/5/zustand.jpg', alt: '이미지3' },
-    { src: '/content/beginner/5/recoil.png', alt: '이미지4' }
-  ]}
-/>
+**큰 건물**: 작은 컴포넌트들을 조합해서 점점 큰 기능을 만드세요
 
-<LinkCard 
-  title="React 상태관리 라이브러리들" 
-  url="https://react.dev/learn/managing-state" 
-  description="Redux, Zustand, Recoil 등 다양한 상태관리 솔루션 알아보기" 
-/>
+**재사용성**: 다른 곳에서도 쓸 수 있도록 유연하게 컴포넌트를 작성하세요
 
-대규모 프로젝트에서는 컴포넌트 간 State 공유가 복잡해집니다. 이때 다음과 같은 솔루션을 고려할 수 있습니다.
-
-1. **Context API**: React 내장 기능으로 전역 상태 관리
-2. **Redux**: 예측 가능한 상태 컨테이너
-3. **Zustand**: 간단하고 현대적인 상태 관리
-4. **Recoil**: Facebook이 개발한 실험적 상태 관리
-
-라이브러리를 활용한 state 관리에 대해서는 이후에 state 관리 방식에 대해 학습할 때 함께 살펴보겠습니다.
+ **명확한 이름**: 컴포넌트 이름만 딱 봐도 역할을 알 수 있게끔 작명하세요
+</CalloutBox>
 
 ---
 
 ## 복습 퀴즈
 
-퀴즈를 풀면서 State에 대한 이해도를 확인해봅시다!
-
 <Quiz
- question="useState Hook의 반환값에 대한 설명으로 옳은 것은?"
+ question="React 컴포넌트의 이름 규칙으로 올바른 것은?"
  options={[
-   "현재 상태값과 새로운 상태값을 반환한다",
-   "현재 상태값과 상태 변경 함수를 배열로 반환한다", 
-   "상태 변경 함수와 이전 상태값을 반환한다",
-   "상태값만 반환하고 변경은 직접 해야 한다"
+   "소문자로 시작해야 한다 (button)",
+   "대문자로 시작해야 한다 (Button)",
+   "숫자로 시작해도 된다 (1Button)",
+   "특수문자를 포함해도 된다 (Button!)"
  ]}
  correctAnswer={1}
- explanation="useState는 [현재 상태값, 상태 변경 함수] 형태의 배열을 반환합니다. 구조분해할당을 통해 const [state, setState] = useState()와 같이 사용합니다."
+ explanation="React 컴포넌트 이름은 반드시 대문자로 시작해야 합니다. 소문자로 시작하면 HTML 태그로 인식됩니다."
 />
 
 <Quiz
- question="State 업데이트와 관련하여 옳지 않은 것은?"
+ question="props에 대한 설명으로 틀린 것은?"
  options={[
-   "setState는 비동기적으로 작동한다",
-   "setState 호출 직후에는 이전 상태값을 가지고 있다",
-   "setState 호출하면 컴포넌트가 즉시 동기적으로 리렌더링된다",
-   "함수형 업데이트를 사용하면 최신 상태값을 기준으로 계산할 수 있다"
+   "부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달하는 방법이다",
+   "props는 컴포넌트 내부에서 직접 수정할 수 있다",
+   "같은 컴포넌트에 다른 props를 전달해서 다른 UI를 만들 수 있다",
+   "구조분해할당을 사용해서 props를 받을 수 있다"
  ]}
- correctAnswer={2}
- explanation="setState는 비동기적으로 작동하며, React는 성능 최적화를 위해 여러 상태 업데이트를 배치(batch)로 처리합니다. 즉시 동기적으로 리렌더링되지 않습니다."
+ correctAnswer={1}
+ explanation="props는 읽기 전용(read-only)입니다. 컴포넌트 내부에서 props를 직접 수정할 수 없으며, 새로운 props를 전달받아야 UI가 변경됩니다."
 />
 
 <Quiz
- question="객체나 배열 State를 업데이트할 때 지켜야 할 원칙은?"
+ question="리스트 렌더링에서 key prop이 필요한 이유는?"
  options={[
-   "기존 객체/배열을 직접 수정해도 된다",
-   "불변성을 유지하며 새로운 객체/배열을 생성해야 한다",  
-   "push, pop 등의 메서드를 자유롭게 사용할 수 있다",
-   "setState 없이 직접 변수에 할당하면 된다"
+   "컴포넌트의 이름을 지정하기 위해",
+   "React가 어떤 아이템이 변경되었는지 효율적으로 파악하기 위해",
+   "컴포넌트에 스타일을 적용하기 위해",
+   "데이터베이스와 연결하기 위해"
  ]}
  correctAnswer={1}
- explanation="React는 State의 불변성을 기반으로 변경사항을 감지합니다. 객체나 배열을 직접 수정하면 React가 변화를 감지하지 못하므로, 스프레드 연산자(...) 등을 사용해 새로운 객체/배열을 생성해야 합니다."
+ explanation="key prop은 React가 가상 DOM을 효율적으로 업데이트하기 위해 필요합니다. 어떤 아이템이 추가, 수정, 삭제되었는지 빠르게 파악할 수 있게 해줍니다."
 />
 
 <Quiz
- question="여러 컴포넌트가 같은 State를 공유해야 할 때 사용하는 패턴은?"
+ question="컴포넌트 합성에 대한 설명으로 올바른 것은?"
  options={[
-   "각 컴포넌트마다 동일한 State를 생성한다",
-   "State를 가장 가까운 공통 부모 컴포넌트로 끌어올린다",
-   "전역 변수를 사용한다",
-   "localStorage에 저장해서 공유한다"
+   "하나의 컴포넌트에 모든 기능을 넣는 것",
+   "작은 컴포넌트들을 조합해서 더 큰 컴포넌트를 만드는 것",
+   "컴포넌트를 복사해서 사용하는 것",
+   "컴포넌트의 이름을 합치는 것"
  ]}
  correctAnswer={1}
- explanation="여러 컴포넌트가 같은 State를 공유해야 할 때는 'State 끌어올리기(Lifting State Up)' 패턴을 사용합니다. 공통 부모 컴포넌트에서 State를 관리하고 Props로 자식들에게 전달합니다."
+ explanation="컴포넌트 합성은 작은, 재사용 가능한 컴포넌트들을 조합해서 더 복잡한 UI를 만드는 React의 핵심 패턴입니다."
 />
 
 ---
 
+## 참고 사항
+
 <LinkCard 
-  title="React 공식 문서 - State 관리" 
-  url="https://ko.react.dev/reference/react/useState" 
-  description="React 공식 문서에서 state와 useState 훅에 대해 더 자세히 알아보세요." 
+  title="ReactJS Docs - React.Component 문서" 
+  url="https://ko.legacy.reactjs.org/docs/react-component.html" 
+  description="이 문서에서는 React 컴포넌트 class를 다루는 API들을 자세히 소개합니다. 해당 내용에 대해 더 자세히 학습해보세요." 
 />
 
 <CalloutBox type="success" title="🎉 축하합니다!">
-React의 핵심 개념인 State를 완벽하게 이해하셨습니다.  이제 다음 단계로 넘어갈 준비가 되었습니다. <br/>
-다음 회차에서는 React의 컴포넌트에 대해 자세히 알아보겠습니다.
+React 컴포넌트의 핵심을 학습했습니다! 이제 재사용 가능한 UI 조각들을 만들고 조합할 수 있습니다. <br/>
+
+다음에는 React의 State, 상태에 대해 알아보겠습니다.
 </CalloutBox>

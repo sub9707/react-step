@@ -1,11 +1,11 @@
 export const metadata = {
-  id: 4,
-  title: "컴포넌트",
-  description: "React의 핵심인 컴포넌트가 무엇인지, 어떻게 만들고 사용하는지 벽돌틀 비유로 쉽게 알아봅시다.",
+  id: 9,
+  title: "JSX와 기본 문법",
+  description: "React가 화면을 구성하는 기본 단위인 JSX와 그와 관련된 기본 문법을 알아봅니다.",
   difficulty: "쉬움",
-  tags: ["React", "컴포넌트", "JSX", "props", "입문", "기초"],
-  lastUpdated: "2025-07-27",
-  image: "/content/beginner/4/4_thumb.png"
+  tags: ["React", "JSX", "className", "React Fragment", "이벤트", "입문"],
+  lastUpdated: "2025-08-15",
+  image: "/content/beginner/4/lesson-4-bg.png"
 };
 
 import { 
@@ -18,667 +18,674 @@ import {
   Image
 } from '@/components/CourseContent/EmbeddedComponents'
 
-
-<br/>
-<ComparisonImages
-  leftImage={{
-    src: "/content/beginner/4/brick-mold.png",
-    alt: "벽돌틀",
-  }}
-  rightImage={{
-    src: "/content/beginner/4/brick-house.png",
-    alt: "벽돌로 집 짓기",
-  }}
-  height={'lg'}
-/>
-<br/>
-기계를 쓰는 요즘과 달리 과거에는 벽돌 하나를 찍어내기 위해 벽돌틀을 사용했습니다.
-
-똑같은 모양의 벽돌을 만들기 위해 틀을 사용해 같은 모양의 여러 색상, 재질의 벽돌을 찍어냈죠.
-
-이 벽돌들을 조합해서 집 전체를 만들어갑니다.
-
-React의 컴포넌트도 마찬가지입니다.
-
-<HighlightWord>여러번 재사용하며 UI를 그려낼 수 있는 코드들의 집합</HighlightWord>을 컴포넌트라고 부릅니다.
-
----
-
-## 컴포넌트란? 재사용 가능한 UI 벽돌틀
-<br/>
 <Image
-  src="/content/beginner/4/component-example.png"
-  alt="컴포넌트 개념 설명"
-  width="full"
-  caption="컴포넌트는 UI를 만드는 재사용 가능한 조각들입니다. 헤더나 갤러리 또한 재사용이 가능합니다."
+  src="/content/beginner/4/JSX.png"
+  alt="JSX 예시"
+  width="half"
 />
 <br/>
-React에서 <HighlightWord>컴포넌트(Component)</HighlightWord>는 UI를 구성하는 독립적이고 재사용 가능한 코드 조각입니다.
+React를 배우다 보면 <HighlightWord>JSX</HighlightWord>라는 용어를 자주 접하게 됩니다.
 
-벽돌틀이 벽돌을 찍어내는 것처럼, 컴포넌트는 동일한 UI 요소를 반복해서 만들어낼 수 있는 "UI 틀"입니다.
-<br/>
----
-### 컴포넌트의 특징
+JSX는 React의 가장 기본적이면서도 중요한 개념 중 하나입니다.
 
-- **재사용성**: 한 번 만들면 여러 곳에서 사용 가능
-- **독립성**: 각각이 독립적으로 동작
-- **조합성**: 작은 컴포넌트들을 조합해 큰 UI 구성
-
-<br/>
-
-집을 짓는 과정을 생각해보세요:
-1. 벽돌틀로 벽돌을 만들고
-2. 벽돌들로 벽을 쌓고
-3. 벽들로 방을 만들고
-4. 방들로 집을 완성합니다
-
-React도 마찬가지입니다:
-1. 작은 컴포넌트를 만들고
-2. 컴포넌트들로 섹션을 만들고
-3. 섹션들로 페이지를 만들고
-4. 페이지들로 웹사이트를 완성합니다
+HTML과 JavaScript를 하나로 합쳐놓은 것 같은 이 문법이 처음에는 어색할 수 있지만, 한번 익숙해지면 매우 직관적이고 편리합니다.
 
 ---
 
-## 컴포넌트 만들어보기
+## JSX란 무엇인가요?
 
-### 가장 간단한 컴포넌트
+<HighlightWord>JSX(JavaScript XML)</HighlightWord>는 JavaScript 코드 안에서 HTML과 비슷한 마크업을 작성할 수 있게 해주는 문법 확장입니다.
 
-React 컴포넌트는 <HighlightWord>JSX를 반환하는 JavaScript 함수</HighlightWord>입니다.
+일반적인 HTML과 거의 똑같이 생겼지만, JavaScript의 모든 기능을 함께 사용할 수 있습니다.
 
-<CodeSandbox
-  code={`
-function Welcome() {
-  return <h1>안녕하세요!</h1>;
-}
+```jsx
+// JSX 예시
+const element = <h1>안녕하세요, React!</h1>;
 
-// 이 컴포넌트를 사용하는 App
-function App() {
-  return (
-    <div>
-      <Welcome />
-      <Welcome />
-      <Welcome />
-    </div>
-  );
-}`}
-  title="첫 번째 컴포넌트 만들기"
-  language="jsx"
-/>
+// 일반 JavaScript로 같은 결과를 만들려면
+const element = React.createElement('h1', null, '안녕하세요, React!');
+```
 
-Welcome이라는 Javascript 함수는 return문에서 JSX를 반환합니다.
+위의 두 코드는 완전히 같은 결과를 만들어냅니다. 
 
-이것이 React의 컴포넌트가 되고,
+JSX가 얼마나 간편한지 알 수 있죠?
 
-이를 똑같이 반복하여 호출하여 출력할 수 있습니다. 재사용한 것이죠.
+<CalloutBox type="info" title="JSX의 특징">
+**HTML과 비슷함**: 기존에 HTML을 알고 있다면 쉽게 익힐 수 있습니다
 
-<CalloutBox type="info" title="컴포넌트 규칙">
-**이름은 대문자로 시작할 것**: `Welcome`, `Button`, `Header` (소문자는 HTML 태그로 인식)
+**JavaScript 통합**: 중괄호 {}를 사용해 HTML 내부에서 JavaScript 표현식을 바로 사용할 수 있습니다
 
-JSX를 반환할 것: return 문에서 JSX를 반환해야 함
-
-숫자로 시작 금지: 1Button ❌, Button1 ✅
-
-특수문자 사용 금지: Button!, My-Button ❌, MyButton ✅
-
-예약어 피하기: class, function, if 등은 컴포넌트 이름으로 사용 불가
+**컴포넌트 친화적**: React 컴포넌트를 마치 HTML 태그처럼 사용할 수 있습니다
 </CalloutBox>
 
-### 자주 재사용하는 버튼 컴포넌트
-
-```js
-function Button({ type = 'confirm', onClick, children }) {
- return (
-   <button onClick={onClick}>
-     {children}
-   </button>
- );
-}
-
-function App() {
- return (
-   <div>
-   {/* type과 onClick 이벤트 함수를 prop으로 Button 컴포넌트에 넘겨주어 어떤 스타일과 형태를 띌지 결정합니다. */}
-     <Button type="confirm" onClick={() => alert('확인!')}>
-       확인
-     </Button>
-     
-     <Button type="cancel" onClick={() => alert('취소!')}>
-       취소
-     </Button>
-   </div>
- );
-}
-```
-
-<CodeSandbox
-  code={`
-function Button({ type = 'confirm', onClick, children }) {
- return (
-   <button 
-     style={{
-       backgroundColor: type === 'confirm' ? '#10b981' : '#6b7280',
-       color: 'white',
-       padding: '12px 24px',
-       border: 'none',
-       borderRadius: '8px',
-       fontSize: '16px',
-       cursor: 'pointer',
-       margin: '0 8px'
-     }}
-     onClick={onClick}
-   >
-     {children}
-   </button>
- );
-}
-
-function App() {
- return (
-   <div style={{ padding: '20px' }}>
-
-   {/* type과 onClick 이벤트 함수를 prop으로 Button 컴포넌트에 넘겨주어 어떤 스타일과 형태를 띌지 결정합니다. */}
-
-     <Button 
-       type="confirm" 
-       onClick={() => alert('확인!')}
-     >
-       확인
-     </Button>
-     
-     <Button 
-       type="cancel" 
-       onClick={() => alert('취소!')}
-     >
-       취소
-     </Button>
-   </div>
- );
-}`}
-  title="재사용 가능한 버튼 컴포넌트"
-  language="jsx"
-  hideCode={true}
-/>
-
 ---
 
-## Props: 컴포넌트에 정보 전달하기
-<br/>
-<Image
-  src="/content/beginner/4/props-component.png"
-  alt="컴포넌트 Props 전달"
-  width="two-thirds"
-  caption="React에서 데이터는 단방향으로 흐르기에 부모 컴포넌트 -> 자식 컴포넌트로 데이터를 넘겨줄 수 있습니다."
-/>
-<br/>
-벽돌틀에 다른 재료를 넣으면 다른 색깔의 벽돌이 나오는 것처럼, 컴포넌트에도 다른 정보를 전달할 수 있습니다.
+## JSX 기본 문법
 
-이것을 <HighlightWord>Props(Properties)</HighlightWord>라고 합니다.
+### 1. JavaScript 표현식 삽입
 
-Props는 부모 컴포넌트가 자식 컴포넌트로 전달하는 <HighlightWord>읽기 전용 데이터</HighlightWord>에 가깝습니다.
+JSX에서는 중괄호 `{}`를 사용해서 JavaScript 표현식을 삽입할 수 있습니다.
 
-자식 컴포넌트에서는 부모로부터 받은 props 데이터를 읽어서 활용하는 데에 그치죠.
+```jsx
+function App() {
+  const name = '김리액트';
+  const age = 25;
+  const isStudent = true;
 
-자식 컴포넌트에서 이 값을 수정하려거나 조작하려면 React의 데이터 단방향 흐름을 바꾸는 다른 방법들을 사용해야합니다. 
-
-이 방법은 이후 뒷회차에서 차근히 살펴보도록 하겠습니다.
-
-Props로 넘길 때는 객체 전체를 spread하여 ```<Button {...data}/> ```의 형태로 객체 자체를 넘길수도 있고,
-
-각각의 값을 명시적으로 ``` <Button text={"Hello"} color={"red"} /> ```처럼 전달할 수도 있습니다.
-<br/>
-
-```js
-{/* Props를 받는 컴포넌트 */}
-function Greeting(props) {
-  return <h2>안녕하세요, {props.name}님!</h2>;
-}
-
-{/* 구조분해할당으로 더 깔끔하게 Prop들을 컴포넌트 내에서 사용할 수 있습니다 */}
-function UserCard({ name, age, hobby }) {
   return (
     <div>
-      <h3>{name}</h3>
+      <h1>안녕하세요, {name}님!</h1>
       <p>나이: {age}세</p>
-      <p>취미: {hobby}</p>
+      <p>학생 여부: {isStudent ? '학생입니다' : '학생이 아닙니다'}</p>
+      <p>내년 나이: {age + 1}세</p>
     </div>
   );
 }
+```
 
+중괄호 안에는 다음과 같은 것들을 넣을 수 있습니다:
+- 변수: `{name}`
+- 함수 호출: `{getName()}`
+- 계산식: `{age + 1}`
+- 삼항 연산자: `{isStudent ? '학생' : '일반인'}`
+- 배열 메서드: `{items.map(...)}`
+
+보통의 Javascript + HTML 방식과 비교했을 때, 더 편리하고 직관적이지 않나요?
+
+### 2. 속성(Attributes) 설정
+
+HTML에서는 태그 내부에 속성을 추가하여 추가 정보를 부여할 수 있었습니다.
+
+JSX에서도 비슷하게 속성을 설정할 수 있습니다.
+
+HTML 속성과 비슷하지만 몇 가지 차이점이 있습니다.
+
+```jsx
 function App() {
+  const imageUrl = 'https://via.placeholder.com/150';
+  const altText = '예시 이미지';
+
   return (
     <div>
-      <Greeting name="철수" />
-      <Greeting name="영희" />
+      {/* 문자열 속성: 값 부분에 문자열을 부여 */}
+      <img src={imageUrl} alt={altText} />
       
-      <UserCard name="김철수" age={25} hobby="게임" />
-      <UserCard name="이영희" age={30} hobby="독서" />
-      <UserCard name="박민수" age={28} hobby="요리" />
-    </div>
-  );
-}
-```
-<CodeSandbox
-  code={`
-  {/* Props를 받는 컴포넌트 */}
-function Greeting(props) {
-  return <h2>안녕하세요, {props.name}님!</h2>;
-}
-
-{/* 구조분해할당으로 더 깔끔하게 Prop들을 컴포넌트 내에서 사용할 수 있습니다 */}
-function UserCard({ name, age, hobby }) {
-  return (
-    <div style={{
-      border: '2px solid #e5e7eb',
-      borderRadius: '12px',
-      padding: '20px',
-      margin: '10px',
-      backgroundColor: '#f9fafb'
-    }}>
-      <h3>{name}</h3>
-      <p>나이: {age}세</p>
-      <p>취미: {hobby}</p>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <div>
-      <Greeting name="철수" />
-      <Greeting name="영희" />
+      {/* 동적 속성 */}
+      <input 
+        type="text" 
+        placeholder="이름을 입력하세요"
+        className="input-field"
+        disabled={false}
+      />
       
-      <UserCard name="김철수" age={25} hobby="게임" />
-      <UserCard name="이영희" age={30} hobby="독서" />
-      <UserCard name="박민수" age={28} hobby="요리" />
-    </div>
-  );
-}`}
-  title="Props로 데이터 전달하기"
-  language="jsx"
-  hideCode={true}
-/>
-
-<br/>
----
-
-## 컴포넌트 합성: 벽돌이 벽으로, 벽이 건물로
-<br/>
-작은 컴포넌트들을 조합해서 더 큰 컴포넌트를 만드는 것을 <HighlightWord>컴포넌트 합성(Component Composition)</HighlightWord>이라고 합니다.
-
-React 앱에는 컴포넌트가 큰 컴포넌트를 이루고, 큰 컴포넌트들이 페이지를 이루어 애플리케이션을 완성합니다.
-```js
-{/* 작은 컴포넌트들 - 이 3개의 컴포넌트를 조합해 UserCard라는 큰 컴포넌트를 구성합니다. */}
-function Avatar({ src, name }) {
- return (
-   <img 
-     src={src} 
-     alt={name}
-   />
- );
-}
-
-function UserName({ name }) {
- return <h3>{name}</h3>;
-}
-
-function UserEmail({ email }) {
- return <p>{email}</p>;
-}
-
-// 큰 컴포넌트: 작은 컴포넌트들을 조합
-function UserCard({ user }) {
- return (
-   <div>
-     <Avatar src={user.avatar} name={user.name} />
-     <div>
-       <UserName name={user.name} />
-       <UserEmail email={user.email} />
-     </div>
-   </div>
- );
-}
-
-function App() {
- const user = {
-   name: '김철수',
-   email: 'kim@example.com',
-   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
- };
-
- return (
-   <div>
-     <UserCard user={user} />
-   </div>
- );
-```
-<CodeSandbox
-  code={`
-function Avatar({ src, name }) {
- return (
-   <img 
-     src={src} 
-     alt={name}
-     style={{
-       width: '50px',
-       height: '50px',
-       borderRadius: '50%'
-     }}
-   />
- );
-}
-
-function UserName({ name }) {
- return <h3 style={{ margin: '0 0 5px 0' }}>{name}</h3>;
-}
-
-function UserEmail({ email }) {
- return <p style={{ margin: 0, color: '#666' }}>{email}</p>;
-}
-
-function UserCard({ user }) {
- return (
-   <div style={{
-     display: 'flex',
-     alignItems: 'center',
-     gap: '15px',
-     padding: '20px',
-     border: '1px solid #ddd',
-     borderRadius: '8px'
-   }}>
-     <Avatar src={user.avatar} name={user.name} />
-     <div>
-       <UserName name={user.name} />
-       <UserEmail email={user.email} />
-     </div>
-   </div>
- );
-}
-
-function App() {
- const user = {
-   name: '김철수',
-   email: 'kim@example.com',
-   avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face'
- };
-
- return (
-   <div style={{ padding: '20px' }}>
-     <UserCard user={user} />
-   </div>
- );
-}`}
-  title="컴포넌트 합성 예제 - 프로필 카드"
-  language="jsx"
-  hideCode={true}
-/>
-
-<Image
-  src="/content/beginner/4/component-tree.png"
-  alt="컴포넌트 계층 구조"
-  width="two-thirds"
-  caption="작은 컴포넌트들이 모여 큰 컴포넌트를 만드는 계층 구조"
-/>
-
----
-
-## 조건부 렌더링: 상황에 따라 다른 벽돌 선택하기
-
-때로는 상황에 따라 다른 UI를 보여줘야 합니다. 이를 <HighlightWord>조건부 렌더링</HighlightWord>이라고 합니다.
-
-<CodeSandbox
-  code={`
-function Status({ isOnline }) {
- return (
-   <div style={{ padding: '20px', textAlign: 'center' }}>
-     {isOnline ? (
-       <div style={{ color: 'green' }}>
-         <h2>🟢 온라인</h2>
-         <p>사용자가 접속 중입니다</p>
-       </div>
-     ) : (
-       <div style={{ color: 'red' }}>
-         <h2>🔴 오프라인</h2>
-         <p>사용자가 접속하지 않았습니다</p>
-       </div>
-     )}
-   </div>
- );
-}
-
-function App() {
- return (
-   <div>
-     <Status isOnline={true} />
-     <Status isOnline={false} />
-   </div>
- );
-}`}
-  title="조건부 렌더링 예제"
-  language="jsx"
-/>
-위의 예제에서는 같은 컴포넌트를 재사용하지만 조건에 따라 다른 UI를 보여줍니다.
-
-때에 아래처럼 따라서는 변수나, state에 따라 컴포넌트 자체를 조건부 렌더링할 수도 있습니다.
-```js
-    {
-        isOnline ?? <Status />
-    }
-```
-<br/>
----
-
-## 리스트 렌더링: 벽돌을 줄지어 배치하기
-
-같은 형태의 컴포넌트를 여러 개 반복해서 렌더링할 때는 <HighlightWord>리스트 렌더링</HighlightWord>을 사용합니다.
-
-<CodeSandbox
-  code={`
-function TodoItem({ todo }) {
-    return (
-    <div style={{
-        padding: '10px',
-        margin: '5px 0',
-        backgroundColor: '#f0f0f0',
-        borderRadius: '5px'
-    }}>
-        {todo}
-    </div>
-    );
-    }
-
-function App() {
-    const todos = [
-    'React 공부하기',
-    '컴포넌트 만들기',
-    '프로젝트 완성하기'
-    ];
-
-    return (
-    <div style={{ padding: '20px' }}>
-        <h2>할 일 목록</h2>
-        {todos.map((todo, index) => (
-        <TodoItem key={index} todo={todo} />
-        ))}
-    </div>
-    );
-}`}
-  title="리스트 렌더링 예제"
-  language="jsx"
-/>
-
-주로 list를 다룰 때 순회하는 map을 사용하여 컴포넌트를 반복 렌더링합니다.
-
-반복 렌더링을 할 때는 key prop을 자식 컴포넌트에 선언하지 않아도 속성과 같이 부여할 수 있습니다.
-
-반복 렌더링된 컴포넌트는 key를 부여해야 서로 독립적인 컴포넌트로 동작할 수 있습니다.
-
-<CalloutBox type="warning" title="Key Prop 주의사항">
-**key prop은 필수**: 리스트를 렌더링할 때는 각 아이템에 고유한 `key` prop을 제공해야 합니다.
-
-**고유값 사용**: 보통 데이터의 `id` 값을 사용하며, 배열의 인덱스는 가급적 피해주세요.
-중복되거나 방해되는 값이 발생하면 오류가 발생합니다.
-
-**성능 최적화**: React가 어떤 아이템이 변경되었는지 key값을 통해서 효율적으로 파악할 수 있게 해줍니다.
-</CalloutBox>
-<br/>
----
-<br/>
-## 컴포넌트 설계 원칙
-
-좋은 컴포넌트를 만들기 위한 원칙들을 알아봅시다.
-<br/>
-### 1. 단일 책임 원칙
-
-각 컴포넌트는 하나의 명확한 역할을 가져야 합니다.
-
-```js
-// 권장하지 않는 설계 예시 - 너무 많은 역할을 하는 하나의 컴포넌트
-const BadComponent = () => {
-  const [name, setName] = useState('김개발');
-  const [email, setEmail] = useState('kim@example.com');
-  const [posts, setPosts] = useState(['글1', '글2']);
-  const [theme, setTheme] = useState('light');
-
-  return (
-    <div className={theme === 'dark' ? 'bg-gray-800 text-white p-4' : 'bg-white p-4'}>
-      <button onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
-        테마 변경
-      </button>
-      <h2>{name}</h2>
-      <p>{email}</p>
-      <input value={name} onChange={(e) => setName(e.target.value)} />
-      <div>
-        {posts.map((post, i) => <div key={i}>{post}</div>)}
+      {/* 인라인 스타일 (객체 형태) */}
+      <div style={{
+        color: 'blue',
+        fontSize: '16px',
+        backgroundColor: 'lightgray'
+      }}>
+        스타일이 적용된 div
       </div>
     </div>
   );
-};
+}
 ```
-<br/>
-하나의 컴포넌트에 너무 많은 기능과 역할을 부여하면 어떻게 될까요?
 
-나중에 유지보수할 때 특정 기능을 수정하게 되면, 
+<CalloutBox type="warning" title="HTML과 다른 속성들">
+**className**: HTML의 `class` 대신 `className`을 사용합니다
 
-이 컴포넌트를 재사용하는 다른 페이지나 컴포넌트에서 예상치 못한 문제가 발생할 수 있습니다.
-<br/>
-벽돌을 하나하나 쌓는 대신 귀찮다고 여러 벽돌을 통째로 뭉쳐서 큰 덩어리로 만들었다고 가정해봅시다. 
+**htmlFor**: HTML의 `for` 대신 `htmlFor`를 사용합니다 (label 태그에서)
 
-이 벽 덩어리를 거실에 설치하고, 나중에 화장실에도 똑같은 벽을 재사용했습니다.
+**style**: 문자열이 아닌 객체 형태로 전달합니다
 
-그런데 거실을 리모델링한다고 미지의 힘으로 거실에 맞게 벽을 수정해버리면 어떻게 될까요?
+**camelCase**: onClick, onSubmit 등 이벤트 핸들러는 카멜케이스로 작성합니다
+</CalloutBox>
 
-화장실의 벽도 동시에 바뀌어버려서 대참사가 일어나겠죠?
-<br/>
-컴포넌트도 마찬가지입니다. 
+### 3. 자식 요소들
 
-너무 많은 기능을 하나에 몰아넣으면 한 곳을 고쳤을 때 다른 곳에서 문제가 생길 수 있어요.
+JSX에서는 중첩된 요소들을 HTML처럼 자연스럽게 작성할 수 있습니다.
 
-좋은 설계 예시를 살펴볼게요.
-<br/>
-```js
- // 권장 설계 예시 - 각각이 명확한 역할을 가진 컴포넌트들
-  // 1. 사용자 정보
-const UserCard = ({ name, email, onNameChange }) => (
-  <div className="border p-2">
-    <h2>{name}</h2>
-    <p>{email}</p>
-    <input value={name} onChange={(e) => onNameChange(e.target.value)} />
-  </div>
-);
-
-// 2. 게시글
-const Posts = ({ posts }) => (
-  <div>
-    {posts.map((post, i) => <div key={i} className="border p-1">{post}</div>)}
-  </div>
-);
-
-// 3. 테마 버튼
-const ThemeButton = ({ theme, onToggle }) => (
-  <button onClick={onToggle} className="bg-blue-500 text-white px-2 py-1">
-    {theme === 'light' ? '다크' : '라이트'}
-  </button>
-);
-
-// 4. 위의 모든 컴포넌트 조합
-const GoodComponent = () => {
-  const [name, setName] = useState('김개발');
-  const [posts] = useState(['글1', '글2']);
-  const [theme, setTheme] = useState('light');
-
-  return (
-    <div className={theme === 'dark' ? 'bg-gray-800 text-white p-4' : 'bg-white p-4'}>
-      <ThemeButton theme={theme} onToggle={() => setTheme(theme === 'light' ? 'dark' : 'light')} />
-      <UserCard name={name} email="kim@example.com" onNameChange={setName} />
-      <Posts posts={posts} />
-    </div>
-  );
-};
-```
-<br/>
-이렇게 설계해놓으면 수정이 필요한 부분만 따로 수정이 가능하니까,
-
-나중을 생각했을 때 많이 편리하겠죠?
-
-<br/>
-
-### 2. Props는 최소한으로
-
-너무 많은 props를 받는 컴포넌트는 복잡해집니다.
+중괄호 안에 JavaScript를 넣어 표현식을 바로 사용할 수 있는 JSX의 특징이자 장점이죠.
 
 ```jsx
-// ❌ 너무 많은 props
-function UserProfile({ 
-  name, age, email, phone, address, company, 
-  role, department, salary, hireDate, manager 
-}) {
-  // ...
+function App() {
+  const todos = ['React 공부하기', 'JSX 익히기', '프로젝트 만들기'];
+
+  return (
+    <div className="container">
+      <header>
+        <h1>할 일 목록</h1>
+      </header>
+      
+      <main>
+        <ul>
+          {todos.map((todo, index) => (
+            <li key={index}>{todo}</li>
+          ))}
+        </ul>
+      </main>
+      
+      <footer>
+        <p>총 {todos.length}개의 할 일</p>
+      </footer>
+    </div>
+  );
+}
+```
+
+---
+
+## JSX 작성 규칙
+
+### 1. 하나의 최상위 요소
+
+JSX에서는 여러 요소를 반환할 때 반드시 하나의 부모 요소로 감싸야 합니다.
+
+이 때, React에서 제공하는 <HighlightWord>React Fragment</HighlightWord>를 사용하거나, 일반적인 HTML 태그로 감쌀 수 있습니다.
+
+빈 태그 `<>...</>`로 간단하게 사용하거나 ```<React.Fragment>```로 명시적으로 사용할 수 있습니다.
+
+```jsx
+// ❌ 잘못된 예시 - 에러 발생
+function App() {
+  return (
+    <h1>제목</h1>
+    <p>내용</p>
+  );
 }
 
-// ✅ 객체로 그룹화
-function UserProfile({ personalInfo, workInfo }) {
-  // 컴포넌트 내부에서 구조분해할당 활용
-  const { name, age, email } = personalInfo;
-  const { company, role, department } = workInfo;
-  
+// ✅ 올바른 예시 1 - div로 감싸기
+function App() {
   return (
     <div>
-      <h2>{name} ({age}세)</h2>
-      <p>이메일: {email}</p>
-      <p>회사: {company}</p>
-      <p>직책: {role}</p>
+      <h1>제목</h1>
+      <p>내용</p>
     </div>
   );
 }
 
-// 사용할 때는 spread 연산자로 간편하게
+// ✅ 올바른 예시 2 - React Fragment 사용
 function App() {
-  const userData = {
-    personalInfo: { name: '김철수', age: 30, email: 'kim@example.com' },
-    workInfo: { company: '테크회사', role: '개발자', department: 'IT팀' }
-  };
+  return (
+    <>
+      <h1>제목</h1>
+      <p>내용</p>
+    </>
+  );
+}
 
-  return <UserProfile {...userData} />;
+// ✅ 올바른 예시 3 - React.Fragment 명시적 사용
+function App() {
+  return (
+    <React.Fragment>
+      <h1>제목</h1>
+      <p>내용</p>
+    </React.Fragment>
+  );
 }
 ```
+
+<HighlightWord>React Fragment(`<>...</>`)</HighlightWord>는 불필요한 div 래퍼 없이 여러 요소를 그룹화할 수 있게 해줍니다. 실제 DOM에는 추가 요소가 생성되지 않습니다.
+
+### 2. 태그는 반드시 닫아주기
+
+HTML에서는 일부 태그를 닫지 않아도 되지만, JSX에서는 모든 태그를 반드시 닫아야 합니다.
+
+```jsx
+// ✅ 올바른 예시
+function App() {
+  return (
+    <div>
+      <img src="image.jpg" alt="이미지" />
+      <input type="text" />
+      <br />
+      <hr />
+    </div>
+  );
+}
+```
+
+---
+
+## 조건부 렌더링
+
+JSX에서는 JavaScript의 조건문을 활용해 상황에 따라 다른 UI를 보여줄 수 있습니다.
+
+### 1. 삼항 연산자 사용
+
+Javascript를 포함해 여러 프로그래밍 언어에서 자주 사용되는 삼항 연산자를 활용할 수 있습니다.
+
+삼항 연산자란, 조건에 따라 두 가지 값을 선택하는 간단한 방법입니다.
+
+```조건식 ? 참일 때의 값 : 거짓일 때의 값``` 와 같은 형태로 조건식에 대한 분기를 작성할 수 있습니다.
+
 <br/>
-객체를 spread 연산자를 통해 직접 전달할 수 있습니다.
 
-보기에도 간결하고 다른 컴포넌트에 전달할 때도 간단하게 전달할 수 있겠네요.
+아래 예시는 로그인 된 상태 ``` isLoggedIn = true ```일 때 사용자 이름을 보여주고, 로그인 되지 않은 상태일 때는 로그인 요청 메시지를 보여주는 예시입니다.
 
-또한 객체를 전달받은 자식 컴포넌트에서 구조분해할당을 활용해 사용할 때 편하고 가시성있게 설계를 할 수 있습니다.
+또한 user의 레벨에 따라 다른 메시지를 보여줍니다.
+
+```jsx
+function App() {
+  const isLoggedIn = true;
+  const user = { name: '김리액트', level: 'beginner' };
+
+  return ( 
+    <div>
+      <h1>
+        {isLoggedIn ? `안녕하세요, ${user.name}님!` : '로그인해주세요'}
+      </h1>
+      
+      <div>
+        {user.level === 'beginner' ? (
+          <p>🌱 React 초보자이시군요!</p>
+        ) : (
+          <p>🚀 React 고수이시네요!</p>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+### 2. 논리 AND 연산자 사용
+
+논리 연산자 `&&`를 사용해서 조건이 참일 때만 특정 요소를 렌더링할 수 있습니다.
+
+앞의 식이 참인 경우, 뒤의 식을 렌더링합니다.
+
+```jsx
+function App() {
+  const showWelcome = true;
+  const notifications = ['새 메시지', '친구 요청'];
+
+  return (
+    <div>
+      {showWelcome && <h1>환영합니다!</h1>}
+      
+      {notifications.length > 0 && (
+        <div>
+          <h3>알림 ({notifications.length}개)</h3>
+          <ul>
+            {notifications.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+하지만 주의할 점이 있습니다.
+
+가령, ``` {items.length && <p>{items.length}개의 아이템</p>} ``` 과 같은 표현식이 있다고 가정해봅시다.
+
+이 경우, items의 길이가 0일 때는 출력하지 않도록 설계한 것이지만, <HighlightWord>실제로는 0이 렌더링</HighlightWord>되는 현상이 발생합니다.
+
+따라서, ``` {items.length > 0 && <p>{items.length}개의 아이템</p>} ```와 같이 조건을 명시적으로 작성하는 것이 좋습니다.
+
 <br/>
-### 3. 컴포넌트는 작게, 조합은 크게
 
-<CalloutBox type="success" title="컴포넌트 설계 팁">
-**작은 벽돌**: 각 컴포넌트는 작고 집중된 기능을 가지세요
+또한 <HighlightWord>boolean 값은 직접적으로 렌더링되지 않습니다.</HighlightWord>
 
-**큰 건물**: 작은 컴포넌트들을 조합해서 점점 큰 기능을 만드세요
+```true```, ```false```, ```null```, ```undefined``` 값은 JSX에서 렌더링되지 않으므로, 조건부 렌더링을 할 때는 주의해야 합니다.
 
-**재사용성**: 다른 곳에서도 쓸 수 있도록 유연하게 컴포넌트를 작성하세요
+하지만 0은 제외이므로 유의합시다.
 
- **명확한 이름**: 컴포넌트 이름만 딱 봐도 역할을 알 수 있게끔 작명하세요
+<br/>
+
+### 3. 함수를 사용한 복잡한 조건부 렌더링
+
+javascript 함수를 활용해 조건부 렌더링을 처리할 수 있습니다.
+
+함수 내에서 return 문을 사용해 조건에 따라 다른 JSX를 반환할 수 있습니다.
+
+이 함수를 JSX 내에서 호출하면 return된 JSX가 렌더링됩니다.
+
+```jsx
+function App() {
+  const user = {
+    name: '김리액트',
+    role: 'admin',
+    isActive: true
+  };
+
+  const renderUserStatus = () => {
+    if (!user.isActive) {
+      return <span style={{ color: 'red' }}>🚫 비활성화된 사용자</span>;
+    }
+    
+    if (user.role === 'admin') {
+      return <span style={{ color: 'purple' }}>👑 관리자</span>;
+    }
+    
+    return <span style={{ color: 'green' }}>👤 일반 사용자</span>;
+  };
+
+  return (
+    <div>
+      <h1>{user.name}</h1>
+      {renderUserStatus()}
+    </div>
+  );
+}
+```
+
+---
+
+## 리스트 렌더링
+
+배열 데이터를 JSX로 렌더링하는 방법을 알아보겠습니다.
+
+배열을 map 메서드로써 반복 렌더링할 때, 주의할 점은 각 아이템에 고유한 `key` 속성을 부여하는 것입니다.
+
+이 `key`는 React가 어떤 아이템이 변경되었는지, 추가되었는지, 삭제되었는지를 효율적으로 파악할 수 있게 도와줍니다.
+
+따라서 `key`를 부여하지 않는다면 성능에 영향을 줄 수 있으며 경고 오류를 출력합니다.
+
+
+<Image
+  src="/content/beginner/4/key-error.png"
+  alt="key 오류 예시"
+  width="two-thirds"
+  caption="key 속성이 없는 리스트 렌더링 시 에러 발생"
+/>
+
+<br/>
+
+map으로 반복 렌더링을 할 때는 반드시 최상단 요소에 `key` 속성을 추가합시다.
+
+`key` 속성은 고유한 값을 사용해야 하며, <HighlightWord>일반적으로 데이터만 가지고 있는 고유 ID</HighlightWord>를 사용합니다.
+
+또는 배열의 인덱스를 사용할 수도 있지만, <HighlightWord>데이터가 변경될 가능성이 있는 경우에는 권장하지 않습니다</HighlightWord>.
+
+```jsx
+function App() {
+  const fruits = [
+    { id: 1, name: '사과', color: 'red', price: 1000 },
+    { id: 2, name: '바나나', color: 'yellow', price: 500 },
+    { id: 3, name: '포도', color: 'purple', price: 2000 }
+  ];
+
+  return (
+    <div>
+      <h1>과일 목록</h1>
+      
+      {/* 기본 리스트 렌더링 */}
+      <ul>
+        {fruits.map(fruit => (
+          <li key={fruit.id}>
+            {fruit.name} - {fruit.price}원
+          </li>
+        ))}
+      </ul>
+
+      {/* 더 복잡한 리스트 렌더링 */}
+      <div>
+        {fruits.map(fruit => (
+          <div key={fruit.id}>
+            <h3 style={{ color: fruit.color }}>{fruit.name}</h3>
+            <p>색상: {fruit.color}</p>
+            <p>가격: {fruit.price.toLocaleString()}원</p>
+            <button>장바구니 담기</button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+```
+
+<CalloutBox type="warning" title="key 속성의 중요성">
+**고유한 값**: 각 리스트 아이템은 형제들 사이에서 고유한 key를 가져야 합니다
+
+**배열 인덱스 피하기**: 가능하면 배열 인덱스 대신 데이터의 고유 ID를 사용하세요
+
+**성능 최적화**: React가 어떤 아이템이 변경되었는지 효율적으로 파악할 수 있게 합니다
+
+```jsx
+// ❌ 권장하지 않음
+{items.map((item, index) => <li key={index}>{item}</li>)}
+
+// ✅ 권장
+{items.map(item => <li key={item.id}>{item.name}</li>)}
+```
+</CalloutBox>
+
+---
+
+## 이벤트 처리
+
+JSX에서는 HTML 이벤트와 비슷하지만 조금 다른 방식으로 이벤트를 처리합니다.
+
+우선 일반 javascript와 마찬가지로 이벤트 핸들러를 함수로 정의하고, JSX에서 해당 함수를 이벤트 속성에 할당합니다.
+
+
+```jsx
+function App() {
+  const handleClick = () => {
+    alert('버튼이 클릭되었습니다!');
+  };
+
+  const handleInputChange = (event) => {
+    console.log('입력값이 변경되었습니다: ', event.target.value);
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log('폼이 제출되었습니다!');
+  };
+
+  return (
+    <div>
+      {/* 클릭 이벤트 */}
+      <button onClick={handleClick}>
+        클릭하세요
+      </button>
+
+      {/* 인라인 함수 */}
+      <button onClick={() => alert('인라인 함수!')}>
+        인라인 클릭
+      </button>
+
+      {/* 매개변수가 있는 함수 */}
+      <button onClick={() => handleClick('매개변수')}>
+        매개변수 전달
+      </button>
+
+      {/* 입력 이벤트 */}
+      <input 
+        type="text" 
+        placeholder="입력해보세요"
+        onChange={handleInputChange}
+      />
+
+      {/* 폼 이벤트 */}
+      <form onSubmit={handleSubmit}>
+        <input type="text" placeholder="이름" />
+        <button type="submit">제출</button>
+      </form>
+    </div>
+  );
+}
+```
+
+### 일반적인 이벤트 핸들러들
+
+javascript에서는 `addEventListener`를 사용해 이벤트를 처리했지만, JSX에서는 이벤트 핸들러를 직접 속성으로 지정합니다.
+
+이 방식이 조금 더 직관적이고 React의 컴포넌트 기반 구조와 잘 어울립니다.
+
+한눈에 들어오니 이해가 더 잘 되지 않나요?
+
+```jsx
+function App() {
+  return (
+    <div>
+      <button onClick={() => console.log('클릭!')}>클릭</button>
+      
+      <input 
+        onFocus={() => console.log('포커스됨')}
+        onBlur={() => console.log('포커스 해제됨')}
+        onChange={(e) => console.log('값 변경:', e.target.value)}
+      />
+      
+      <div 
+        onMouseEnter={() => console.log('마우스 진입')}
+        onMouseLeave={() => console.log('마우스 이탈')}
+        style={{ padding: '20px', backgroundColor: 'lightblue' }}
+      >
+        마우스를 올려보세요
+      </div>
+      
+      <form onSubmit={(e) => { e.preventDefault(); console.log('폼 제출'); }}>
+        <button type="submit">제출</button>
+      </form>
+    </div>
+  );
+}
+```
+
+---
+
+## 스타일링
+
+JSX에서 스타일을 적용하는 여러 가지 방법을 알아보겠습니다.
+
+### 1. 인라인 스타일
+
+JSX 태그에 style 속성을 사용해 인라인 스타일을 적용할 수 있습니다.
+
+인라인 스타일은 객체 형태로 작성하며, CSS 속성 이름은 카멜케이스로 작성합니다.
+
+이 때, <HighlightWord>인라인 스타일로 지정한 스타일은 CSS 클래스보다 우선 적용</HighlightWord>됩니다.
+
+우선순위가 높게 잡힌다는 의미입니다.
+
+우선순위를 정리하면, ```외부 CSS``` < ```CSS 클래스``` < ```인라인 스타일``` < ```!important``` 순입니다.
+
+```jsx
+function App() {
+  const boxStyle = {
+    width: '200px',
+    height: '200px',
+    backgroundColor: 'lightblue',
+    border: '2px solid blue',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  };
+
+  return (
+    <div>
+      {/* 직접 객체 전달 */}
+      <div style={{ color: 'red', fontSize: '18px' }}>
+        빨간 텍스트
+      </div>
+
+      {/* 변수로 스타일 객체 전달 */}
+      <div style={boxStyle}>
+        스타일 박스
+      </div>
+
+      {/* 조건부 스타일 */}
+      <div style={{ 
+        color: true ? 'green' : 'red',
+        fontWeight: 'bold' 
+      }}>
+        조건부 스타일
+      </div>
+    </div>
+  );
+}
+```
+
+### 2. CSS 클래스 사용
+
+```jsx
+function App() {
+  const isActive = true;
+  const theme = 'dark';
+
+  return (
+    <div>
+      {/* 기본 클래스 */}
+      <div className="container">
+        컨테이너
+      </div>
+
+      {/* 조건부 클래스 */}
+      <div className={isActive ? 'active' : 'inactive'}>
+        상태에 따른 클래스
+      </div>
+
+      {/* 여러 클래스 조합 */}
+      <div className={`box ${theme} ${isActive ? 'active' : ''}`}>
+        여러 클래스
+      </div>
+    </div>
+  );
+}
+```
+
+---
+
+## 주석 작성하기
+
+JSX에서 주석을 작성하는 방법입니다.
+
+```jsx
+function App() {
+  return (
+    <div>
+      {/* JSX 주석은 이렇게 작성합니다 */}
+      <h1>제목</h1>
+      
+      {/* 
+        여러 줄 주석도 
+        이렇게 작성할 수 있습니다 
+      */}
+      <p>내용</p>
+      
+      {/* 조건부 렌더링에서도 주석 활용 */}
+      {true && (
+        <div>
+          {/* 이 부분은 true일 때만 렌더링됩니다 */}
+          <span>표시됨</span>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+---
+
+## JSX 사용 시 주의사항
+
+<CalloutBox type="warning" title="JSX 사용 시 주의점">
+**중괄호 안의 객체**: 객체를 직접 렌더링할 수 없음 - `{user}` ❌, `{user.name}` ✅
+
+**undefined와 null**: 이 값들은 렌더링되지 않음
+
+**boolean 값**: true/false도 렌더링되지 않음
+
+**함수 호출**: 함수 자체가 아닌 함수 호출 결과를 사용
+
+```jsx
+// ❌ 잘못된 예시들
+<div>{user}</div>  // 객체는 렌더링 불가
+<div>{true}</div>  // boolean은 렌더링되지 않음
+<div>{someFunction}</div>  // 함수 자체가 아닌 호출 결과를
+
+// ✅ 올바른 예시들
+<div>{user.name}</div>  // 객체의 속성
+<div>{true ? '참' : '거짓'}</div>  // 조건부 렌더링
+<div>{someFunction()}</div>  // 함수 호출 결과
+```
 </CalloutBox>
 
 ---
@@ -686,65 +693,73 @@ function App() {
 ## 복습 퀴즈
 
 <Quiz
- question="React 컴포넌트의 이름 규칙으로 올바른 것은?"
+ question="JSX에서 JavaScript 표현식을 삽입할 때 사용하는 기호는?"
  options={[
-   "소문자로 시작해야 한다 (button)",
-   "대문자로 시작해야 한다 (Button)",
-   "숫자로 시작해도 된다 (1Button)",
-   "특수문자를 포함해도 된다 (Button!)"
+   "소괄호 ()",
+   "중괄호 {}",
+   "대괄호 []",
+   "꺾쇠괄호 <>"
  ]}
  correctAnswer={1}
- explanation="React 컴포넌트 이름은 반드시 대문자로 시작해야 합니다. 소문자로 시작하면 HTML 태그로 인식됩니다."
+ explanation="JSX에서는 중괄호 {}를 사용해서 JavaScript 표현식을 삽입할 수 있습니다."
 />
 
 <Quiz
- question="props에 대한 설명으로 틀린 것은?"
+ question="JSX에서 HTML의 'class' 속성을 대신해서 사용하는 속성명은?"
  options={[
-   "부모 컴포넌트에서 자식 컴포넌트로 데이터를 전달하는 방법이다",
-   "props는 컴포넌트 내부에서 직접 수정할 수 있다",
-   "같은 컴포넌트에 다른 props를 전달해서 다른 UI를 만들 수 있다",
-   "구조분해할당을 사용해서 props를 받을 수 있다"
+   "class",
+   "className",
+   "cssClass",
+   "htmlClass"
  ]}
  correctAnswer={1}
- explanation="props는 읽기 전용(read-only)입니다. 컴포넌트 내부에서 props를 직접 수정할 수 없으며, 새로운 props를 전달받아야 UI가 변경됩니다."
+ explanation="JSX에서는 JavaScript의 예약어 'class'와 구분하기 위해 'className'을 사용합니다."
 />
 
 <Quiz
- question="리스트 렌더링에서 key prop이 필요한 이유는?"
+ question="JSX에서 여러 요소를 감싸지 않고 반환하려면 무엇을 사용해야 할까요?"
  options={[
-   "컴포넌트의 이름을 지정하기 위해",
-   "React가 어떤 아이템이 변경되었는지 효율적으로 파악하기 위해",
-   "컴포넌트에 스타일을 적용하기 위해",
-   "데이터베이스와 연결하기 위해"
+   "div 태그",
+   "span 태그",
+   "React Fragment (<> </>)",
+   "section 태그"
  ]}
- correctAnswer={1}
- explanation="key prop은 React가 가상 DOM을 효율적으로 업데이트하기 위해 필요합니다. 어떤 아이템이 추가, 수정, 삭제되었는지 빠르게 파악할 수 있게 해줍니다."
+ correctAnswer={2}
+ explanation="React Fragment(<> </>)를 사용하면 불필요한 DOM 요소 없이 여러 요소를 그룹화할 수 있습니다."
 />
 
 <Quiz
- question="컴포넌트 합성에 대한 설명으로 올바른 것은?"
+ question="다음 중 JSX에서 렌더링되지 않는 값은?"
  options={[
-   "하나의 컴포넌트에 모든 기능을 넣는 것",
-   "작은 컴포넌트들을 조합해서 더 큰 컴포넌트를 만드는 것",
-   "컴포넌트를 복사해서 사용하는 것",
-   "컴포넌트의 이름을 합치는 것"
+   "문자열",
+   "숫자",
+   "boolean (true/false)",
+   "배열"
  ]}
- correctAnswer={1}
- explanation="컴포넌트 합성은 작은, 재사용 가능한 컴포넌트들을 조합해서 더 복잡한 UI를 만드는 React의 핵심 패턴입니다."
+ correctAnswer={2}
+ explanation="JSX에서는 boolean 값(true/false), null, undefined는 렌더링되지 않습니다."
 />
 
 ---
 
-## 참고 사항
+## 참고 자료
 
 <LinkCard 
-  title="ReactJS Docs - React.Component 문서" 
-  url="https://ko.legacy.reactjs.org/docs/react-component.html" 
-  description="이 문서에서는 React 컴포넌트 class를 다루는 API들을 자세히 소개합니다. 해당 내용에 대해 더 자세히 학습해보세요." 
+  title="React 공식 문서 - JSX 소개" 
+  url="https://ko.react.dev/learn/writing-markup-with-jsx" 
+  description="React 공식 문서에서 JSX에 대해 더 자세히 알아보세요" 
 />
 
-<CalloutBox type="success" title="🎉 축하합니다!">
-React 컴포넌트의 핵심을 학습했습니다! 이제 재사용 가능한 UI 조각들을 만들고 조합할 수 있습니다. <br/>
+<LinkCard 
+  title="React 공식 문서 - 조건부 렌더링" 
+  url="https://ko.react.dev/learn/conditional-rendering" 
+  description="조건부 렌더링에 대한 더 자세한 내용과 고급 패턴들을 확인해보세요" 
+/>
 
-다음에는 컴포넌트가 어떻게 상태를 기억하고 변화하는지 알아보겠습니다.
+---
+
+<CalloutBox type="success" title="🎉 축하합니다!">
+JSX의 핵심 문법을 모두 학습했습니다! 이제 React에서 HTML과 JavaScript를 자유자재로 활용할 수 있습니다. 
+
+다음 강의에서는 React의 컴포넌트에 대해 배워보겠습니다.
 </CalloutBox>
