@@ -1,0 +1,1901 @@
+export const metadata = {
+  id: 10,
+  title: "React 스타일링",
+  description: "React에서 스타일을 적용하는 다양한 방법들을 배워보고, 각각의 장단점과 사용법을 익혀봅시다.",
+  difficulty: "쉬움",
+  tags: ["React", "CSS", "스타일링", "Tailwind", "styled-components", "SCSS", "CSS 모듈"],
+  lastUpdated: "2025-08-20",
+  image: "/content/beginner/10/lesson-10-bg.png"
+};
+
+import { 
+  CalloutBox, 
+  ComparisonImages, 
+  HighlightWord, 
+  Quiz, 
+  LinkCard,
+  Image
+} from '@/components/CourseContent/EmbeddedComponents'
+
+<Image
+  src="/content/beginner/10/styling-methods.png"
+  alt="React 스타일링 방법들"
+  width="full"
+/>
+
+React 개발을 하다 보면 컴포넌트에 스타일을 적용하는 것이 HTML/CSS와는 조금 다르다는 것을 느끼게 됩니다.
+
+React에서는 <HighlightWord>다양한 방법으로 스타일을 적용</HighlightWord>할 수 있으며, 각각의 방법마다 고유한 장단점이 있습니다.
+
+이번 강의에서는 React에서 스타일을 적용하는 주요 방법들을 배워보고, 언제 어떤 방법을 사용하는 것이 좋은지 알아보겠습니다.
+
+---
+
+## React에서 스타일링하는 방법들
+
+React에서 스타일을 적용하는 주요 방법들은 다음과 같습니다:
+
+1. **일반 CSS 파일 사용**
+2. **인라인 스타일**
+3. **CSS 모듈**
+4. **CSS-in-JS (styled-components)**
+5. **유틸리티 CSS (Tailwind CSS)**
+6. **CSS 전처리기 (SCSS/Sass)**
+
+각각의 방법을 자세히 살펴보겠습니다.
+
+---
+
+## 1. 일반 CSS 파일 사용
+
+가장 전통적이고 익숙한 방법입니다. CSS 파일을 컴포넌트별, 레이아웃 등 파일 별도로 만들고 React 컴포넌트에서 import해서 사용합니다.
+
+### 기본 사용법
+
+```css
+/* Button.css */
+.btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #2563eb;
+}
+
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+}
+```
+
+```jsx
+// Button.jsx
+import './Button.css'; // CSS 파일 import
+
+function Button({ variant = 'primary', children, onClick }) {
+  return (
+    <button 
+      className={`btn btn-${variant}`} // 클래스명과 조합으로 스타일 적용
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default Button;
+```
+
+```jsx
+// App.jsx
+import Button from './components/Button';
+
+function App() {
+  return (
+    <div>
+      <Button variant="primary">기본 버튼</Button>
+      <Button variant="secondary">보조 버튼</Button>
+    </div>
+  );
+}
+```
+
+<CalloutBox type="info" title="CSS 파일 import 특징">
+**전역 적용**: import한 CSS는 전체 애플리케이션에 적용됩니다
+
+**클래스명 중복 주의**: 다른 컴포넌트와 클래스명이 겹치지 않도록 주의해야 합니다
+
+**간단하고 익숙함**: 기존 CSS 지식을 그대로 활용할 수 있습니다
+</CalloutBox>
+
+---
+
+## 2. App.css와 전역 CSS 관리
+
+Create React App으로 프로젝트를 생성하면 기본적으로 여러 CSS 파일이 생성됩니다. 각 파일마다 명확한 역할과 목적이 있어 적절히 분리해서 관리하는 것이 중요합니다.
+
+### CSS 파일 분리의 필요성
+
+React 프로젝트에서 CSS를 적절히 분리하는 이유는 다음과 같습니다:
+
+<CalloutBox type="info" title="CSS 파일 분리의 이유">
+**유지보수성**: 파일별로 역할이 명확해 수정과 관리가 쉬워집니다
+
+**재사용성**: 전역 스타일은 여러 컴포넌트에서 공통으로 사용할 수 있습니다
+
+**성능**: 필요한 스타일만 로드하여 초기 로딩 시간을 최적화할 수 있습니다
+
+**협업**: 팀원들이 각자 담당 영역의 스타일을 독립적으로 작업할 수 있습니다
+
+**충돌 방지**: 전역 스타일과 컴포넌트별 스타일을 분리하여 의도치 않은 스타일 충돌을 예방합니다
+</CalloutBox>
+
+### 파일 구조와 각 파일의 역할
+
+```
+src/
+├── index.css              # 전역 기본 스타일 (리셋, 타이포그래피, 유틸리티)
+├── globals.css            # 전역 공통 스타일 (변수, 테마, 공통 클래스)
+├── App.css               # App 컴포넌트 전용 스타일 (메인 레이아웃)
+├── styles/
+│   ├── variables.css     # CSS 변수 정의
+│   ├── utilities.css     # 유틸리티 클래스들
+│   └── themes.css        # 테마별 스타일
+└── components/
+    ├── Header/
+    │   ├── Header.jsx
+    │   └── Header.css    # Header 컴포넌트 전용 스타일
+    └── Button/
+        ├── Button.jsx
+        └── Button.css    # Button 컴포넌트 전용 스타일
+```
+
+### 1. index.css - 전역 기본 스타일
+
+index.css는 애플리케이션의 **기초가 되는 전역 스타일**을 담당합니다.
+
+```css
+/* index.css - 애플리케이션 전체 기본 스타일 */
+
+/* ===== 리셋 스타일 ===== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== 기본 HTML 요소 스타일 ===== */
+html {
+  font-size: 16px; /* 1rem = 16px */
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 
+               'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+  line-height: 1.6;
+  color: #333333;
+  background-color: #ffffff;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== 기본 타이포그래피 ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  line-height: 1.2;
+  margin-bottom: 0.5em;
+}
+
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.75rem; }
+h4 { font-size: 1.5rem; }
+h5 { font-size: 1.25rem; }
+h6 { font-size: 1rem; }
+
+p {
+  margin-bottom: 1rem;
+}
+
+/* ===== 기본 링크 스타일 ===== */
+a {
+  color: #3b82f6;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* ===== 기본 폼 요소 스타일 ===== */
+input, textarea, select, button {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+/* ===== 접근성 ===== */
+:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+/* 스크린 리더 전용 텍스트 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+```
+
+### 2. globals.css - 전역 공통 스타일
+
+globals.css는 **프로젝트 전체에서 공통으로 사용되는 스타일**을 정의합니다.
+
+```css
+/* globals.css - 전역 공통 스타일 및 유틸리티 */
+
+/* ===== CSS 변수 (Custom Properties) ===== */
+:root {
+  /* 컬러 시스템 */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-secondary: #6b7280;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  
+  /* 텍스트 컬러 */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  
+  /* 배경 컬러 */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f9fafb;
+  --color-bg-muted: #f3f4f6;
+  
+  /* 보더 */
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
+  
+  /* 그림자 */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* 간격 */
+  --spacing-xs: 0.25rem;   /* 4px */
+  --spacing-sm: 0.5rem;    /* 8px */
+  --spacing-md: 1rem;      /* 16px */
+  --spacing-lg: 1.5rem;    /* 24px */
+  --spacing-xl: 2rem;      /* 32px */
+  --spacing-2xl: 3rem;     /* 48px */
+  
+  /* 폰트 크기 */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  
+  /* 반응형 브레이크포인트 */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+}
+
+/* ===== 다크 테마 ===== */
+[data-theme="dark"] {
+  --color-text-primary: #f9fafb;
+  --color-text-secondary: #d1d5db;
+  --color-text-muted: #9ca3af;
+  --color-bg-primary: #111827;
+  --color-bg-secondary: #1f2937;
+  --color-bg-muted: #374151;
+  --color-border: #374151;
+  --color-border-hover: #4b5563;
+}
+
+/* ===== 레이아웃 유틸리티 ===== */
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.container-sm { max-width: 640px; }
+.container-md { max-width: 768px; }
+.container-lg { max-width: 1024px; }
+.container-xl { max-width: 1280px; }
+
+/* ===== Flexbox 유틸리티 ===== */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.flex-row { flex-direction: row; }
+.items-center { align-items: center; }
+.items-start { align-items: flex-start; }
+.items-end { align-items: flex-end; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.justify-start { justify-content: flex-start; }
+.justify-end { justify-content: flex-end; }
+
+/* ===== Grid 유틸리티 ===== */
+.grid { display: grid; }
+.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+.gap-1 { gap: var(--spacing-xs); }
+.gap-2 { gap: var(--spacing-sm); }
+.gap-4 { gap: var(--spacing-md); }
+.gap-6 { gap: var(--spacing-lg); }
+
+/* ===== 텍스트 유틸리티 ===== */
+.text-left { text-align: left; }
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-xs { font-size: var(--font-size-xs); }
+.text-sm { font-size: var(--font-size-sm); }
+.text-base { font-size: var(--font-size-base); }
+.text-lg { font-size: var(--font-size-lg); }
+.text-xl { font-size: var(--font-size-xl); }
+.text-2xl { font-size: var(--font-size-2xl); }
+.font-normal { font-weight: 400; }
+.font-medium { font-weight: 500; }
+.font-semibold { font-weight: 600; }
+.font-bold { font-weight: 700; }
+
+/* ===== 간격 유틸리티 ===== */
+.m-0 { margin: 0; }
+.m-1 { margin: var(--spacing-xs); }
+.m-2 { margin: var(--spacing-sm); }
+.m-4 { margin: var(--spacing-md); }
+.mt-1 { margin-top: var(--spacing-xs); }
+.mt-2 { margin-top: var(--spacing-sm); }
+.mt-4 { margin-top: var(--spacing-md); }
+.mb-1 { margin-bottom: var(--spacing-xs); }
+.mb-2 { margin-bottom: var(--spacing-sm); }
+.mb-4 { margin-bottom: var(--spacing-md); }
+.p-1 { padding: var(--spacing-xs); }
+.p-2 { padding: var(--spacing-sm); }
+.p-4 { padding: var(--spacing-md); }
+.p-6 { padding: var(--spacing-lg); }
+
+/* ===== 반응형 유틸리티 ===== */
+@media (min-width: 640px) {
+  .sm\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+  .sm\:text-lg { font-size: var(--font-size-lg); }
+}
+
+@media (min-width: 768px) {
+  .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+  .md\:text-xl { font-size: var(--font-size-xl); }
+  .md\:flex-row { flex-direction: row; }
+}
+
+@media (min-width: 1024px) {
+  .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+  .lg\:text-2xl { font-size: var(--font-size-2xl); }
+}
+```
+
+### 3. App.css - 메인 레이아웃 스타일
+
+App.css는 **App 컴포넌트와 메인 레이아웃**에만 관련된 스타일을 정의합니다.
+
+```css
+/* App.css - App 컴포넌트 전용 스타일 */
+
+.App {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ===== 메인 레이아웃 구조 ===== */
+.App-header {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-hover));
+  color: white;
+  padding: var(--spacing-lg) 0;
+  box-shadow: var(--shadow-md);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.App-main {
+  flex: 1;
+  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - 200px); /* 헤더와 푸터 제외 */
+}
+
+.App-footer {
+  background-color: var(--color-bg-secondary);
+  border-top: 1px solid var(--color-border);
+  padding: var(--spacing-lg) 0;
+  margin-top: auto;
+}
+
+/* ===== 로딩 상태 ===== */
+.App-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  font-size: var(--font-size-lg);
+  color: var(--color-text-secondary);
+}
+
+.App-loading::after {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-border);
+  border-top: 2px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-left: var(--spacing-sm);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== 에러 상태 ===== */
+.App-error {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-error);
+}
+
+/* ===== 반응형 레이아웃 ===== */
+@media (max-width: 768px) {
+  .App-header {
+    padding: var(--spacing-md) 0;
+  }
+  
+  .App-main {
+    padding: var(--spacing-lg) 0;
+  }
+  
+  .App-footer {
+    padding: var(--spacing-md) 0;
+  }
+}
+
+/* ===== 네비게이션 스타일 (App 컴포넌트 내부) ===== */
+.App-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+}
+
+.App-nav-brand {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: white;
+}
+
+.App-nav-menu {
+  display: flex;
+  list-style: none;
+  gap: var(--spacing-lg);
+}
+
+.App-nav-link {
+  color: rgba(255, 255, 255, 0.9);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.App-nav-link:hover {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.1);
+  text-decoration: none;
+}
+
+.App-nav-link.active {
+  color: white;
+  background-color: rgba(255, 255, 255, 0.2);
+}
+```
+
+### CSS 파일 import 순서와 우선순위
+
+올바른 순서로 CSS 파일을 import하는 것이 중요합니다:
+
+```jsx
+// index.js - 전역 스타일을 가장 먼저 import
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import './index.css';      // 1. 기본 리셋과 타이포그래피
+import './globals.css';    // 2. 전역 변수와 유틸리티
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+```
+
+```jsx
+// App.js
+import React from 'react';
+import './App.css';        // 3. App 컴포넌트 스타일 (전역 스타일 이후)
+import Header from './components/Header/Header';
+import Button from './components/Button/Button';
+
+function App() {
+  return (
+    <div className="App">
+      <header className="App-header">
+        <nav className="App-nav">
+          <div className="App-nav-brand">My React App</div>
+          <ul className="App-nav-menu">
+            <li><a href="#" className="App-nav-link active">홈</a></li>
+            <li><a href="#" className="App-nav-link">서비스</a></li>
+            <li><a href="#" className="App-nav-link">연락처</a></li>
+          </ul>
+        </nav>
+      </header>
+      
+      <main className="App-main">
+        <div className="container">
+          <Button variant="primary">시작하기</Button>
+        </div>
+      </main>
+      
+      <footer className="App-footer">
+        <div className="container text-center">
+          <p>&copy; 2024 My React App. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+export default App;
+```
+
+### 각 파일별 관리 원칙
+
+<CalloutBox type="success" title="CSS 파일별 관리 원칙">
+**index.css (기본 스타일)**
+- HTML 요소의 기본 스타일 리셋
+- 타이포그래피 설정
+- 접근성 관련 스타일
+- 절대 변경되지 않을 기본 스타일만 포함
+
+**globals.css (공통 스타일)**
+- CSS 변수 (컬러, 폰트, 간격 등)
+- 유틸리티 클래스
+- 테마 관련 스타일
+- 프로젝트 전체에서 재사용되는 공통 스타일
+
+**App.css (레이아웃 스타일)**
+- App 컴포넌트의 메인 레이아웃
+- 헤더, 푸터, 네비게이션 등 앱 구조 스타일
+- 로딩, 에러 상태 등 앱 레벨 상태 스타일
+- App 컴포넌트에만 관련된 스타일
+
+**컴포넌트별 CSS**
+- 해당 컴포넌트에만 관련된 스타일
+- 컴포넌트의 내부 구조와 상태 스타일
+- 다른 컴포넌트에 영향을 주지 않는 독립적인 스타일
+</CalloutBox>
+
+### 실제 프로젝트에서의 활용 예시
+
+```jsx
+// 실제 사용 예시 - 여러 CSS 파일의 스타일을 조합
+function HomePage() {
+  return (
+    <div className="container">  {/* globals.css에서 정의 */}
+      <section className="hero-section"> {/* App.css에서 정의 */}
+        <div className="flex flex-col items-center text-center"> {/* globals.css 유틸리티 */}
+          <h1 className="text-2xl font-bold mb-4">  {/* globals.css 유틸리티 */}
+            Welcome to My App
+          </h1>
+          <p className="text-lg text-secondary mb-6"> {/* globals.css 유틸리티 */}
+            React 스타일링의 모든 것을 배워보세요
+          </p>
+          <div className="flex gap-4"> {/* globals.css 유틸리티 */}
+            <Button variant="primary" size="large">시작하기</Button> {/* Button.css */}
+            <Button variant="outline">더 알아보기</Button> {/* Button.css */}
+          </div>
+        </div>
+      </section>
+      
+      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"> {/* globals.css */}
+        <Card title="CSS 모듈"> {/* Card.css */}
+          <p>컴포넌트별 스타일 격리</p>
+        </Card>
+        <Card title="styled-components">
+          <p>CSS-in-JS의 강력한 기능</p>
+        </Card>
+        <Card title="Tailwind CSS">
+          <p>유틸리티 우선 접근법</p>
+        </Card>
+      </section>
+    </div>
+  );
+}
+```
+
+<CalloutBox type="warning" title="CSS 파일 관리 주의사항">
+**import 순서가 중요**: 나중에 import된 CSS가 더 높은 우선순위를 가집니다
+
+**클래스명 네이밍 규칙**: 
+- 전역 스타일: 간단하고 명확한 이름 (`.container`, `.btn`)
+- 컴포넌트 스타일: 접두사 사용 (`.Button-primary`, `.Card-header`)
+- BEM 방식: `.block__element--modifier`
+
+**변수 활용**: CSS 변수를 사용해 일관된 디자인 시스템 구축
+
+**성능 고려**: 불필요한 CSS는 제거하고, 크리티컬 CSS를 우선 로드
+
+**반응형 설계**: 모바일 퍼스트 접근법으로 미디어 쿼리 작성
+</CalloutBox>
+
+---
+
+## 3. CSS 모듈 (CSS Modules)
+
+CSS 모듈은 CSS 클래스명을 지역적으로 범위를 제한하여 클래스명 충돌을 방지하는 방법입니다.
+
+### CSS 모듈 사용법
+
+파일명을 `[이름].module.css` 형태로 만들어야 합니다.
+
+```css
+/* Button.module.css */
+.button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primary {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.primary:hover {
+  background-color: #2563eb;
+}
+
+.secondary {
+  background-color: #6b7280;
+  color: white;
+}
+
+.large {
+  padding: 16px 32px;
+  font-size: 18px;
+}
+```
+
+```jsx
+// Button.jsx
+import styles from './Button.module.css'; // 객체로 import
+
+function Button({ variant = 'primary', size, children, onClick }) {
+  // 여러 클래스를 조합할 때
+  const buttonClasses = [
+    styles.button,
+    styles[variant],
+    size === 'large' ? styles.large : ''
+  ].filter(Boolean).join(' ');
+
+  return (
+    <button 
+      className={buttonClasses}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default Button;
+```
+
+### CSS 모듈의 장점
+
+```jsx
+// 클래스명이 자동으로 고유하게 변환됩니다
+// 실제 렌더링: <button class="Button_button__2xY3z Button_primary__1aB2c">
+
+// 다른 컴포넌트에서 같은 클래스명을 사용해도 충돌하지 않습니다
+import headerStyles from './Header.module.css';
+import buttonStyles from './Button.module.css';
+
+// 두 파일 모두 .primary 클래스가 있어도 서로 다른 고유한 클래스로 변환됨
+```
+
+<CalloutBox type="success" title="CSS 모듈의 장점">
+**스코프 격리**: 클래스명이 컴포넌트별로 격리됩니다
+
+**자동 네이밍**: 고유한 클래스명이 자동으로 생성됩니다
+
+**타입 안전성**: TypeScript와 함께 사용하면 클래스명 자동완성을 지원합니다
+
+**기존 CSS 활용**: 기존 CSS 문법을 그대로 사용할 수 있습니다
+</CalloutBox>
+
+---
+
+## 4. 인라인 스타일
+
+JSX에서 직접 스타일 객체를 전달하는 방법입니다.
+
+### 기본 사용법
+
+```jsx
+function InlineStyleExample() {
+  const boxStyle = {
+    width: '200px',
+    height: '200px',
+    backgroundColor: '#3b82f6',
+    border: '2px solid #1e40af',
+    borderRadius: '12px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: 'white',
+    fontSize: '18px',
+    fontWeight: 'bold'
+  };
+
+  const textStyle = {
+    color: '#1f2937',
+    fontSize: '16px',
+    marginBottom: '10px'
+  };
+
+  return (
+    <div>
+      <p style={textStyle}>인라인 스타일 예제</p>
+      <div style={boxStyle}>
+        스타일 박스
+      </div>
+    </div>
+  );
+}
+```
+
+### 동적 스타일링
+
+```jsx
+function DynamicButton({ variant, disabled, size, children }) {
+  const getButtonStyle = () => {
+    const baseStyle = {
+      padding: size === 'large' ? '16px 32px' : '12px 24px',
+      border: 'none',
+      borderRadius: '6px',
+      fontSize: size === 'large' ? '18px' : '16px',
+      cursor: disabled ? 'not-allowed' : 'pointer',
+      opacity: disabled ? 0.6 : 1,
+      transition: 'all 0.2s ease'
+    };
+
+    const variantStyles = {
+      primary: {
+        backgroundColor: '#3b82f6',
+        color: 'white'
+      },
+      secondary: {
+        backgroundColor: '#6b7280',
+        color: 'white'
+      },
+      outline: {
+        backgroundColor: 'transparent',
+        color: '#3b82f6',
+        border: '2px solid #3b82f6'
+      }
+    };
+
+    return {
+      ...baseStyle,
+      ...variantStyles[variant]
+    };
+  };
+
+  return (
+    <button 
+      style={getButtonStyle()}
+      disabled={disabled}
+    >
+      {children}
+    </button>
+  );
+}
+
+// 사용 예시
+function App() {
+  return (
+    <div style={{ padding: '20px' }}>
+      <DynamicButton variant="primary" size="large">
+        대형 기본 버튼
+      </DynamicButton>
+      <DynamicButton variant="outline" disabled>
+        비활성화 버튼
+      </DynamicButton>
+    </div>
+  );
+}
+```
+
+### 반응형 인라인 스타일
+
+```jsx
+import { useState, useEffect } from 'react';
+
+function ResponsiveCard({ title, content }) {
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const cardStyle = {
+    maxWidth: windowWidth > 768 ? '400px' : '100%',
+    margin: windowWidth > 768 ? '20px' : '10px',
+    padding: windowWidth > 768 ? '24px' : '16px',
+    backgroundColor: 'white',
+    borderRadius: '12px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+    border: '1px solid #e5e7eb'
+  };
+
+  const titleStyle = {
+    fontSize: windowWidth > 768 ? '24px' : '20px',
+    fontWeight: 'bold',
+    marginBottom: '12px',
+    color: '#1f2937'
+  };
+
+  return (
+    <div style={cardStyle}>
+      <h2 style={titleStyle}>{title}</h2>
+      <p style={{ color: '#6b7280', lineHeight: '1.6' }}>
+        {content}
+      </p>
+    </div>
+  );
+}
+```
+
+<CalloutBox type="warning" title="인라인 스타일 주의사항">
+**성능**: 매번 새로운 객체가 생성되므로 복잡한 스타일에는 부적합
+
+**의사 클래스 불가**: `:hover`, `:focus` 등의 의사 클래스 사용 불가
+
+**미디어 쿼리 불가**: 반응형 디자인을 위한 CSS 미디어 쿼리 사용 불가
+
+**디버깅 어려움**: 브라우저 개발자 도구에서 스타일 추적이 어려움
+
+</CalloutBox>
+
+---
+
+## 5. CSS-in-JS (styled-components)
+
+JavaScript 안에서 CSS를 작성하는 방법 중 가장 인기 있는 라이브러리입니다.
+
+### 설치 및 기본 사용법
+
+```bash
+npm install styled-components
+```
+
+```jsx
+import styled from 'styled-components';
+
+// 기본 스타일드 컴포넌트
+const Button = styled.button`
+  padding: 12px 24px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  background-color: ${props => 
+    props.variant === 'primary' ? '#3b82f6' : '#6b7280'
+  };
+  color: white;
+
+  &:hover {
+    background-color: ${props => 
+      props.variant === 'primary' ? '#2563eb' : '#4b5563'
+    };
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+const Card = styled.div`
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  margin: 20px 0;
+`;
+
+const Title = styled.h2`
+  font-size: 24px;
+  font-weight: bold;
+  color: #1f2937;
+  margin-bottom: 16px;
+`;
+
+// 사용 예시
+function App() {
+  return (
+    <div>
+      <Card>
+        <Title>styled-components 예제</Title>
+        <p>이것은 styled-components로 만든 카드입니다.</p>
+        <Button variant="primary">기본 버튼</Button>
+        <Button variant="secondary" disabled>
+          비활성화 버튼
+        </Button>
+      </Card>
+    </div>
+  );
+}
+```
+
+### 고급 기능들
+
+```jsx
+// 테마 사용
+import styled, { ThemeProvider } from 'styled-components';
+
+const theme = {
+  colors: {
+    primary: '#3b82f6',
+    secondary: '#6b7280',
+    success: '#10b981',
+    danger: '#ef4444'
+  },
+  sizes: {
+    small: '8px 16px',
+    medium: '12px 24px',
+    large: '16px 32px'
+  }
+};
+
+const ThemedButton = styled.button`
+  padding: ${props => props.theme.sizes[props.size || 'medium']};
+  background-color: ${props => props.theme.colors[props.color || 'primary']};
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+`;
+
+// 조건부 스타일링
+const StatusCard = styled.div`
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 4px solid;
+  
+  ${props => props.status === 'success' && `
+    background-color: #dcfce7;
+    border-color: #10b981;
+    color: #065f46;
+  `}
+  
+  ${props => props.status === 'error' && `
+    background-color: #fee2e2;
+    border-color: #ef4444;
+    color: #991b1b;
+  `}
+  
+  ${props => props.status === 'warning' && `
+    background-color: #fef3c7;
+    border-color: #f59e0b;
+    color: #92400e;
+  `}
+`;
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <div>
+        <ThemedButton color="primary" size="large">
+          대형 기본 버튼
+        </ThemedButton>
+        
+        <StatusCard status="success">
+          성공 메시지입니다.
+        </StatusCard>
+        
+        <StatusCard status="error">
+          오류가 발생했습니다.
+        </StatusCard>
+      </div>
+    </ThemeProvider>
+  );
+}
+```
+
+<CalloutBox type="success" title="styled-components의 장점">
+**동적 스타일링**: props를 기반으로 한 조건부 스타일링이 쉬움
+
+**스코프 격리**: 컴포넌트별로 스타일이 격리됨
+
+**테마 지원**: ThemeProvider를 통한 일관된 디자인 시스템 구축
+
+**자동 prefix**: 브라우저 호환성을 위한 CSS prefix 자동 추가
+</CalloutBox>
+
+---
+
+## 6. Tailwind CSS
+
+유틸리티 우선 CSS 프레임워크로, 미리 정의된 클래스들을 조합해서 스타일을 만드는 방법입니다.
+
+### 설치 및 설정
+
+```bash
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+```
+
+```javascript
+// tailwind.config.js
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+```css
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+```
+
+### 기본 사용법
+
+```jsx
+// Tailwind CSS 클래스를 사용한 컴포넌트
+function TailwindExample() {
+  return (
+    <div className="min-h-screen bg-gray-100 py-12 px-4">
+      <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+        <div className="md:flex">
+          <div className="p-8">
+            <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">
+              Tailwind CSS
+            </div>
+            <h2 className="mt-2 text-xl font-bold text-gray-900">
+              간편한 스타일링
+            </h2>
+            <p className="mt-2 text-gray-600">
+              유틸리티 클래스를 조합해서 빠르게 스타일을 적용할 수 있습니다.
+            </p>
+            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+              시작하기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### 컴포넌트별 Tailwind 패턴
+
+```jsx
+// 버튼 컴포넌트
+function Button({ variant = 'primary', size = 'medium', children, ...props }) {
+  const baseClasses = 'font-medium rounded-lg transition-colors focus:outline-none focus:ring-2';
+  
+  const variantClasses = {
+    primary: 'bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500',
+    secondary: 'bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500',
+    outline: 'border-2 border-blue-500 text-blue-500 hover:bg-blue-50 focus:ring-blue-500'
+  };
+  
+  const sizeClasses = {
+    small: 'px-3 py-1.5 text-sm',
+    medium: 'px-4 py-2 text-base',
+    large: 'px-6 py-3 text-lg'
+  };
+
+  const classes = `${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]}`;
+
+  return (
+    <button className={classes} {...props}>
+      {children}
+    </button>
+  );
+}
+
+// 카드 컴포넌트
+function Card({ title, children, className = '' }) {
+  return (
+    <div className={`bg-white rounded-lg shadow-md border border-gray-200 p-6 ${className}`}>
+      {title && (
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          {title}
+        </h3>
+      )}
+      <div className="text-gray-600">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// 반응형 레이아웃
+function ResponsiveGrid() {
+  return (
+    <div className="container mx-auto px-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card title="카드 1">
+          <p>첫 번째 카드 내용입니다.</p>
+        </Card>
+        <Card title="카드 2">
+          <p>두 번째 카드 내용입니다.</p>
+        </Card>
+        <Card title="카드 3">
+          <p>세 번째 카드 내용입니다.</p>
+        </Card>
+      </div>
+    </div>
+  );
+}
+```
+
+### Tailwind 커스텀 컴포넌트 클래스
+
+```css
+/* src/index.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .btn {
+    @apply font-medium py-2 px-4 rounded-lg transition-colors focus:outline-none focus:ring-2;
+  }
+  
+  .btn-primary {
+    @apply bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-500 text-white hover:bg-gray-600 focus:ring-gray-500;
+  }
+  
+  .card {
+    @apply bg-white rounded-lg shadow-md border border-gray-200 p-6;
+  }
+}
+```
+
+```jsx
+// 커스텀 클래스 사용
+function CustomTailwindExample() {
+  return (
+    <div className="p-8">
+      <div className="card">
+        <h2 className="text-xl font-bold mb-4">커스텀 Tailwind 컴포넌트</h2>
+        <p className="text-gray-600 mb-4">
+          @layer components를 사용해서 재사용 가능한 컴포넌트 클래스를 만들 수 있습니다.
+        </p>
+        <button className="btn btn-primary mr-2">
+          기본 버튼
+        </button>
+        <button className="btn btn-secondary">
+          보조 버튼
+        </button>
+      </div>
+    </div>
+  );
+}
+```
+
+<CalloutBox type="info" title="Tailwind CSS의 특징">
+**빠른 개발**: 미리 정의된 클래스로 빠른 프로토타이핑 가능
+
+**일관성**: 디자인 시스템이 내장되어 있어 일관된 스타일 유지
+
+**최적화**: 사용하지 않는 CSS는 자동으로 제거 (PurgeCSS)
+
+**반응형**: 간단한 접두사로 반응형 디자인 구현 (`sm:`, `md:`, `lg:`, `xl:`)
+</CalloutBox>
+
+---
+
+## 7. SCSS/Sass
+
+CSS의 확장 언어로, 변수, 중첩, 믹스인 등의 기능을 제공합니다.
+
+### 설치 및 설정
+
+```bash
+npm install sass
+```
+
+### SCSS 기본 문법
+
+```scss
+// variables.scss - 변수 정의
+$primary-color: #3b82f6;
+$secondary-color: #6b7280;
+$success-color: #10b981;
+$danger-color: #ef4444;
+
+$font-size-sm: 14px;
+$font-size-base: 16px;
+$font-size-lg: 18px;
+$font-size-xl: 24px;
+
+$border-radius: 6px;
+$box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+// Button.scss
+@import './variables';
+
+.button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: $border-radius;
+  font-size: $font-size-base;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+
+  // 중첩 규칙
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.3);
+  }
+
+  // 수식자 클래스
+  &--primary {
+    background-color: $primary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($primary-color, 10%);
+    }
+  }
+
+  &--secondary {
+    background-color: $secondary-color;
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: darken($secondary-color, 10%);
+    }
+  }
+
+  &--outline {
+    background-color: transparent;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+
+    &:hover:not(:disabled) {
+      background-color: $primary-color;
+      color: white;
+    }
+  }
+
+  // 크기 변형
+  &--small {
+    padding: 8px 16px;
+    font-size: $font-size-sm;
+  }
+
+  &--large {
+    padding: 16px 32px;
+    font-size: $font-size-lg;
+  }
+}
+```
+
+### 믹스인(Mixins) 사용
+
+```scss
+// mixins.scss
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin card($padding: 24px) {
+  background: white;
+  border-radius: $border-radius * 2;
+  box-shadow: $box-shadow;
+  border: 1px solid #e5e7eb;
+  padding: $padding;
+}
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == mobile {
+    @media (max-width: 767px) { @content; }
+  }
+  @if $breakpoint == tablet {
+    @media (min-width: 768px) and (max-width: 1023px) { @content; }
+  }
+  @if $breakpoint == desktop {
+    @media (min-width: 1024px) { @content; }
+  }
+}
+
+// 믹스인 사용 예시
+.hero-section {
+  @include flex-center;
+  height: 400px;
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  color: white;
+
+  .hero-content {
+    @include card(40px);
+    text-align: center;
+    color: $secondary-color;
+
+    @include respond-to(mobile) {
+      padding: 20px;
+      margin: 0 20px;
+    }
+  }
+}
+
+.product-grid {
+  display: grid;
+  gap: 20px;
+  
+  @include respond-to(mobile) {
+    grid-template-columns: 1fr;
+  }
+  
+  @include respond-to(tablet) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  @include respond-to(desktop) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+```
+
+### React 컴포넌트에서 SCSS 사용
+
+```jsx
+// Button.jsx
+import './Button.scss';
+
+function Button({ 
+  variant = 'primary', 
+  size = 'medium', 
+  children, 
+  disabled,
+  ...props 
+}) {
+  const classes = [
+    'button',
+    `button--${variant}`,
+    size !== 'medium' ? `button--${size}` : ''
+  ].filter(Boolean).join(' ');
+
+  return (
+    <button 
+      className={classes}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+}
+
+export default Button;
+```
+
+```jsx
+// ProductCard.jsx
+import './ProductCard.scss';
+
+function ProductCard({ product }) {
+  return (
+    <div className="product-card">
+      <div className="product-card__image">
+        <img src={product.image} alt={product.name} />
+      </div>
+      <div className="product-card__content">
+        <h3 className="product-card__title">{product.name}</h3>
+        <p className="product-card__description">{product.description}</p>
+        <div className="product-card__footer">
+          <span className="product-card__price">${product.price}</span>
+          <button className="button button--primary button--small">
+            장바구니 담기
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+```scss
+// ProductCard.scss
+@import './variables';
+@import './mixins';
+
+.product-card {
+  @include card;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+
+  &__image {
+    width: 100%;
+    height: 200px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    &:hover img {
+      transform: scale(1.05);
+    }
+  }
+
+  &__content {
+    padding: 20px;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 8px;
+  }
+
+  &__description {
+    color: #6b7280;
+    font-size: $font-size-sm;
+    line-height: 1.5;
+    margin-bottom: 16px;
+  }
+
+  &__footer {
+    @include flex-center;
+    justify-content: space-between;
+  }
+
+  &__price {
+    font-size: $font-size-lg;
+    font-weight: 700;
+    color: $primary-color;
+  }
+}
+```
+
+<CalloutBox type="success" title="SCSS/Sass의 장점">
+**변수 시스템**: 일관된 디자인 시스템 구축 가능
+
+**중첩 규칙**: HTML 구조와 유사한 CSS 작성 가능
+
+**믹스인**: 재사용 가능한 스타일 블록 생성
+
+**강력한 기능**: 함수, 조건문, 반복문 등 프로그래밍 기능 제공
+</CalloutBox>
+
+---
+
+## 스타일링 방법 비교
+
+| 방법 | 장점 | 단점 | 적합한 경우 |
+|------|------|------|-------------|
+| **일반 CSS** | 익숙함, 간단함, 별도 학습 불필요 | 전역 스타일링, 클래스명 충돌 | 소규모 프로젝트, CSS에 익숙한 팀 |
+| **CSS 모듈** | 스코프 격리, 기존 CSS 활용 | 추가 설정 필요, 클래스명 자동 생성 | 중간 규모 프로젝트, 클래스명 충돌 방지 필요 |
+| **인라인 스타일** | 동적 스타일링 쉬움, 컴포넌트 격리 | 성능 이슈, 의사 클래스 불가 | 간단한 동적 스타일, 프로토타입 |
+| **styled-components** | 강력한 동적 스타일링, 테마 지원 | 번들 크기 증가, 런타임 비용 | 복잡한 UI, 테마 시스템 필요 |
+| **Tailwind CSS** | 빠른 개발, 일관성, 최적화 | 학습 곡선, 마크업 복잡 | 빠른 프로토타이핑, 일관된 디자인 시스템 |
+| **SCSS/Sass** | 강력한 기능, 변수 시스템 | 컴파일 필요, 복잡할 수 있음 | 대규모 프로젝트, 복잡한 스타일 시스템 |
+
+---
+
+## 실전 스타일링 팁
+
+### 1. 스타일링 방법 조합하기
+
+실제 프로젝트에서는 여러 방법을 조합해서 사용하는 것이 일반적입니다.
+
+```jsx
+// 기본 스타일: Tailwind CSS
+// 컴포넌트별 스타일: CSS 모듈
+// 동적 스타일: 인라인 스타일
+
+import styles from './Dashboard.module.css';
+
+function Dashboard({ user, theme }) {
+  const cardStyle = {
+    backgroundColor: theme === 'dark' ? '#1f2937' : 'white',
+    color: theme === 'dark' ? 'white' : '#1f2937'
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-100 p-4">
+      <div className="max-w-6xl mx-auto">
+        <header className={styles.header}>
+          <h1 className="text-2xl font-bold">대시보드</h1>
+        </header>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+          <div 
+            className={`${styles.card} rounded-lg shadow-md p-6`}
+            style={cardStyle}
+          >
+            <h2>사용자 정보</h2>
+            <p>{user.name}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### 2. 반응형 디자인 구현
+
+```jsx
+// Tailwind CSS를 활용한 반응형 컴포넌트
+function ResponsiveNav() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <nav className="bg-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          {/* 로고 */}
+          <div className="flex items-center">
+            <h1 className="text-xl font-bold text-gray-900">MyApp</h1>
+          </div>
+
+          {/* 데스크톱 메뉴 */}
+          <div className="hidden md:flex items-center space-x-4">
+            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2">홈</a>
+            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2">서비스</a>
+            <a href="#" className="text-gray-700 hover:text-blue-600 px-3 py-2">연락처</a>
+          </div>
+
+          {/* 모바일 메뉴 버튼 */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="text-gray-700 hover:text-blue-600"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        {/* 모바일 메뉴 */}
+        {isOpen && (
+          <div className="md:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <a href="#" className="block text-gray-700 hover:text-blue-600 px-3 py-2">홈</a>
+              <a href="#" className="block text-gray-700 hover:text-blue-600 px-3 py-2">서비스</a>
+              <a href="#" className="block text-gray-700 hover:text-blue-600 px-3 py-2">연락처</a>
+            </div>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+}
+```
+
+### 3. 테마 시스템 구축
+
+```jsx
+// Context를 활용한 테마 시스템
+import { createContext, useContext, useState } from 'react';
+
+const ThemeContext = createContext();
+
+const themes = {
+  light: {
+    background: '#ffffff',
+    surface: '#f8fafc',
+    text: '#1f2937',
+    textSecondary: '#6b7280',
+    primary: '#3b82f6',
+    border: '#e5e7eb'
+  },
+  dark: {
+    background: '#111827',
+    surface: '#1f2937',
+    text: '#f9fafb',
+    textSecondary: '#d1d5db',
+    primary: '#60a5fa',
+    border: '#374151'
+  }
+};
+
+export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState('light');
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <ThemeContext.Provider value={{ theme: themes[theme], toggleTheme, currentTheme: theme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
+}
+
+export const useTheme = () => useContext(ThemeContext);
+
+// 테마를 사용하는 컴포넌트
+function ThemedCard({ title, children }) {
+  const { theme } = useTheme();
+
+  const cardStyle = {
+    backgroundColor: theme.surface,
+    color: theme.text,
+    border: `1px solid ${theme.border}`,
+    borderRadius: '12px',
+    padding: '24px',
+    boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)'
+  };
+
+  const titleStyle = {
+    color: theme.text,
+    fontSize: '20px',
+    fontWeight: 'bold',
+    marginBottom: '16px'
+  };
+
+  return (
+    <div style={cardStyle}>
+      <h2 style={titleStyle}>{title}</h2>
+      <div style={{ color: theme.textSecondary }}>
+        {children}
+      </div>
+    </div>
+  );
+}
+```
+
+### 4. 성능 최적화 팁
+
+```jsx
+// 스타일 객체 메모이제이션
+import { useMemo } from 'react';
+
+function OptimizedComponent({ color, size, children }) {
+  // 스타일 객체를 메모이제이션해서 불필요한 리렌더링 방지
+  const buttonStyle = useMemo(() => ({
+    backgroundColor: color,
+    padding: size === 'large' ? '16px 32px' : '12px 24px',
+    border: 'none',
+    borderRadius: '6px',
+    color: 'white',
+    cursor: 'pointer'
+  }), [color, size]);
+
+  return (
+    <button style={buttonStyle}>
+      {children}
+    </button>
+  );
+}
+
+// CSS 변수를 활용한 동적 스타일링
+function CSSVariableComponent({ primaryColor, secondaryColor }) {
+  const rootStyle = {
+    '--primary-color': primaryColor,
+    '--secondary-color': secondaryColor
+  };
+
+  return (
+    <div style={rootStyle} className="themed-container">
+      <button className="primary-button">기본 버튼</button>
+      <button className="secondary-button">보조 버튼</button>
+    </div>
+  );
+}
+```
+
+```css
+/* CSS 파일에서 CSS 변수 사용 */
+.themed-container {
+  .primary-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+  }
+
+  .secondary-button {
+    background-color: var(--secondary-color);
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 6px;
+  }
+}
+```
+
+---
+
+## 복습 퀴즈
+
+<Quiz
+ question="React에서 CSS 클래스명 충돌을 방지하는 가장 좋은 방법은?"
+ options={[
+   "인라인 스타일만 사용하기",
+   "CSS 모듈 또는 CSS-in-JS 사용하기",
+   "모든 클래스명에 접두사 붙이기",
+   "전역 CSS만 사용하기"
+ ]}
+ correctAnswer={1}
+ explanation="CSS 모듈이나 styled-components 같은 CSS-in-JS 라이브러리는 클래스명을 자동으로 고유하게 만들어 충돌을 방지합니다."
+/>
+
+<Quiz
+ question="인라인 스타일의 단점이 아닌 것은?"
+ options={[
+   "의사 클래스(:hover)를 사용할 수 없다",
+   "매번 새로운 객체가 생성되어 성능에 영향을 줄 수 있다",
+   "미디어 쿼리를 사용할 수 없다",
+   "컴포넌트별로 스타일이 격리된다"
+ ]}
+ correctAnswer={3}
+ explanation="컴포넌트별 스타일 격리는 인라인 스타일의 장점입니다. 다른 선택지들은 모두 인라인 스타일의 단점에 해당합니다."
+/>
+
+<Quiz
+ question="Tailwind CSS의 주요 특징이 아닌 것은?"
+ options={[
+   "유틸리티 우선 접근 방식",
+   "사용하지 않는 CSS 자동 제거",
+   "컴포넌트별 스타일 격리",
+   "반응형 디자인을 위한 접두사 제공"
+ ]}
+ correctAnswer={2}
+ explanation="Tailwind CSS는 전역 유틸리티 클래스를 제공하므로 컴포넌트별 스타일 격리 기능은 없습니다. 이는 CSS 모듈이나 CSS-in-JS의 특징입니다."
+/>
+
+<Quiz
+ question="SCSS/Sass의 장점이 아닌 것은?"
+ options={[
+   "변수를 사용할 수 있다",
+   "중첩 규칙을 사용할 수 있다",
+   "믹스인으로 재사용 가능한 스타일을 만들 수 있다",
+   "별도의 컴파일 과정이 필요 없다"
+ ]}
+ correctAnswer={3}
+ explanation="SCSS/Sass는 CSS 전처리기이므로 브라우저에서 실행되기 전에 일반 CSS로 컴파일하는 과정이 필요합니다."
+/>
+
+---
+
+## 마무리
+
+<CalloutBox type="success" title="🎉 축하합니다!">
+React에서 스타일을 적용하는 다양한 방법들을 모두 학습했습니다! 
+
+각각의 방법은 고유한 장단점이 있으므로, 프로젝트의 규모와 팀의 상황에 맞는 방법을 선택하는 것이 중요합니다.
+
+**추천하는 조합:**
+- 소규모 프로젝트: Tailwind CSS + 일반 CSS
+- 중대규모 프로젝트: CSS 모듈 + SCSS
+- 복잡한 UI가 많은 프로젝트: styled-components + 테마 시스템
+
+다음 강의에서는 React의 State와 이벤트 처리에 대해 더 자세히 알아보겠습니다.
+</CalloutBox>
+
+## 참고 자료
+
+<LinkCard 
+  title="React 공식 문서 - 스타일링과 CSS" 
+  url="https://ko.react.dev/learn/styling" 
+  description="React 공식 문서에서 제공하는 스타일링 가이드" 
+/>
+
+<LinkCard 
+  title="Tailwind CSS 공식 문서" 
+  url="https://tailwindcss.com/docs" 
+  description="Tailwind CSS 사용법과 모든 유틸리티 클래스 정보" 
+/>
+
+<LinkCard 
+  title="styled-components 공식 문서" 
+  url="https://styled-components.com/docs" 
+  description="CSS-in-JS의 대표 라이브러리 styled-components 사용법" 
+/>
+
+<LinkCard 
+  title="Sass 공식 문서" 
+  url="https://sass-lang.com/documentation" 
+  description="CSS 전처리기 Sass/SCSS의 모든 기능과 사용법" 
+/>
