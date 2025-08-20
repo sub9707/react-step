@@ -20,20 +20,22 @@ import {
 <Image
   src="/content/beginner/10/styling-methods.png"
   alt="React 스타일링 방법들"
-  width="full"
+  width="two-thirds"
 />
 
-React 개발을 하다 보면 컴포넌트에 스타일을 적용하는 것이 HTML/CSS와는 조금 다르다는 것을 느끼게 됩니다.
+React 개발을 하다 보면 컴포넌트 JSX에 스타일을 적용하는 것이 기존의 HTML/CSS와는 조금 다르다는 것을 느끼게 됩니다.
+
+어떤 방식에선 똑같이 class와 CSS 파일이나 긴 클래스명을 사용하기도 하고, 또 어떤 방식에선 컴포넌트 자체가 스타일이 적용된 상태로 보이기도 합니다.
 
 React에서는 <HighlightWord>다양한 방법으로 스타일을 적용</HighlightWord>할 수 있으며, 각각의 방법마다 고유한 장단점이 있습니다.
 
-이번 강의에서는 React에서 스타일을 적용하는 주요 방법들을 배워보고, 언제 어떤 방법을 사용하는 것이 좋은지 알아보겠습니다.
+이번 회차에서는 React에서 스타일을 적용하는 주요 방법들을 배워보고, 언제 어떤 방법을 사용하는 것이 좋은지 알아보겠습니다.
 
 ---
 
 ## React에서 스타일링하는 방법들
 
-React에서 스타일을 적용하는 주요 방법들은 다음과 같습니다:
+React에서 스타일을 적용하는 주요 방법들은 다음과 같습니다.
 
 1. **일반 CSS 파일 사용**
 2. **인라인 스타일**
@@ -48,12 +50,16 @@ React에서 스타일을 적용하는 주요 방법들은 다음과 같습니다
 
 ## 1. 일반 CSS 파일 사용
 
-가장 전통적이고 익숙한 방법입니다. CSS 파일을 컴포넌트별, 레이아웃 등 파일 별도로 만들고 React 컴포넌트에서 import해서 사용합니다.
+가장 전통적이고 기존의 HTML/CSS를 사용했다면 익숙한 방법입니다. 
+
+CSS 파일을 컴포넌트별, 레이아웃 등 파일 별도로 만들고 React 컴포넌트에서 import해서 사용합니다.
 
 ### 기본 사용법
 
 ```css
 /* Button.css */
+
+/* 기본 버튼 스타일 */
 .btn {
   padding: 12px 24px;
   border: none;
@@ -63,13 +69,10 @@ React에서 스타일을 적용하는 주요 방법들은 다음과 같습니다
   transition: all 0.2s ease;
 }
 
+/* props에 따라 달라질 스타일 클래스 */
 .btn-primary {
   background-color: #3b82f6;
   color: white;
-}
-
-.btn-primary:hover {
-  background-color: #2563eb;
 }
 
 .btn-secondary {
@@ -77,19 +80,17 @@ React에서 스타일을 적용하는 주요 방법들은 다음과 같습니다
   color: white;
 }
 
-.btn-secondary:hover {
-  background-color: #4b5563;
-}
 ```
 
 ```jsx
 // Button.jsx
 import './Button.css'; // CSS 파일 import
 
+// Button 컴포넌트는 props로 variant를 넘겨받아 동적으로 스타일을 적용할 수 있습니다
 function Button({ variant = 'primary', children, onClick }) {
   return (
     <button 
-      className={`btn btn-${variant}`} // 클래스명과 조합으로 스타일 적용
+      className={`btn btn-${variant}`} // 클래스명 조합으로 스타일 적용. variant에 따라 다른 스타일이 적용됩니다
       onClick={onClick}
     >
       {children}
@@ -99,6 +100,10 @@ function Button({ variant = 'primary', children, onClick }) {
 
 export default Button;
 ```
+
+위와 같이 따로 버튼 컴포넌트를 만들었다면 스타일이 서로 다른 컴포넌트로 재사용을 할 수 있겠죠.
+
+variant라는 props만 따로 넘겨주면 넘겨준 값에 따라 어떤 버튼이 될지 결정됩니다.
 
 ```jsx
 // App.jsx
@@ -115,7 +120,7 @@ function App() {
 ```
 
 <CalloutBox type="info" title="CSS 파일 import 특징">
-**전역 적용**: import한 CSS는 전체 애플리케이션에 적용됩니다
+**전역 적용**: import한 CSS는 전체 애플리케이션에 적용됩니다. 컴포넌트 별로 따로 적용하기 위해서는 CSS 모듈(button.module.css)이나 CSS-in-JS 방법을 사용해야 합니다
 
 **클래스명 중복 주의**: 다른 컴포넌트와 클래스명이 겹치지 않도록 주의해야 합니다
 
@@ -126,47 +131,49 @@ function App() {
 
 ## 2. App.css와 전역 CSS 관리
 
-Create React App으로 프로젝트를 생성하면 기본적으로 여러 CSS 파일이 생성됩니다. 각 파일마다 명확한 역할과 목적이 있어 적절히 분리해서 관리하는 것이 중요합니다.
+Create-React-App(CRA) 혹은 vite로 프로젝트를 생성하면 기본적으로 여러 CSS 파일이 생성됩니다. 
 
-### CSS 파일 분리의 필요성
-
-React 프로젝트에서 CSS를 적절히 분리하는 이유는 다음과 같습니다:
-
-<CalloutBox type="info" title="CSS 파일 분리의 이유">
-**유지보수성**: 파일별로 역할이 명확해 수정과 관리가 쉬워집니다
-
-**재사용성**: 전역 스타일은 여러 컴포넌트에서 공통으로 사용할 수 있습니다
-
-**성능**: 필요한 스타일만 로드하여 초기 로딩 시간을 최적화할 수 있습니다
-
-**협업**: 팀원들이 각자 담당 영역의 스타일을 독립적으로 작업할 수 있습니다
-
-**충돌 방지**: 전역 스타일과 컴포넌트별 스타일을 분리하여 의도치 않은 스타일 충돌을 예방합니다
-</CalloutBox>
+각 파일, 폴더마다 명확한 역할과 목적이 있어 적절히 분리해서 관리하는 것이 중요합니다.
 
 ### 파일 구조와 각 파일의 역할
 
-```
-src/
+React 프로젝트를 생성하면 기본 구조는 다음과 같이 구성됩니다.
+
+```bash
+src/ 
 ├── index.css              # 전역 기본 스타일 (리셋, 타이포그래피, 유틸리티)
 ├── globals.css            # 전역 공통 스타일 (변수, 테마, 공통 클래스)
 ├── App.css               # App 컴포넌트 전용 스타일 (메인 레이아웃)
 ├── styles/
 │   ├── variables.css     # CSS 변수 정의
-│   ├── utilities.css     # 유틸리티 클래스들
+│   ├── reset.css         # 브라우저 기본 스타일 리셋
 │   └── themes.css        # 테마별 스타일
 └── components/
     ├── Header/
     │   ├── Header.jsx
-    │   └── Header.css    # Header 컴포넌트 전용 스타일
+    │   └── Header.module.css    # Header 컴포넌트 전용 스타일
     └── Button/
         ├── Button.jsx
-        └── Button.css    # Button 컴포넌트 전용 스타일
+        └── Button.module.css    # Button 컴포넌트 전용 스타일
 ```
 
 ### 1. index.css - 전역 기본 스타일
 
-index.css는 애플리케이션의 **기초가 되는 전역 스타일**을 담당합니다.
+index.css는  애플리케이션의 **기초가 되는 전역 스타일**을 담당합니다.
+
+src 경로의 index.js 파일, 혹은 main.jsx에서 바로 import하여 사용합니다. (vite는 main.jsx 혹은 사용 X)
+<br/ >
+브라우저마다 기본적으로 세팅된 margin, padding 등의 스타일을 리셋하고 통일하기 위함이죠.
+
+프로젝트에 따라 혹은 개발 스타일에 따라 reset.css나 normalize.css를 사용하기도 하고, index.css에 한번에 작성하기도 합니다.
+
+또, 앱 전반적인 기본 글꼴, 줄 간격, 크기 등의 스타일도 작성하고
+
+html, body, #root와 같은 요소들의 레이아웃 스타일도 미리 잡을 수 있습니다.
+<br/ >
+정리하면, index.css는 <HighlightWord>앱 전체에 공통적으로 초기 셋팅될 스타일을 지정</HighlightWord>하고 싶을 때 사용하는 스타일시트 파일입니다.
+
+예시 파일을 보고 '이렇게도 사용하는구나' 확인하시고 넘어가시면 되겠습니다.
 
 ```css
 /* index.css - 애플리케이션 전체 기본 스타일 */
@@ -182,7 +189,7 @@ index.css는 애플리케이션의 **기초가 되는 전역 스타일**을 담�
 
 /* ===== 기본 HTML 요소 스타일 ===== */
 html {
-  font-size: 16px; /* 1rem = 16px */
+  font-size: 16px;
   scroll-behavior: smooth;
   height: 100%;
 }
@@ -228,40 +235,13 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ===== 기본 폼 요소 스타일 ===== */
-input, textarea, select, button {
-  font-family: inherit;
-  font-size: inherit;
-}
-
-button {
-  cursor: pointer;
-  border: none;
-  background: none;
-}
-
-/* ===== 접근성 ===== */
-:focus {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-}
-
-/* 스크린 리더 전용 텍스트 */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  border: 0;
-}
 ```
 
 ### 2. globals.css - 전역 공통 스타일
 
-globals.css는 **프로젝트 전체에서 공통으로 사용되는 스타일**을 정의합니다.
+globals.css는 <HighlightWord>프로젝트 전체에서 공통으로 자주 사용되는 스타일</HighlightWord>을 정의합니다.
+
+자주 쓸 CSS 변수나 색상 코드들을 모아둔 팔레트, 자주 쓰는 유틸리티 클래스들을 담는 파일로 프로젝트의 컨벤션을 담는다고 할 수 있습니다.
 
 ```css
 /* globals.css - 전역 공통 스타일 및 유틸리티 */
@@ -276,32 +256,6 @@ globals.css는 **프로젝트 전체에서 공통으로 사용되는 스타일**
   --color-warning: #f59e0b;
   --color-error: #ef4444;
   
-  /* 텍스트 컬러 */
-  --color-text-primary: #111827;
-  --color-text-secondary: #6b7280;
-  --color-text-muted: #9ca3af;
-  
-  /* 배경 컬러 */
-  --color-bg-primary: #ffffff;
-  --color-bg-secondary: #f9fafb;
-  --color-bg-muted: #f3f4f6;
-  
-  /* 보더 */
-  --color-border: #e5e7eb;
-  --color-border-hover: #d1d5db;
-  
-  /* 그림자 */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-  
-  /* 간격 */
-  --spacing-xs: 0.25rem;   /* 4px */
-  --spacing-sm: 0.5rem;    /* 8px */
-  --spacing-md: 1rem;      /* 16px */
-  --spacing-lg: 1.5rem;    /* 24px */
-  --spacing-xl: 2rem;      /* 32px */
-  --spacing-2xl: 3rem;     /* 48px */
   
   /* 폰트 크기 */
   --font-size-xs: 0.75rem;
@@ -310,12 +264,6 @@ globals.css는 **프로젝트 전체에서 공통으로 사용되는 스타일**
   --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem;
   --font-size-2xl: 1.5rem;
-  
-  /* 반응형 브레이크포인트 */
-  --breakpoint-sm: 640px;
-  --breakpoint-md: 768px;
-  --breakpoint-lg: 1024px;
-  --breakpoint-xl: 1280px;
 }
 
 /* ===== 다크 테마 ===== */
@@ -343,29 +291,6 @@ globals.css는 **프로젝트 전체에서 공통으로 사용되는 스타일**
 .container-lg { max-width: 1024px; }
 .container-xl { max-width: 1280px; }
 
-/* ===== Flexbox 유틸리티 ===== */
-.flex { display: flex; }
-.flex-col { flex-direction: column; }
-.flex-row { flex-direction: row; }
-.items-center { align-items: center; }
-.items-start { align-items: flex-start; }
-.items-end { align-items: flex-end; }
-.justify-center { justify-content: center; }
-.justify-between { justify-content: space-between; }
-.justify-start { justify-content: flex-start; }
-.justify-end { justify-content: flex-end; }
-
-/* ===== Grid 유틸리티 ===== */
-.grid { display: grid; }
-.grid-cols-1 { grid-template-columns: repeat(1, 1fr); }
-.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-.gap-1 { gap: var(--spacing-xs); }
-.gap-2 { gap: var(--spacing-sm); }
-.gap-4 { gap: var(--spacing-md); }
-.gap-6 { gap: var(--spacing-lg); }
-
 /* ===== 텍스트 유틸리티 ===== */
 .text-left { text-align: left; }
 .text-center { text-align: center; }
@@ -373,51 +298,29 @@ globals.css는 **프로젝트 전체에서 공통으로 사용되는 스타일**
 .text-xs { font-size: var(--font-size-xs); }
 .text-sm { font-size: var(--font-size-sm); }
 .text-base { font-size: var(--font-size-base); }
-.text-lg { font-size: var(--font-size-lg); }
-.text-xl { font-size: var(--font-size-xl); }
-.text-2xl { font-size: var(--font-size-2xl); }
-.font-normal { font-weight: 400; }
-.font-medium { font-weight: 500; }
-.font-semibold { font-weight: 600; }
-.font-bold { font-weight: 700; }
 
 /* ===== 간격 유틸리티 ===== */
 .m-0 { margin: 0; }
 .m-1 { margin: var(--spacing-xs); }
 .m-2 { margin: var(--spacing-sm); }
 .m-4 { margin: var(--spacing-md); }
-.mt-1 { margin-top: var(--spacing-xs); }
-.mt-2 { margin-top: var(--spacing-sm); }
-.mt-4 { margin-top: var(--spacing-md); }
-.mb-1 { margin-bottom: var(--spacing-xs); }
-.mb-2 { margin-bottom: var(--spacing-sm); }
-.mb-4 { margin-bottom: var(--spacing-md); }
 .p-1 { padding: var(--spacing-xs); }
 .p-2 { padding: var(--spacing-sm); }
 .p-4 { padding: var(--spacing-md); }
 .p-6 { padding: var(--spacing-lg); }
 
-/* ===== 반응형 유틸리티 ===== */
-@media (min-width: 640px) {
-  .sm\:grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
-  .sm\:text-lg { font-size: var(--font-size-lg); }
-}
-
-@media (min-width: 768px) {
-  .md\:grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
-  .md\:text-xl { font-size: var(--font-size-xl); }
-  .md\:flex-row { flex-direction: row; }
-}
-
-@media (min-width: 1024px) {
-  .lg\:grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
-  .lg\:text-2xl { font-size: var(--font-size-2xl); }
-}
 ```
+
+tailwind 같은 유틸리티 CSS 를 사용해보신 분들이라면 익숙하실 겁니다.
+
+클래스를 직접 정의해서 필요할 때마다 부르는 방식이니까요.
+<br/>
 
 ### 3. App.css - 메인 레이아웃 스타일
 
-App.css는 **App 컴포넌트와 메인 레이아웃**에만 관련된 스타일을 정의합니다.
+App.css는 <HighlightWord>App 컴포넌트와 메인 레이아웃</HighlightWord>에만 관련된 스타일을 정의합니다.
+
+헤더, 푸터, 메인 컨텐츠 영역과 같은 앱의 전반적인 레이아웃 틀을 정해놓습니다.
 
 ```css
 /* App.css - App 컴포넌트 전용 스타일 */
@@ -445,7 +348,7 @@ App.css는 **App 컴포넌트와 메인 레이아웃**에만 관련된 스타일
 .App-main {
   flex: 1;
   padding: var(--spacing-2xl) 0;
-  min-height: calc(100vh - 200px); /* 헤더와 푸터 제외 */
+  min-height: calc(100vh - 200px); 
 }
 
 .App-footer {
@@ -454,99 +357,17 @@ App.css는 **App 컴포넌트와 메인 레이아웃**에만 관련된 스타일
   padding: var(--spacing-lg) 0;
   margin-top: auto;
 }
-
-/* ===== 로딩 상태 ===== */
-.App-loading {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 50vh;
-  font-size: var(--font-size-lg);
-  color: var(--color-text-secondary);
-}
-
-.App-loading::after {
-  content: '';
-  width: 20px;
-  height: 20px;
-  border: 2px solid var(--color-border);
-  border-top: 2px solid var(--color-primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin-left: var(--spacing-sm);
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* ===== 에러 상태 ===== */
-.App-error {
-  text-align: center;
-  padding: var(--spacing-2xl);
-  color: var(--color-error);
-}
-
-/* ===== 반응형 레이아웃 ===== */
-@media (max-width: 768px) {
-  .App-header {
-    padding: var(--spacing-md) 0;
-  }
-  
-  .App-main {
-    padding: var(--spacing-lg) 0;
-  }
-  
-  .App-footer {
-    padding: var(--spacing-md) 0;
-  }
-}
-
-/* ===== 네비게이션 스타일 (App 컴포넌트 내부) ===== */
-.App-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-}
-
-.App-nav-brand {
-  font-size: var(--font-size-xl);
-  font-weight: 700;
-  color: white;
-}
-
-.App-nav-menu {
-  display: flex;
-  list-style: none;
-  gap: var(--spacing-lg);
-}
-
-.App-nav-link {
-  color: rgba(255, 255, 255, 0.9);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border-radius: 6px;
-  transition: all 0.2s ease;
-}
-
-.App-nav-link:hover {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.1);
-  text-decoration: none;
-}
-
-.App-nav-link.active {
-  color: white;
-  background-color: rgba(255, 255, 255, 0.2);
-}
 ```
 
 ### CSS 파일 import 순서와 우선순위
 
-올바른 순서로 CSS 파일을 import하는 것이 중요합니다:
+올바른 순서로 CSS 파일을 import하는 것이 중요합니다
+
+<HighlightWord>전역 스타일을 가장 먼저 import하고, 그 다음에 컴포넌트별 스타일</HighlightWord>을 순서대로 import해야 합니다.
+
+컴포넌트 스타일을 나중에 import하면 원치않는 전역 스타일링이 적용되는 상황을 막을 수 있습니다.
+
+거꾸로 작성한다면 기껏 꾸민 컴포넌트가 전역 스타일에 먹혀 "왜 적용이 안되지..?"하는 상황이 일어날 수 있어요.
 
 ```jsx
 // index.js - 전역 스타일을 가장 먼저 import
@@ -573,33 +394,11 @@ function App() {
       <header className="App-header">
         <nav className="App-nav">
           <div className="App-nav-brand">My React App</div>
-          <ul className="App-nav-menu">
-            <li><a href="#" className="App-nav-link active">홈</a></li>
-            <li><a href="#" className="App-nav-link">서비스</a></li>
-            <li><a href="#" className="App-nav-link">연락처</a></li>
-          </ul>
-        </nav>
-      </header>
-      
-      <main className="App-main">
-        <div className="container">
-          <Button variant="primary">시작하기</Button>
-        </div>
-      </main>
-      
-      <footer className="App-footer">
-        <div className="container text-center">
-          <p>&copy; 2024 My React App. All rights reserved.</p>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
-export default App;
 ```
 
-### 각 파일별 관리 원칙
+### 각 파일별 관리 원칙 정리
+
+각 파일별 특징과 원칙을 정리하고 넘어가겠습니다.
 
 <CalloutBox type="success" title="CSS 파일별 관리 원칙">
 **index.css (기본 스타일)**
@@ -626,59 +425,6 @@ export default App;
 - 다른 컴포넌트에 영향을 주지 않는 독립적인 스타일
 </CalloutBox>
 
-### 실제 프로젝트에서의 활용 예시
-
-```jsx
-// 실제 사용 예시 - 여러 CSS 파일의 스타일을 조합
-function HomePage() {
-  return (
-    <div className="container">  {/* globals.css에서 정의 */}
-      <section className="hero-section"> {/* App.css에서 정의 */}
-        <div className="flex flex-col items-center text-center"> {/* globals.css 유틸리티 */}
-          <h1 className="text-2xl font-bold mb-4">  {/* globals.css 유틸리티 */}
-            Welcome to My App
-          </h1>
-          <p className="text-lg text-secondary mb-6"> {/* globals.css 유틸리티 */}
-            React 스타일링의 모든 것을 배워보세요
-          </p>
-          <div className="flex gap-4"> {/* globals.css 유틸리티 */}
-            <Button variant="primary" size="large">시작하기</Button> {/* Button.css */}
-            <Button variant="outline">더 알아보기</Button> {/* Button.css */}
-          </div>
-        </div>
-      </section>
-      
-      <section className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12"> {/* globals.css */}
-        <Card title="CSS 모듈"> {/* Card.css */}
-          <p>컴포넌트별 스타일 격리</p>
-        </Card>
-        <Card title="styled-components">
-          <p>CSS-in-JS의 강력한 기능</p>
-        </Card>
-        <Card title="Tailwind CSS">
-          <p>유틸리티 우선 접근법</p>
-        </Card>
-      </section>
-    </div>
-  );
-}
-```
-
-<CalloutBox type="warning" title="CSS 파일 관리 주의사항">
-**import 순서가 중요**: 나중에 import된 CSS가 더 높은 우선순위를 가집니다
-
-**클래스명 네이밍 규칙**: 
-- 전역 스타일: 간단하고 명확한 이름 (`.container`, `.btn`)
-- 컴포넌트 스타일: 접두사 사용 (`.Button-primary`, `.Card-header`)
-- BEM 방식: `.block__element--modifier`
-
-**변수 활용**: CSS 변수를 사용해 일관된 디자인 시스템 구축
-
-**성능 고려**: 불필요한 CSS는 제거하고, 크리티컬 CSS를 우선 로드
-
-**반응형 설계**: 모바일 퍼스트 접근법으로 미디어 쿼리 작성
-</CalloutBox>
-
 ---
 
 ## 3. CSS 모듈 (CSS Modules)
@@ -692,51 +438,27 @@ CSS 모듈은 CSS 클래스명을 지역적으로 범위를 제한하여 클래�
 ```css
 /* Button.module.css */
 .button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.primary {
+  border-radius: 4px;
   background-color: #3b82f6;
   color: white;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.primary:hover {
+.button:hover {
   background-color: #2563eb;
-}
-
-.secondary {
-  background-color: #6b7280;
-  color: white;
-}
-
-.large {
-  padding: 16px 32px;
-  font-size: 18px;
 }
 ```
 
 ```jsx
 // Button.jsx
-import styles from './Button.module.css'; // 객체로 import
+import styles from './Button.module.css';
 
-function Button({ variant = 'primary', size, children, onClick }) {
-  // 여러 클래스를 조합할 때
-  const buttonClasses = [
-    styles.button,
-    styles[variant],
-    size === 'large' ? styles.large : ''
-  ].filter(Boolean).join(' ');
-
+function Button({ children, onClick }) {
   return (
-    <button 
-      className={buttonClasses}
-      onClick={onClick}
-    >
+    <button className={styles.button} onClick={onClick}>
       {children}
     </button>
   );
@@ -745,7 +467,9 @@ function Button({ variant = 'primary', size, children, onClick }) {
 export default Button;
 ```
 
-### CSS 모듈의 장점
+위 예시처럼 모듈을 사용하게 된다면 클래스명이 자동으로 고유하게 변합니다.
+
+따라서, 다른 컴포넌트에서 아무리 같은 클래스명을 지정하더라도 겹쳐서 같은 스타일이 적용되는 참사가 없습니다.
 
 ```jsx
 // 클래스명이 자동으로 고유하게 변환됩니다
@@ -755,8 +479,10 @@ export default Button;
 import headerStyles from './Header.module.css';
 import buttonStyles from './Button.module.css';
 
-// 두 파일 모두 .primary 클래스가 있어도 서로 다른 고유한 클래스로 변환됨
 ```
+두 파일에서 모두 같은 이름의 .primary 클래스가 있어도 서로 다른 고유한 클래스로 변환됩니다.
+
+예: Header.module.css의 .primary와 Button.module.css의 .primary은 서로 다른 클래스명
 
 <CalloutBox type="success" title="CSS 모듈의 장점">
 **스코프 격리**: 클래스명이 컴포넌트별로 격리됩니다
@@ -773,6 +499,10 @@ import buttonStyles from './Button.module.css';
 ## 4. 인라인 스타일
 
 JSX에서 직접 스타일 객체를 전달하는 방법입니다.
+
+스타일 내용이 있는 객체를 만들어 JSX의 `style` 속성에 전달합니다.
+
+객체로 따로 빼서 ```style={여기!}```에 넣어도 되고, ```style={{}}``` 형태로 바로 작성해도 됩니다.
 
 ### 기본 사용법
 
@@ -792,16 +522,15 @@ function InlineStyleExample() {
     fontWeight: 'bold'
   };
 
-  const textStyle = {
-    color: '#1f2937',
-    fontSize: '16px',
-    marginBottom: '10px'
-  };
 
   return (
     <div>
       <p style={textStyle}>인라인 스타일 예제</p>
-      <div style={boxStyle}>
+      <div style={{    
+        color: '#1f2937',
+        fontSize: '16px',
+        marginBottom: '10px'
+        }}>
         스타일 박스
       </div>
     </div>
