@@ -1,0 +1,645 @@
+export const metadata = {
+  id: 11,
+  title: "React 이벤트 처리",
+  description: "React에서 클릭, 입력, 제출 등 다양한 이벤트를 처리하는 방법을 배워봅시다.",
+  difficulty: "보통",
+  tags: ["React", "이벤트", "onClick", "onChange", "onSubmit", "폼", "입문"],
+  lastUpdated: "2025-08-22",
+  image: "/content/beginner/11/lesson-11-bg.png"
+};
+
+import { 
+  CalloutBox, 
+  HighlightWord, 
+  Quiz, 
+  LinkCard,
+  Image
+} from '@/components/CourseContent/EmbeddedComponents'
+
+Javascript에서는 addEventListener로 HTML에서 다양한 이벤트를 처리할 수 있습니다.
+
+React에서도 마찬가지로, 사용자와 상호작용하기 위해서 이벤트 처리가 필수입니다.
+
+버튼을 클릭하거나, 입력창에 텍스트를 입력하거나, 폼을 제출하는 모든 행동이 이벤트라고 일컫습니다.
+
+React는 이런 이벤트들을 효과적으로 처리할 수 있는 시스템을 제공합니다.
+
+---
+
+## React 이벤트 시스템
+
+React는 브라우저의 기본 이벤트를 <HighlightWord>SyntheticEvent</HighlightWord>라는 자체 이벤트 시스템으로 감싸서 제공합니다.
+
+SyntheticEvent는 <HighlightWord>React가 제공하는 표준화된 이벤트 객체</HighlightWord>로, 브라우저에서 발생하는 원래 이벤트를 감싸서 어디서 실행해도 똑같이 동작할 수 있게 만든 것입니다.
+
+React가 이벤트를 표준화를 시키니 <HighlightWord>브라우저마다 이벤트 동작 방식이 조금씩 달라도 동일하게 동작</HighlightWord>할 수 있습니다.
+
+```preventDefault()```나 ```stopPropagation()``` 같은 javascript의 이벤트 메서드를 그대로 사용할 수 있고, 
+
+React는 성능 최적화를 위해 이벤트 객체를 재사용하기 때문에 이벤트 핸들러가 끝나면 해당 객체의 값들이 비워집니다. 
+
+그래서 비동기적으로 이벤트 객체를 다뤄야 할 때는 ```event.persist()```를 호출해야 합니다.
+
+<br/>
+
+React의 이벤트들은 핸들러 함수를 선언한 뒤 JSX에서 onClick, onChange 같은 props로 전달하여 사용합니다.
+
+```jsx
+function Button() {
+  const handleClick = (event) => {
+    console.log('버튼이 클릭되었습니다!');
+    console.log('이벤트 타입:', event.type); // "click"
+    console.log('클릭된 요소:', event.target); // button 엘리먼트
+  };
+
+  return (
+    <button onClick={handleClick}>
+      클릭하세요
+    </button>
+  );
+}
+```
+
+<CalloutBox type="info" title="SyntheticEvent의 특징">
+**크로스 브라우저 호환성**: 모든 브라우저에서 동일하게 작동합니다
+
+**기본 이벤트와 동일한 API**: 브라우저 기본 이벤트와 같은 방식으로 사용할 수 있습니다
+
+**자동 정리**: React가 이벤트 객체를 자동으로 관리합니다
+</CalloutBox>
+
+---
+
+## 기본 이벤트 핸들러
+
+### 클릭 이벤트 (onClick)
+
+<Image
+  src="/content/beginner/11/clickEvent.gif"
+  alt="React 클릭이벤트"
+  width="two-thirds"
+  isGif={true}
+/>
+
+클릭 이벤트는 사용자가 요소를 클릭했을 때 발생하는 가장 기본적이고 자주 사용되는 이벤트입니다.
+
+React에서 클릭 이벤트가 처리되는 과정
+1. 사용자가 버튼을 클릭
+2. 브라우저가 클릭 이벤트를 감지
+3. React가 이벤트를 SyntheticEvent로 변환
+4. onClick prop에 지정된 함수가 실행
+5. 함수 내부에서 상태 업데이트 발생
+6. React가 컴포넌트를 다시 렌더링
+
+```jsx
+function ClickExample() {
+  const [count, setCount] = useState(0);
+
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+
+  const handleReset = () => {
+    setCount(0);
+  };
+
+  return (
+    <div>
+      <p>클릭 횟수: {count}</p>
+      <button onClick={handleClick}>클릭</button>
+      <button onClick={handleReset}>리셋</button>
+    </div>
+  );
+}
+```
+
+위 예제에서 `handleClick` 함수는 버튼이 클릭될 때마다 실행되어 `count` 상태를 1씩 증가시킵니다. 
+
+React는 상태 변경을 감지하고 컴포넌트를 자동으로 다시 렌더링하여 화면에 새로운 count 값을 표시합니다.
+
+<br/>
+
+### 입력 이벤트 (onChange)
+
+<Image
+  src="/content/beginner/11/formEvent.gif"
+  alt="React form 이벤트"
+  width="two-thirds"
+  isGif={true}
+/>
+
+입력 이벤트는 사용자가 input, textarea, select 등의 폼 요소에서 값을 변경할 때 발생합니다.
+
+onChange 이벤트의 동작 과정:
+1. 사용자가 입력창에 텍스트를 입력하거나 삭제
+2. 브라우저가 변경사항을 감지
+3. React가 onChange 이벤트를 발생시킴
+4. 이벤트 객체의 target.value에서 새로운 값을 가져옴
+5. setState를 통해 상태 업데이트
+6. 새로운 값으로 컴포넌트 재렌더링
+
+```jsx
+function InputExample() {
+  const [text, setText] = useState('');
+
+  const handleChange = (event) => {
+    setText(event.target.value);
+  };
+
+  return (
+    <div>
+      <input 
+        type="text" 
+        value={text}
+        onChange={handleChange}
+        placeholder="텍스트를 입력하세요"
+      />
+      <p>입력된 텍스트: {text}</p>
+    </div>
+  );
+}
+```
+
+이 예제에서 `value={text}`와 `onChange={handleChange}`의 조합을 <HighlightWord>제어된 컴포넌트(Controlled Component)</HighlightWord>라고 합니다. 
+
+React 상태가 입력 필드의 값을 완전히 제어하므로, 입력값과 화면에 표시되는 값이 항상 동기화됩니다.
+
+<br/>
+
+### 마우스 이벤트
+
+<Image
+  src="/content/beginner/11/mouseEvent.gif"
+  alt="React 마우스 이벤트"
+  width="two-thirds"
+  isGif={true}
+/>
+
+마우스 관련 다양한 이벤트들을 처리할 수 있습니다. 각 이벤트는 마우스의 특정 동작에 반응합니다.
+
+마우스 이벤트의 종류와 발생 시점:
+- `onMouseEnter`: 마우스가 요소 위로 들어올 때
+- `onMouseLeave`: 마우스가 요소 밖으로 나갈 때  
+- `onMouseDown`: 마우스 버튼을 누르는 순간
+- `onMouseUp`: 마우스 버튼을 떼는 순간
+- `onMouseMove`: 마우스가 요소 위에서 움직일 때
+
+```jsx
+function MouseEvents() {
+  const [message, setMessage] = useState('마우스를 올려보세요');
+
+  return (
+    <div>
+      <div 
+        onMouseEnter={() => setMessage('마우스가 들어왔습니다')}
+        onMouseLeave={() => setMessage('마우스가 나갔습니다')}
+        onMouseDown={() => setMessage('마우스 버튼이 눌렸습니다')}
+        onMouseUp={() => setMessage('마우스 버튼이 떼어졌습니다')}
+      >
+        {message}
+      </div>
+    </div>
+  );
+}
+```
+
+이 예제에서는 하나의 div 요소에 여러 마우스 이벤트를 등록했습니다. 
+
+각 이벤트는 독립적으로 동작하며, 마우스의 상태 변화에 따라 다른 메시지를 화면에 표시합니다. 
+
+javascript의 이벤트 내용과 거의 동일하므로 간단하게 짚어보고 넘어가겠습니다.
+
+다만 React에서는 <HighlightWord>이벤트 이름이 camelCase로 작성되고, JSX 속성으로 전달된다</HighlightWord>는 점만 기억하면 되겠습니다.
+
+---
+
+## 이벤트 객체 활용하기
+
+이벤트 핸들러는 이벤트 객체를 매개변수로 받아 다양한 정보에 접근할 수 있습니다.
+
+이벤트 객체가 제공하는 주요 정보:
+- `event.type`: 발생한 이벤트의 종류 (click, change, submit 등)
+- `event.target`: 실제로 이벤트가 발생한 DOM 요소
+- `event.currentTarget`: 이벤트 핸들러가 등록된 DOM 요소
+- `event.target.value`: 입력 요소의 현재 값
+- `event.preventDefault()`: 브라우저 기본 동작 방지
+- `event.stopPropagation()`: 이벤트 버블링 중단
+
+```jsx
+function EventObjectExample() {
+  const handleEvent = (event) => {
+    console.log('이벤트 타입:', event.type);
+    console.log('대상 요소:', event.target);
+    console.log('현재 요소:', event.currentTarget);
+    
+    // 입력값 가져오기
+    if (event.target.type === 'text') {
+      console.log('입력값:', event.target.value);
+    }
+  };
+
+  return (
+    <div onClick={handleEvent}>
+      <button onClick={handleEvent}>버튼</button>
+      <input type="text" onChange={handleEvent} />
+    </div>
+  );
+}
+```
+<br/>
+이 예제에서 버튼을 클릭하면 `event.target`은 button 요소를, `event.currentTarget`은 실제로 이벤트 핸들러가 등록된 요소를 가리킵니다. 
+
+입력창에 타이핑하면 `event.target.value`를 통해 현재 입력값을 실시간으로 확인할 수 있습니다.
+
+<br/>
+
+---
+
+## 폼(Form) 이벤트 처리
+
+### 기본 폼 처리
+
+<Image
+  src="/content/beginner/11/basicForm.gif"
+  alt="React 기본 폼 이벤트"
+  width="two-thirds"
+  isGif={true}
+/>
+
+폼 제출은 웹 애플리케이션에서 매우 중요한 기능입니다. React에서는 폼 제출을 완전히 제어할 수 있습니다.
+
+폼 제출 이벤트의 처리 과정:
+1. 사용자가 폼을 제출 (버튼 클릭 또는 Enter 키)
+2. 브라우저가 기본적으로 페이지를 새로고침하려고 시도
+3. `event.preventDefault()`로 기본 동작을 방지
+4. React에서 폼 데이터를 JavaScript로 처리
+5. 필요한 경우 서버로 데이터 전송이나 상태 업데이트 수행
+
+```jsx
+function BasicForm() {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (event) => {
+    event.preventDefault(); // 페이지 새로고침 방지
+    
+    console.log('제출된 데이터:', { name, email });
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <div>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="이름"
+        />
+      </div>
+      <div>
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="이메일"
+        />
+      </div>
+      <button type="submit">제출</button>
+    </form>
+  );
+}
+```
+
+`event.preventDefault()`가 없다면 폼 제출 시 페이지가 새로고침되어 모든 상태가 초기화됩니다. 
+
+화면이 깜빡이면서 새로운 페이지를 로드하고 상태가 사라지는 이 모습은 React가 원하는 방식과는 거리가 멀죠.
+
+따라서 React의 <HighlightWord>Single Page Application(SPA)</HighlightWord> 특성을 유지하려면 반드시 기본 동작을 방지해야 합니다.
+
+<br/>
+
+---
+
+## 이벤트 핸들러 함수 정의하기
+
+### 화살표 함수 vs 일반 함수
+
+React에서는 화살표 함수를 사용하는 것이 일반적입니다. 
+
+화살표 함수는 javascript의 this 바인딩 문제가 없고 간결한 문법을 제공합니다.
+
+함수 정의 방식의 차이점:
+- **화살표 함수**: `this` 바인딩이 없어 React 함수형 컴포넌트에서 권장
+- **일반 함수**: 클래스 컴포넌트에서 `this` 바인딩이 필요했던 과거 방식
+- **인라인 함수**: 간단한 로직에 적합하지만 매번 새로운 함수 생성
+
+```jsx
+function EventHandlerTypes() {
+  const [count, setCount] = useState(0);
+
+  // 화살표 함수 (권장)
+  const handleClick = () => {
+    setCount(count + 1);
+  };
+
+  // 인라인 화살표 함수
+  const handleReset = () => setCount(0);
+
+  return (
+    <div>
+      <p>카운트: {count}</p>
+      <button onClick={handleClick}>증가</button>
+      <button onClick={handleReset}>리셋</button>
+      
+      {/* 인라인으로 직접 작성 */}
+      <button onClick={() => setCount(count - 1)}>감소</button>
+    </div>
+  );
+}
+```
+
+이 예제에서 `handleClick`은 재사용 가능한 함수로 정의되었고, 마지막 버튼은 인라인으로 함수를 정의했습니다. 
+
+간단한 로직이라면 인라인도 괜찮지만, 복잡한 로직은 별도 함수로 정의하는 것이 좋습니다.
+
+<br/>
+
+### 매개변수 전달하기
+
+이벤트 핸들러에 추가 매개변수를 전달할 수 있습니다. 
+
+이는 데이터를 동적으로 처리할 때 매우 유용합니다.
+
+동적으로 처리한다는 것은 매번 다른 값을 전달하면 그 값에 따라 다른 동작을 하도록 처리하는 것을 의미합니다.
+<br/>
+매개변수 전달 방법:
+1. **클로저 활용**: 화살표 함수로 감싸서 매개변수 전달
+2. **bind 메서드**: 함수에 인수를 미리 바인딩 (잘 사용하지 않음)
+3. **데이터 속성**: HTML data-* 속성 활용 (HTML 태그에 임의의 속성을 만들고 값을 부여하는 방법. React에서는 권장하지 않음)
+
+<br/>
+
+가장 일반적인 방법은 클로저를 활용하는 것입니다.
+
+클로저란 <HighlightWord>함수와 그 함수가 선언된 렉시컬 환경의 조합</HighlightWord>을 의미합니다.
+
+용어가 좀 난해하죠?
+
+렉시컬(lexical)이란 말 자체가 "어떤 코드가 작성된 위치"를 뜻합니다.
+
+함수가 작성됐을 때, 호출 됐을 때 두 가지 경우가 있다면 렉시컬은 함수를 작성한 바로 그 "선언 위치"를 뜻합니다.
+
+그 위치를 기준으로 변수를 결정한다는 의미죠.
+
+간단히 예제로 살펴보겠습니다.
+
+<br/>
+
+보통 이벤트 핸들러에 값을 같이 전달하고 싶을 때가 있잖아요?
+
+예를 들어, 버튼을 누를 때 id를 같이 넘기고 싶다든가 이런 상황.
+
+```jsx
+<button onClick={handleClick}>클릭</button>
+```
+이렇게 함수를 전달하면 handleClick 함수에 event만 전달되고 id와 같은 넘기고 싶은 값은 못 넘깁니다.
+
+이 때, 클로저를 활용하면 됩니다.
+
+```jsx
+function App() {
+  const handleClick = (id) => {
+    alert(`버튼 ${id} 클릭됨!`);
+  };
+
+  return (
+    <div>
+      <button onClick={() => handleClick(1)}>버튼 1</button>
+      <button onClick={() => handleClick(2)}>버튼 2</button>
+    </div>
+  );
+}
+```
+button의 onClick에서 화살표 함수를 한번 더 감싸는 방법으로 
+
+그 함수 환경 안에서(즉, 선언된 그 당시에) 기억되는 id값을 handleClick 함수에 그대로 전달하는 것입니다.
+
+이렇게 화살표 함수로 감싸면 다음 함수가 id 값을 넘겨받고 이를 기억한 채 실행됩니다.
+
+이게 바로 클로저를 활용한 것입니다.
+
+---
+
+## 이벤트 버블링과 제어
+
+### 이벤트 버블링 이해하기
+
+<Image
+  src="/content/beginner/11/eventBubble.gif"
+  alt="javascript 이벤트 버블링"
+  width="two-thirds"
+  isGif={true}
+/>
+
+이벤트 버블링은 자식 요소에서 발생한 이벤트가 부모 요소까지 전파되는 현상입니다. 
+
+마치 물속의 거품이 위로 올라가는 것처럼 거슬러 올라가는 형태입니다.
+
+이벤트 버블링의 순서:
+1. 이벤트가 최초 발생한 요소(target)에서 시작
+2. 그 요소의 부모 요소로 전파
+3. 계속해서 상위 부모 요소들로 전파
+4. document 객체까지 도달하면 종료
+
+```jsx
+function BubblingExample() {
+  const handleParentClick = () => {
+    console.log('부모 요소 클릭');
+  };
+
+  const handleChildClick = (event) => {
+    console.log('자식 요소 클릭');
+    // event.stopPropagation(); // 주석 해제하면 버블링 중단
+  };
+
+  return (
+    <div onClick={handleParentClick} style={{ padding: '20px', border: '1px solid red' }}>
+      부모 영역
+      <button onClick={handleChildClick} style={{ margin: '10px' }}>
+        자식 버튼
+      </button>
+    </div>
+  );
+}
+```
+
+이 예제에서 자식 버튼을 클릭하면 "자식 요소 클릭"과 "부모 요소 클릭"이 모두 콘솔에 출력됩니다. 
+
+`event.stopPropagation()`을 사용하면 부모로의 전파를 막을 수 있습니다.
+
+<br/>
+
+### preventDefault 사용하기
+
+<Image
+  src="/content/beginner/11/preventDefault.gif"
+  alt="React preventDefault"
+  width="two-thirds"
+  isGif={true}
+/>
+
+`preventDefault()`는 브라우저의 기본 동작을 막고 싶을 때 사용합니다. 가장 흔한 사용 사례는 폼 제출과 링크 클릭입니다.
+
+기본 동작을 막는 이유
+- **폼 제출**: 페이지 새로고침 방지
+- **링크 클릭**: 페이지 이동 방지  
+- **우클릭 메뉴**: 컨텍스트 메뉴 방지
+- **키보드 입력**: 특정 키의 기본 동작 방지
+
+```jsx
+function PreventDefaultExample() {
+  const handleLinkClick = (event) => {
+    event.preventDefault();
+    alert('링크 이동이 방지되었습니다');
+  };
+
+  const handleFormSubmit = (event) => {
+    event.preventDefault();
+    alert('폼 제출이 방지되었습니다');
+  };
+
+  return (
+    <div>
+      <a href="https://google.com" onClick={handleLinkClick}>
+        클릭해도 이동하지 않는 링크
+      </a>
+      
+      <form onSubmit={handleFormSubmit}>
+        <button type="submit">제출해도 새로고침되지 않음</button>
+      </form>
+    </div>
+  );
+}
+```
+
+`preventDefault()`가 없다면 링크를 클릭했을 때 Google로 이동하고, 폼을 제출했을 때 페이지가 새로고침됩니다. 
+
+React에서는 이런 기본 동작들을 막고 JavaScript로 직접 제어하는 것이 일반적입니다.
+
+<br/>
+
+## 키보드 이벤트
+
+<Image
+  src="/content/beginner/11/keyEvent.gif"
+  alt="React 키보드 이벤트"
+  width="two-thirds"
+  isGif={true}
+/>
+
+
+키보드 입력을 처리하는 방법입니다. 키보드 이벤트는 사용자가 키를 누르거나 뗄 때 발생합니다.
+
+주요 키보드 이벤트 종류:
+- `onKeyDown`: 키를 누르는 순간 발생
+- `onKeyUp`: 키를 떼는 순간 발생  
+
+키보드 이벤트에서 자주 사용하는 속성:
+- `event.key`: 눌린 키의 값 ('Enter', 'Escape', 'a', '1' 등)
+- `event.code`: 물리적 키의 코드 ('KeyA', 'Space', 'Enter' 등)
+- `event.ctrlKey`, `event.shiftKey`: 조합키 눌림 상태
+
+```jsx
+function KeyboardEvents() {
+  const [message, setMessage] = useState('');
+
+  const handleKeyDown = (event) => {
+    console.log('눌린 키:', event.key);
+    
+    if (event.key === 'Enter') {
+      alert('엔터 키가 눌렸습니다!');
+    }
+    
+    if (event.key === 'Escape') {
+      setMessage('');
+    }
+  };
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        onKeyDown={handleKeyDown}
+        placeholder="입력하고 엔터나 ESC를 눌러보세요"
+      />
+      <p>메시지: {message}</p>
+    </div>
+  );
+}
+```
+
+이 예제에서는 입력창에서 엔터 키를 누르면 알림이 표시되고, ESC 키를 누르면 입력창이 초기화됩니다. 검색창에서 엔터로 검색하거나, 모달 창에서 ESC로 닫기 등의 기능을 구현할 때 유용합니다.
+
+---
+
+## 복습 퀴즈
+
+<Quiz
+ question="React에서 폼 제출 시 페이지 새로고침을 방지하는 메서드는?"
+ options={[
+   "event.stopPropagation()",
+   "event.preventDefault()",
+   "event.stopImmediatePropagation()",
+   "event.returnValue = false"
+ ]}
+ correctAnswer={1}
+ explanation="event.preventDefault()는 브라우저의 기본 동작을 막는 메서드입니다. 폼 제출 시 페이지 새로고침을 방지할 때 사용합니다."
+/>
+
+<Quiz
+ question="이벤트 버블링을 중단시키는 메서드는?"
+ options={[
+   "event.preventDefault()",
+   "event.stopPropagation()",
+   "event.stopEvent()",
+   "event.cancel()"
+ ]}
+ correctAnswer={1}
+ explanation="event.stopPropagation()은 이벤트가 부모 요소로 전파되는 것을 중단시킵니다."
+/>
+
+<Quiz
+ question="React에서 권장되는 이벤트 핸들러 함수 정의 방식은?"
+ options={[
+   "일반 함수 (function)",
+   "화살표 함수 (=>)",
+   "익명 함수",
+   "모든 방식이 동일"
+ ]}
+ correctAnswer={1}
+ explanation="React에서는 this 바인딩 문제가 없고 간결한 화살표 함수를 사용하는 것이 권장됩니다."
+/>
+
+---
+
+## 참고 자료
+
+<LinkCard 
+  title="React 공식 문서 - 이벤트 처리하기" 
+  url="https://ko.react.dev/learn/responding-to-events" 
+  description="React 이벤트 처리에 대한 더 자세한 공식 문서" 
+/>
+
+<LinkCard 
+  title="React 공식 문서 - SyntheticEvent" 
+  url="https://ko.legacy.reactjs.org/docs/events.html" 
+  description="React의 SyntheticEvent 시스템에 대한 상세한 설명" 
+/>
+
+---
+
+<CalloutBox type="success" title="🎉 축하합니다!">
+React 이벤트 처리의 핵심을 모두 학습했습니다! 이제 사용자와 상호작용하는 동적인 React 애플리케이션을 만들 수 있습니다.
+</CalloutBox>
