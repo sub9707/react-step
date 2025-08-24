@@ -7,6 +7,7 @@ import CoursePage from './pages/ContentPage';
 import DashboardPage from './pages/DashboardPage';
 import { useEffect } from 'react';
 import { initGA, trackPageView } from './utils/analytics';
+import NotFoundPage from './pages/NotFoundPage';
 
 const Analytics: React.FC = () => {
   const location = useLocation();
@@ -52,7 +53,7 @@ const App: React.FC = () => {
             <DashboardPage />
           </Layout>
         } />
-        {/* <Route path="*" element={<NotFoundPage />} /> */}
+        <Route path="*" element={<Layout><NotFoundPage /></Layout>} />
       </Routes>
     </>
   );

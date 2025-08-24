@@ -5,18 +5,16 @@ import MDXRenderer from '../components/CourseContent/MDXRenderer';
 import { componentRegistry } from '../components/CourseContent/EmbeddedComponents';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/common/Button';
+import type { LevelType } from '../types/CourseList';
 
-interface ContentPageProps {
-  level?: string;
-}
 
-function ContentPage({ level = 'beginner'}: ContentPageProps) {
-  const { lessonId } = useParams<{ lessonId: string }>();
-  const { MDXComponent, metadata, loading, error } = useMDXContent(level, lessonId!);
+function ContentPage() {
+  const { level, lessonId } = useParams<{ level: LevelType; lessonId: string }>();
+  const { MDXComponent, metadata, loading, error } = useMDXContent(level!, lessonId!);
   const navigate = useNavigate();
   
   // 사용 가능한 레슨 목록 가져오기
-  const availableLessons = getAvailableLessons(level);
+  const availableLessons = getAvailableLessons(level!);
   const currentLessonNum = parseInt(lessonId!);
   const currentIndex = availableLessons.indexOf(currentLessonNum);
   

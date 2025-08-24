@@ -1,5 +1,3 @@
-// types/CourseList.ts
-
 /**
  * 난이도 레벨 타입
  */

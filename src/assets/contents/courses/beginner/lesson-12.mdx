@@ -1,0 +1,582 @@
+export const metadata = {
+  id: 12,
+  title: "React에서 쓰는 JavaScript 문법 복습",
+  description: "React를 효과적으로 학습하기 위해 필요한 JavaScript 핵심 문법을 복습해봅시다.",
+  difficulty: "쉬움",
+  tags: ["JavaScript", "ES6+", "기초", "React 준비"],
+  lastUpdated: "2025-08-24",
+  image: "/content/beginner/12/lesson-12-bg.png"
+};
+
+import { 
+  CalloutBox, 
+  HighlightWord, 
+  Quiz, 
+  LinkCard,
+  Image
+} from '@/components/CourseContent/EmbeddedComponents'
+
+React를 배우기 전에 JavaScript의 핵심 문법을 확실히 알아두는 것이 중요합니다.
+
+React는 JavaScript 라이브러리이기 때문에 JavaScript의 최신 문법(ES6+)을 많이 활용합니다.
+
+특히 화살표 함수, 구조분해할당, 스프레드 연산자 등은 React 코드에서 매우 자주 사용되므로 잘 익혀두어야 합니다.
+
+이번 시간에는 React 학습에 필수적인 JavaScript 문법들을 빠르게 복습해보겠습니다.
+
+---
+
+## 화살표 함수 (Arrow Function)
+
+화살표 함수는 ES6에서 도입된 함수 표현 방식으로, <HighlightWord>기존 function 키워드보다 간결하고 this 바인딩이 없어</HighlightWord> React에서 매우 자주 사용됩니다.
+
+화살표 함수의 특징:
+- 간결한 문법으로 코드량 감소
+- this가 상위 스코프를 따라감
+- 항상 익명 함수로만 사용 가능
+- return 키워드 생략 가능 (한 줄일 때)
+
+```jsx
+// 기존 함수 표현식
+const add = function(a, b) {
+  return a + b;
+};
+
+// 화살표 함수
+const add = (a, b) => {
+  return a + b;
+};
+
+// 한 줄일 때 return 생략 가능
+const add = (a, b) => a + b;
+
+// 매개변수가 하나일 때 괄호 생략 가능
+const double = x => x * 2;
+
+// 매개변수가 없을 때
+const sayHello = () => console.log('Hello!');
+```
+
+위 예제에서 볼 수 있듯이 화살표 함수는 코드를 훨씬 간결하게 만들어줍니다. 
+
+React에서 이벤트 핸들러나 콜백 함수를 작성할 때 화살표 함수를 사용하면 코드가 깔끔해지고 this 바인딩 문제도 피할 수 있습니다.
+
+<br/>
+
+---
+
+## 구조분해할당 (Destructuring)
+
+구조분해할당은 <HighlightWord>배열이나 객체의 속성을 개별 변수로 쉽게 추출</HighlightWord>하여 따로따로 간단하게 쓸 수 있는 문법입니다. 
+
+React에서 props나 state를 다룰 때 매우 유용합니다.
+
+### 객체 구조분해할당
+
+객체의 속성을 개별 변수로 추출하는 방법입니다.
+
+```jsx
+// 기본 사용법
+const person = { name: 'Kim', age: 29, city: 'Seoul' };
+
+// 기존 방식
+const name = person.name;
+const age = person.age;
+
+// 구조분해할당
+const { name, age } = person;
+console.log(name); // 'Kim'
+console.log(age);  // 29
+
+// 변수명 바꾸기
+const { name: userName, age: userAge } = person;
+
+// 기본값 설정
+const { name, age, job = '무직' } = person;
+console.log(job); // '무직' (person.job이 없으므로)
+```
+
+React에서는 컴포넌트의 props를 받을 때 구조분해할당을 자주 사용합니다. 
+
+`function Button({ title, onClick })` 같은 형태로 props 객체에서 필요한 속성만 바로 추출할 수 있어 마치 변수처럼 사용해 코드가 깔끔해집니다.
+
+<br/>
+
+### 배열 구조분해할당
+
+배열의 요소를 순서대로 개별 변수에 할당하는 방법입니다.
+
+```jsx
+const numbers = [1, 2, 3, 4, 5];
+
+// 기존 방식
+const first = numbers[0];
+const second = numbers[1];
+
+// 구조분해할당
+const [first, second, third] = numbers;
+console.log(first);  // 1
+console.log(second); // 2
+
+// 일부 요소 건너뛰기
+const [first, , third] = numbers;
+console.log(third); // 3
+
+// 나머지 요소들 가져오기
+const [first, second, ...rest] = numbers;
+console.log(rest); // [3, 4, 5]
+```
+
+React에서는 `useState` Hook이 배열을 반환하므로 구조분해할당을 필수적으로 사용합니다. 
+
+`const [count, setCount] = useState(0)`처럼 상태값과 상태 업데이트 함수를 한번에 받아올 수 있습니다.
+
+<br/>
+
+---
+
+## 스프레드 연산자 (Spread Operator)
+
+스프레드 연산자(`...`)는 <HighlightWord>배열이나 객체의 껍데기를 벗기고 쭈욱 펼쳐서 개별 요소들로 분리</HighlightWord>하는 문법입니다. 
+
+React에서 상태 업데이트나 props 전달 시 매우 유용합니다.
+
+### 배열에서 스프레드 연산자
+
+배열을 복사하거나 합칠 때 사용합니다.
+
+```jsx
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+
+// 배열 복사
+const copied = [...arr1];
+console.log(copied); // [1, 2, 3]
+
+// 배열 합치기
+const combined = [...arr1, ...arr2];
+console.log(combined); // [1, 2, 3, 4, 5, 6]
+
+// 새 요소 추가
+const newArr = [...arr1, 4, 5];
+console.log(newArr); // [1, 2, 3, 4, 5]
+```
+
+React에서 배열 상태를 업데이트할 때 원본을 직접 수정하지 않고 새로운 배열을 만들어야 합니다. 
+
+스프레드 연산자를 사용하면 기존 배열을 복사한 후 변경사항을 적용할 수 있어 불변성을 유지할 수 있습니다.
+
+<br/>
+
+### 객체에서 스프레드 연산자
+
+객체를 복사하거나 속성을 추가/수정할 때 사용합니다.
+
+```jsx
+const user = { name: 'Kim', age: 25 };
+
+// 객체 복사
+const copiedUser = { ...user };
+
+// 속성 추가
+const userWithEmail = { ...user, email: 'kim@example.com' };
+
+// 속성 수정
+const olderUser = { ...user, age: 26 };
+
+// 여러 객체 합치기
+const address = { city: 'Seoul', country: 'Korea' };
+const fullUser = { ...user, ...address };
+console.log(fullUser); // { name: 'Kim', age: 25, city: 'Seoul', country: 'Korea' }
+```
+
+React에서 객체 형태의 상태를 업데이트할 때 스프레드 연산자를 사용하면 기존 속성들은 유지하면서 특정 속성만 변경할 수 있습니다.
+
+또한 props를 전달할 때도 객체 스프레드 연산자를 사용하여 편리하게 여러 속성을 넘길 수 있습니다.
+
+```jsx
+const props = { title: 'Hello', onClick: () => alert('Clicked!') };
+<Button {...props} />
+
+// Button.jsx에서 그대로 전달
+function Button({ title, onClick }){
+    ...생략
+}
+```
+
+이런 식으로 props 객체를 간단하고 직관적으로 전달할 수 있습니다.
+
+<br/>
+
+---
+
+## 배열 메서드
+
+React에서는 데이터를 화면에 렌더링할 때 배열 메서드를 자주 사용합니다. 특히 `map`, `filter`, `reduce` 메서드는 필수적으로 알아야 합니다.
+
+### map() 메서드
+
+<HighlightWord>배열의 각 요소를 변환하여 새로운 배열을 만드는</HighlightWord> 메서드입니다. React에서 리스트를 렌더링할 때 가장 많이 사용합니다.
+
+```jsx
+const numbers = [1, 2, 3, 4, 5];
+
+// 각 숫자를 2배로 변환
+const doubled = numbers.map(num => num * 2);
+console.log(doubled); // [2, 4, 6, 8, 10]
+
+// 객체 배열 변환
+const users = [
+  { id: 1, name: 'Kim' },
+  { id: 2, name: 'Lee' }
+];
+
+const userNames = users.map(user => user.name);
+console.log(userNames); // ['Kim', 'Lee']
+
+// React에서 리스트 렌더링 예시
+const userList = users.map(user => (
+  <li key={user.id}>{user.name}</li>
+));
+```
+
+React에서 `map()` 메서드는 데이터 배열을 JSX 요소 배열로 변환할 때 사용합니다. 
+
+각 요소마다 고유한 `key` prop을 제공해야 React가 효율적으로 렌더링할 수 있습니다.
+
+<br/>
+
+### filter() 메서드
+
+<HighlightWord>조건에 맞는 요소들만 걸러내어 새로운 배열을 만드는</HighlightWord> 메서드입니다.
+
+```jsx
+const numbers = [1, 2, 3, 4, 5, 6];
+
+// 짝수만 필터링
+const evenNumbers = numbers.filter(num => num % 2 === 0);
+console.log(evenNumbers); // [2, 4, 6]
+
+// 객체 배열 필터링
+const users = [
+  { id: 1, name: 'Kim', age: 25 },
+  { id: 2, name: 'Lee', age: 30 },
+  { id: 3, name: 'Park', age: 20 }
+];
+
+const adults = users.filter(user => user.age >= 25);
+console.log(adults); // [{ id: 1, name: 'Kim', age: 25 }, { id: 2, name: 'Lee', age: 30 }]
+```
+
+React에서는 검색 기능이나 조건부 렌더링에서 `filter()` 메서드를 자주 사용합니다. 
+
+사용자 입력에 따라 목록을 동적으로 필터링할 때 매우 유용합니다.
+
+<br/>
+
+---
+
+## 템플릿 리터럴 (Template Literal)
+
+템플릿 리터럴은 <HighlightWord>백틱(`)을 사용하여 문자열을 더 쉽게 조작</HighlightWord>할 수 있는 ES6 문법입니다. 변수나 표현식을 문자열에 쉽게 삽입할 수 있습니다.
+
+```jsx
+const name = 'Kim';
+const age = 25;
+
+// 기존 문자열 연결
+const message1 = 'Hello, my name is ' + name + ' and I am ' + age + ' years old.';
+
+// 템플릿 리터럴
+const message2 = `Hello, my name is ${name} and I am ${age} years old.`;
+
+// 여러 줄 문자열
+const multiLine = `
+  This is a
+  multi-line
+  string.
+`;
+
+// 표현식 사용
+const result = `2 + 3 = ${2 + 3}`;
+console.log(result); // '2 + 3 = 5'
+```
+
+React에서는 동적으로 CSS 클래스 이름을 만들거나, 조건부 스타일을 적용할 때 템플릿 리터럴을 자주 사용합니다. 
+
+JSX 내에서 변수값을 표시할 때도 매우 편리합니다.
+
+<br/>
+
+---
+
+## 삼항 연산자 (Ternary Operator)
+
+삼항 연산자는 <HighlightWord>if-else문을 간단하게 표현</HighlightWord>할 수 있는 연산자입니다. React의 JSX에서 조건부 렌더링을 할 때 필수적으로 사용됩니다.
+
+```jsx
+const age = 20;
+
+// 기존 if-else문
+let message;
+if (age >= 18) {
+  message = '성인입니다';
+} else {
+  message = '미성년자입니다';
+}
+
+// 삼항 연산자
+const message = age >= 18 ? '성인입니다' : '미성년자입니다';
+
+// 중첩 삼항 연산자 (권장하지 않음)
+const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : 'C';
+
+// React JSX에서 조건부 렌더링
+const isLoggedIn = true;
+return (
+  <div>
+    {isLoggedIn ? <UserProfile /> : <LoginButton />}
+  </div>
+);
+```
+
+JSX에서는 if문을 직접 사용할 수 없기 때문에 삼항 연산자가 조건부 렌더링의 핵심 도구입니다. 
+
+간단한 조건부 로직에는 매우 유용하지만, 복잡한 조건이 많아지면 별도 함수로 분리하는 것이 좋습니다.
+
+<br/>
+
+---
+
+## 논리 연산자 (Logical Operators)
+
+논리 연산자 `&&`와 `||`는 <HighlightWord>조건부 렌더링과 기본값 설정</HighlightWord>에 매우 유용합니다.
+
+### && 연산자 (AND)
+
+조건이 참일 때만 뒤의 값을 렌더링합니다.
+
+```jsx
+const showMessage = true;
+const user = { name: 'Kim' };
+
+// 조건부 렌더링
+return (
+  <div>
+    {showMessage && <p>이 메시지는 showMessage가 true일 때만 보입니다</p>}
+    {user && <p>환영합니다, {user.name}님!</p>}
+  </div>
+);
+
+// 배열 길이 확인
+const items = ['apple', 'banana'];
+return (
+  <div>
+    {items.length > 0 && <p>{items.length}개의 항목이 있습니다</p>}
+  </div>
+);
+```
+
+`&&` 연산자는 왼쪽 값이 참(truthy)일 때만 오른쪽 값을 반환합니다. 
+
+React에서 특정 조건일 때만 컴포넌트를 렌더링하고 싶을 때 매우 간편하게 사용할 수 있습니다.
+
+<br/>
+
+### || 연산자 (OR)
+
+기본값을 설정하거나 대체값을 제공할 때 사용합니다.
+
+```jsx
+const userName = '';
+const defaultName = '익명';
+
+// 기본값 설정
+const displayName = userName || defaultName;
+console.log(displayName); // '익명'
+
+// React에서 props 기본값
+function Greeting({ name }) {
+  return <h1>Hello, {name || 'Guest'}!</h1>;
+}
+
+// API 데이터 기본값
+const user = {
+  name: 'Kim',
+  email: null
+};
+
+return (
+  <div>
+    <p>이메일: {user.email || '이메일 없음'}</p>
+  </div>
+);
+```
+
+`||` 연산자는 왼쪽 값이 falsy일 때 오른쪽 값을 반환합니다. 
+
+undefined나 null 값에 대한 안전한 기본값을 제공할 때 유용합니다.
+
+특히 React에 Typescript를 함께 사용할 때, `||` 연산자를 사용하여 null이나 undefined를 처리하는 패턴이 자주 등장합니다.
+
+<br/>
+
+---
+
+## 비동기 처리 (Promise & async/await)
+<br/>
+React에서 API 호출이나 데이터 페칭을 할 때 비동기 처리는 필수적입니다.
+
+비동기/동기에 대한 개념을 간단히 짚고 넘어가자면, 동기는 <HighlightWord>작업을 순서대로 처리하기 때문에 하나의 작업이 끝나야 다음 작업이 시작</HighlightWord>됩니다. 
+
+반면 비동기는 <HighlightWord>작업을 병렬로 처리하여 다른 작업이 끝나기를 기다리지 않고 바로 다음 작업을 시작</HighlightWord>할 수 있습니다.
+<br/>
+javascript는 기본적으로 한 번에 하나의 작업을 처리할 수 밖에 없는 단일 스레드 언어이지만,
+
+비동기 처리 방식을 지원합니다.
+
+바로 Promise와 async/await 문법을 사용해서요.
+
+이 문법을 사용하면 한 번에 하나밖에 못하는 고지식한 JavaScript도 비동기 작업처럼 효율적으로 작업을 처리할 수 있습니다.
+<br/>
+
+### Promise 기초
+
+Promise는 비동기 작업의 완료(성공) 또는 실패를 나타내는 객체입니다.
+
+```jsx
+// Promise 생성
+const fetchData = () => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      const success = true;
+      if (success) {
+        resolve('데이터 로드 성공');
+      } else {
+        reject('데이터 로드 실패');
+      }
+    }, 1000);
+  });
+};
+
+// Promise 사용
+fetchData()
+  .then(data => console.log(data))
+  .catch(error => console.error(error));
+```
+
+Promise는 세 가지 상태를 가집니다: 대기(pending), 이행(fulfilled), 거부(rejected). 
+
+`.then()`에다 성공했을 때 어떻게 처리할 것인지, `.catch()`로 실패 시 어떤 처리를 할 것인지 작성할 수 있습니다.
+
+<br/>
+
+### async/await
+
+async/await는 Promise를 더 간단하고 직관적으로 사용할 수 있게 해줍니다.
+
+위 Promise는 여러 작업을 구성해놓으면 끝날 때마다 then을 붙이고 then을 붙여 코드고 난해해지고 복잡해지는 "콜백 지옥"이라는 고질병이 있었습니다.
+
+이 고질병을 해결하기 위해 나온 문법이 async/await입니다.
+
+then을 꼬리에 꼬리를 물지 않고, 마치 동기 코드처럼 이 작업 끝나면 아래 작업을 실행하는 것처럼 순서대로 작성할 수 있습니다.
+
+```jsx
+// async 함수로 비동기 처리
+const loadUserData = async () => {
+  try {
+    const response = await fetch('/api/user');
+    const userData = await response.json();
+    console.log(userData);
+  } catch (error) {
+    console.error('에러 발생:', error);
+  }
+};
+
+// React 컴포넌트에서 사용
+function UserProfile() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/user');
+        const userData = await response.json();
+        setUser(userData);
+      } catch (error) {
+        console.error('사용자 데이터 로드 실패:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
+  return user ? <div>{user.name}</div> : <div>로딩 중...</div>;
+}
+```
+
+React에서는 useEffect Hook과 함께 사용하여 컴포넌트가 마운트될 때 혹은 특정 상호작용 이후에 데이터를 불러오는 패턴이 매우 일반적입니다.
+
+<br/>
+
+---
+
+## 복습 퀴즈
+
+<Quiz
+ question="React에서 배열 데이터를 화면에 렌더링할 때 가장 자주 사용되는 배열 메서드는?"
+ options={[
+   "filter()",
+   "reduce()",
+   "map()",
+   "forEach()"
+ ]}
+ correctAnswer={2}
+ explanation="map() 메서드는 배열의 각 요소를 JSX 요소로 변환하여 새로운 배열을 반환하므로 React에서 리스트를 렌더링할 때 가장 많이 사용됩니다."
+/>
+
+<Quiz
+ question="JSX에서 조건부 렌더링을 위해 사용할 수 없는 것은?"
+ options={[
+   "삼항 연산자 (condition ? A : B)",
+   "논리 AND 연산자 (condition && element)",
+   "if-else 문",
+   "논리 OR 연산자 (value || defaultValue)"
+ ]}
+ correctAnswer={2}
+ explanation="JSX 내부에서는 if-else 문을 직접 사용할 수 없습니다. 대신 삼항 연산자나 논리 연산자를 사용해야 합니다."
+/>
+
+<Quiz
+ question="스프레드 연산자(...)의 올바른 사용법은?"
+ options={[
+   "const newArr = [...arr1, arr2];",
+   "const newArr = [...arr1, ...arr2];",
+   "const newArr = [arr1..., arr2...];",
+   "const newArr = [arr1, arr2]...;"
+ ]}
+ correctAnswer={1}
+ explanation="스프레드 연산자는 배열 앞에 ...을 붙여서 사용합니다. [...arr1, ...arr2]처럼 각 배열을 펼쳐서 새로운 배열에 포함시킵니다."
+/>
+
+---
+
+## 참고 자료
+
+<LinkCard 
+  title="MDN - JavaScript 가이드" 
+  url="https://developer.mozilla.org/ko/docs/Web/JavaScript/Guide" 
+  description="JavaScript의 모든 문법과 개념을 상세히 다룬 공식 문서" 
+/>
+
+<LinkCard 
+  title="MDN - ES6 기능들" 
+  url="https://developer.mozilla.org/ko/docs/Web/JavaScript/New_in_JavaScript/ECMAScript_2015_support_in_Mozilla" 
+  description="ES6+에서 추가된 새로운 JavaScript 기능들에 대한 설명" 
+/>
+
+---
+
+<CalloutBox type="success" title="🎉 준비 완료!">
+React 학습에 필요한 JavaScript 핵심 문법을 모두 복습했습니다! 이제 React 컴포넌트와 Hooks를 자유자재로 다룰 준비가 되었습니다.
+</CalloutBox>

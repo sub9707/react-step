@@ -10,6 +10,7 @@ interface CourseListProps {
 }
 
 const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
+    console.log(level)
     const { data: learningData, loading, error, refetch } = useLearningData(level);
     const navigator = useNavigate();
 

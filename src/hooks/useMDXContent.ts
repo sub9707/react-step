@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import type { MDXMetadata } from '../types/mdx';
+import { getLevelFolderName } from '../components/CourseListPage/generateLearningData';
+import type { LevelType } from '../types/CourseList';
 
 interface UseMDXContentReturn {
   MDXComponent: React.ComponentType | null;
@@ -19,7 +21,7 @@ const mdxMetadataModules = import.meta.glob('/src/assets/contents/courses/**/*.m
   import: 'metadata'
 });
 
-export const useMDXContent = (level: string, lessonId: string): UseMDXContentReturn => {
+export const useMDXContent = (level: LevelType, lessonId: string): UseMDXContentReturn => {
   const [MDXComponent, setMDXComponent] = useState<React.ComponentType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -31,15 +33,17 @@ export const useMDXContent = (level: string, lessonId: string): UseMDXContentRet
         setLoading(true);
         setError(null);
 
+        const mappedLevel = getLevelFolderName(level);
+
         // MDX 파일 경로 구성
-        const mdxPath = `/src/assets/contents/courses/${level}/lesson-${lessonId}.mdx`;
+        const mdxPath = `/src/assets/contents/courses/${mappedLevel}/lesson-${lessonId}.mdx`;
         
         // glob으로 로드된 모듈에서 해당 파일 찾기
         const moduleLoader = mdxModules[mdxPath];
         const metadataLoader = mdxMetadataModules[mdxPath];
         
         if (!moduleLoader) {
-          throw new Error(`레슨 파일을 찾을 수 없습니다: ${level}/lesson-${lessonId}`);
+          throw new Error(`레슨 파일을 찾을 수 없습니다: ${mappedLevel}/lesson-${lessonId}`);
         }
 
         // 비동기로 MDX 모듈 로드

@@ -4,7 +4,7 @@ import type { LearningItem, LevelType } from "../../types/CourseList";
 /**
  * 레벨명을 영어 폴더명으로 변환
  */
-const getLevelFolderName = (level: LevelType): string => {
+export const getLevelFolderName = (level: LevelType): string => {
   const levelMap: Record<LevelType, string> = {
     '초급': 'beginner',
     '중급': 'intermediate',
