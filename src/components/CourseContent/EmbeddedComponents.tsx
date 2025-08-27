@@ -675,7 +675,7 @@ const isGifImage = (src: string): boolean => {
   return src.toLowerCase().includes('.gif') || src.toLowerCase().includes('gif');
 };
 
-// 이미지 갤러리 컴포넌트 (모바일 최적화)
+// 이미지 갤러리 컴포넌트
 export const ImageGallery: React.FC<ImageGalleryProps> = ({
   images,
   width = 'full',

@@ -142,7 +142,7 @@ const DashboardPage: React.FC = () => {
 
   // 인증된 경우 대시보드 내용 표시
   return (
-    <div className="min-h-screen bg-light-1 dark:bg-dark-3 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         {/* 헤더 */}
         <div className="flex justify-between items-center mb-8">

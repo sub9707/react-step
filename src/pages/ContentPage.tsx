@@ -43,7 +43,7 @@ function ContentPage() {
   // 로딩 상태
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] flex items-center justify-center">
+      <>
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
           <div className="text-center">
@@ -55,14 +55,14 @@ function ContentPage() {
             </p>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
   // 에러 상태
   if (error || !MDXComponent) {
     return (
-      <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] flex items-center justify-center">
+      <>
         <div className="max-w-md mx-auto text-center p-6">
           <div className="flex justify-center mb-4">
             <AlertCircle className="w-16 h-16 text-red-500" />
@@ -93,7 +93,7 @@ function ContentPage() {
             </button>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
@@ -102,7 +102,7 @@ function ContentPage() {
 
   // 성공적으로 데이터를 불러온 경우
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] transition-colors duration-200">
+    <>
       {/* 마크다운 네비게이션 - MDX 컴포넌트에서 헤딩 추출 */}
       <NavigationBar MDXComponent={MDXComponent} />
 
@@ -222,7 +222,7 @@ function ContentPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
 

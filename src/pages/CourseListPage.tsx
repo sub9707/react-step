@@ -14,7 +14,7 @@ const CourseListPage: React.FC = () => {
         return levelMap[id] || '초급';
     };
 
-    return <CourseList level={getLevelName(level || 'beginner')} />;
+    return <CourseList level={getLevelName(level!)} />;
 };
 
 export default CourseListPage;

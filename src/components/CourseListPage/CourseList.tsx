@@ -10,7 +10,6 @@ interface CourseListProps {
 }
 
 const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
-    console.log(level)
     const { data: learningData, loading, error, refetch } = useLearningData(level);
     const navigator = useNavigate();
 
@@ -21,7 +20,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
     // 로딩 상태
     if (loading) {
         return (
-            <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] flex items-center justify-center">
+            <>
                 <div className="flex flex-col items-center gap-4">
                     <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
                     <div className="text-center">
@@ -33,7 +32,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
                         </p>
                     </div>
                 </div>
-            </div>
+            </>
         );
     }
 
@@ -42,7 +41,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
         const folderName = level === '초급' ? 'beginner' : level === '중급' ? 'intermediate' : 'advanced';
         
         return (
-            <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] transition-colors duration-200">
+            <>
                 <div className="max-w-4xl mx-auto px-4 py-8">
                     <div className="mb-8">
                         <button
@@ -99,65 +98,13 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
                         </div>
                     </div>
                 </div>
-            </div>
-        );
-    }
-
-    // 데이터가 없는 경우
-    if (!learningData || learningData.length === 0) {
-        const folderName = level === '초급' ? 'beginner' : level === '중급' ? 'intermediate' : 'advanced';
-        
-        return (
-            <div className="min-h-screen bg-[#f8f8f8] dark:bg-[#1d1d1d] transition-colors duration-200">
-                <div className="max-w-4xl mx-auto px-4 py-8">
-                    <div className="mb-8">
-                        <button
-                            onClick={handleBackToHome}
-                            className="inline-flex items-center gap-2 text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 transition-colors mb-4 group"
-                        >
-                            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-                            단계 선택
-                        </button>
-                        <h1 className="text-4xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-2">
-                            {level} React 과정
-                        </h1>
-                    </div>
-
-                    <div className="flex flex-col items-center justify-center py-16">
-                        <div className="text-center max-w-md">
-                            <FileX className="w-16 h-16 text-gray-400 mx-auto mb-6" />
-                            
-                            <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-4">
-                                강의가 준비되지 않았습니다
-                            </h2>
-                            
-                            <p className="text-gray-600 dark:text-[#c2c2c2] mb-6 leading-relaxed">
-                                {level} 단계의 MDX 강의 파일이 아직 작성되지 않았습니다.
-                            </p>
-                            
-                            <div className="text-sm text-gray-500 dark:text-gray-400 mb-6">
-                                <p>다음 경로에 강의 파일을 추가해주세요:</p>
-                                <code className="block bg-gray-100 dark:bg-gray-800 p-2 rounded mt-2 text-xs">
-                                    src/assets/contents/courses/{folderName}/lesson-1.mdx
-                                </code>
-                            </div>
-                            
-                            <button
-                                onClick={handleBackToHome}
-                                className="bg-[#3e3e3e] hover:bg-[#2b2b2b] dark:bg-[#f8f8f8] dark:hover:bg-[#c2c2c2] text-white dark:text-[#2b2b2b] font-medium py-3 px-6 rounded-xl transition-all duration-200"
-                            >
-                                다른 단계 선택하기
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            </>
         );
     }
 
     // 성공적으로 데이터를 로드한 경우
     return (
-        <div className="min-h-screen bg-slate-100 dark:bg-[#1d1d1d] transition-colors duration-200">
+        <>
             <div className="max-w-4xl mx-auto px-4 py-8">
                 <div className="mb-8">
                     <button
@@ -205,7 +152,7 @@ const CourseList: React.FC<CourseListProps> = ({ level = '초급' }) => {
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
