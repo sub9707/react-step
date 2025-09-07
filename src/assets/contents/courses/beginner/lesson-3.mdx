@@ -5,7 +5,7 @@ export const metadata = {
   difficulty: "쉬움",
   tags: ["React", "Virtual DOM", "성능", "DOM", "입문", "기초"],
   lastUpdated: "2025-07-26",
-  image: "/content/beginner/3/VDOM-BG.png"
+  image: "http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/VDOM-BG.png"
 };
 
 import { 
@@ -17,7 +17,7 @@ import {
 } from '@/components/CourseContent/EmbeddedComponents'
 
 <Image
-  src="/content/beginner/3/write.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/write.png"
   alt="write_Image"
   width="half"
   caption="예...? 이름이 바뀌었다고요...?"
@@ -53,7 +53,7 @@ DOM은 <HighlightWord>Document-Object-Model, "문서-객체-모델"</HighlightWo
 아래 사진을 볼까요?
 
 <Image
-  src="/content/beginner/3/DOM-example.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/DOM-example.png"
   alt="DOM"
   width="full"
   caption="문서 페이지(좌)와 이를 구성하는 객체 HTML(우)"
@@ -99,7 +99,7 @@ Document-Object-Model, DOM이라 불리는 객체 구조입니다.
 이 DOM 구조는 들쑥날쑥한 위 사진의 HTML처럼 트리구조를 띄게됩니다.
 
 <Image
-  src="/content/beginner/3/DOM-tree.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/DOM-tree.png"
   alt="DOM tree"
   width="full"
   caption="DOM 트리 구조를 가식화한 도형도"
@@ -110,7 +110,7 @@ Document-Object-Model, DOM이라 불리는 객체 구조입니다.
 ## 기존 DOM의 문제점
 
 <Image
-  src="/content/beginner/2/reloading.gif"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/2/reloading.gif"
   alt="느린 DOM 조작"
   width="full"
   caption="전통적인 DOM 조작 - 하나씩 바꿀 때마다 다시 그리기"
@@ -177,7 +177,7 @@ const virtualElement = {
 ### 1단계: Virtual DOM 트리 생성
 <br/>
 <Image
-  src="/content/beginner/3/step1.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/step1.png"
   alt="Virtual DOM 작동 과정_1"
   width="half"
 />
@@ -190,7 +190,7 @@ const virtualElement = {
 ### 2단계: 상태 변화
 <br/>
 <Image
-  src="/content/beginner/3/step2.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/step2.png"
   alt="Virtual DOM 작동 과정_2"
   width="half"
 />
@@ -203,7 +203,7 @@ const virtualElement = {
 ### 3단계: 차이 비교(Diffing)
 <br/>
 <Image
-  src="/content/beginner/3/step3.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/step3.png"
   alt="Virtual DOM 작동 과정_3"
   width="two-thirds"
 />
@@ -218,7 +218,7 @@ React는 이 Diffing 알고리즘으로 트리 전체를 샅샅이 비교하기�
 ### 4단계: 재조정 단계(Reconciliation), 재렌더링(Re-Render)
 <br/>
 <Image
-  src="/content/beginner/3/step4.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/beginner/3/step4.png"
   alt="Virtual DOM 작동 과정_4"
   width="two-thirds"
 />

@@ -5,7 +5,7 @@ export const metadata = {
   difficulty: "중간",
   tags: ["React Router", "라우팅", "SPA", "동적 라우팅", "중첩 라우팅", "보호된 라우트"],
   lastUpdated: "2025-08-24",
-  image: "/content/intermediate/1/lesson-1-bg.png"
+  image: "http://subdevpi.duckdns.org:3000/file/react-step/content/intermediate/1/lesson-1-bg.png"
 };
 
 import { 
@@ -19,14 +19,14 @@ import {
 } from '@/components/CourseContent/EmbeddedComponents'
 
 <Image
-  src="/content/intermediate/1/react-router.png"
+  src="http://subdevpi.duckdns.org:3000/file/react-step/content/intermediate/1/react-router.png"
   alt="React Router 개념도"
   width="half"
 />
 <br/>
 React로 웹 애플리케이션을 만들다 보면 여러 페이지 간의 이동이 필요한 순간이 옵니다.
 
-일반 웹사이트처럼 페이지마다 새로 로드되는 것이 아니라, <HighlightWord>Single Page Application(SPA)</HighlightWord>에서 부드럽게 화면이 전환되는 것을 구현하려면 라우팅 시스템이 필요합니다.
+일반 웹사이트처럼 페이지마다 깜빡이며 새로 로드되는 것이 아니라, <HighlightWord>Single Page Application(SPA)</HighlightWord>에서 부드럽게 화면이 전환되는 것을 구현하려면 라우팅 시스템이 필요합니다.
 
 React Router는 React 애플리케이션에서 가장 널리 사용되는 라우팅 라이브러리입니다.
 
@@ -37,6 +37,8 @@ React Router는 React 애플리케이션에서 가장 널리 사용되는 라우
 <HighlightWord>React Router</HighlightWord>는 React 애플리케이션에서 클라이언트 사이드 라우팅을 구현할 수 있게 해주는 라이브러리입니다.
 
 일반 웹사이트에서는 새로운 페이지로 이동할 때마다 서버에서 완전히 새로운 HTML을 받아오지만, SPA에서는 JavaScript로 현재 페이지의 내용만 바꿔주면서 마치 새로운 페이지로 이동한 것처럼 느끼게 해줍니다.
+
+자세한 내용은 초급 단계의 SPA vs MPA 비교 회차를 참고해주세요.
 
 <CalloutBox type="info" title="SPA의 장점">
 **빠른 페이지 전환**: 전체 페이지를 다시 로드하지 않고 필요한 부분만 변경
@@ -60,7 +62,13 @@ React Router는 React 애플리케이션에서 가장 널리 사용되는 라우
 npm install react-router-dom
 ```
 
-React Router의 기본 구조는 다음과 같습니다:
+React router를 배우는데 왜 react-router-dom을 설치할까요? 
+
+React Router는 웹, 네이티브, 기타 플랫폼용으로 나뉘어져 있습니다. 
+
+react-router-dom은 웹 애플리케이션에 특화된 기능들을 포함하고 있기 때문에 웹 프로젝트에서는 이 패키지를 사용합니다.
+
+React Router의 기본 구조는 다음과 같습니다.
 
 ```jsx
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
@@ -97,26 +105,26 @@ function App() {
 }
 ```
 
-### 2. 핵심 컴포넌트 이해
+`BrowserRouter`는 라우팅 기능을 넣을 곳의 최상위 컴포넌트 래퍼입니다. 주로 React의 Main.jsx 또는 App.jsx에서 사용합니다.
 
-React Router의 핵심 컴포넌트들을 살펴보겠습니다:
+Routes 컴포넌트 아래에 여러 Route 컴포넌트를 배치하여 각 경로(path)와 렌더링할 컴포넌트(element)를 정의합니다.
 
-- **BrowserRouter**: 라우팅 기능을 제공하는 최상위 래퍼
-- **Routes**: 여러 Route를 감싸는 컨테이너
-- **Route**: 특정 경로와 컴포넌트를 연결
-- **Link**: 페이지 간 이동을 위한 링크 (HTML의 `<a>` 태그 대신 사용)
+path는 URL 경로를 의미하며, element는 해당 경로에 접근했을 때 렌더링할 React 컴포넌트입니다.
 
-<CalloutBox type="warning" title="Link vs a 태그">
-**Link 사용**: SPA의 이점을 활용하여 페이지 새로고침 없이 이동
+`Link` 컴포넌트를 활용하면 페이지 간 이동을 할 수 있습니다. 
 
-**a 태그 사용**: 전체 페이지를 새로 로드하므로 SPA의 이점을 잃음
+`Link`는 HTML의 `<a>` 태그와 비슷하지만, SPA의 장점을 살리기 위해 페이지 새로고침 없이 이동할 수 있습니다.
 
-React 애플리케이션 내부 링크는 반드시 Link 컴포넌트를 사용하세요!
-</CalloutBox>
+`<a>` 태그를 사용하면 전체 페이지가 깜빡거리며 새로고침되어 SPA의 장점을 잃게 됩니다.
 
-### 3. 네비게이션과 레이아웃
+<br/>
 
-실제 애플리케이션에서는 모든 페이지에 공통된 네비게이션이 있을 것입니다:
+
+### 2. 네비게이션과 레이아웃
+
+웹 애플리케이션에서는 모든 페이지에 공통된 네비게이션 바(상단메뉴, 사이드바 등)나, 푸터, 공통된 페이지 규격 등 레이아웃이 필요한 경우가 있습니다.
+
+이를 위해서 Layout 컴포넌트를 만들어 공통 UI를 관리할 수 있습니다.
 
 ```jsx
 import { BrowserRouter, Routes, Route, Link, Outlet } from 'react-router-dom';
@@ -125,14 +133,14 @@ function Layout() {
   return (
     <div>
       <header>
-        <nav style={{ padding: '1rem', borderBottom: '1px solid #ccc' }}>
-          <Link to="/" style={{ marginRight: '1rem' }}>홈</Link>
-          <Link to="/products" style={{ marginRight: '1rem' }}>상품</Link>
-          <Link to="/about" style={{ marginRight: '1rem' }}>소개</Link>
+        <nav>
+          <Link to="/">홈</Link>
+          <Link to="/products">상품</Link>
+          <Link to="/about">소개</Link>
         </nav>
       </header>
       
-      <main style={{ padding: '2rem' }}>
+      <main>
         <Outlet /> {/* 여기에 각 페이지 컴포넌트가 렌더링됩니다 */}
       </main>
     </div>
@@ -153,8 +161,26 @@ function App() {
   );
 }
 ```
+Layout 컴포넌트는 모든 페이지에 공통으로 적용되는 UI를 담당합니다.
 
-`<Outlet />`은 중첩된 라우트에서 자식 컴포넌트가 렌더링될 위치를 지정합니다. Layout 컴포넌트는 모든 페이지에 공통으로 적용되는 UI를 담당합니다.
+자식 `Route`들을 묶는 부모 `Route`에 element로 Layout 컴포넌트를 지정할 수 있습니다.
+
+이렇게 하면 자식 Route들이 공통된 레이아웃을 가지며 렌더링됩니다.
+
+가령 위의 예시처럼, 헤더(상단 메뉴)등 여러 공통 페이지에서 사용되는 중복 UI를 Layout 컴포넌트에 넣어 일관적으로 보여지게 할 수 있습니다.
+
+`<Outlet />`은 중첩된 라우트에서 자식 컴포넌트가 렌더링될 위치를 지정합니다. 
+
+자식 Route로 path가 선택될 때, element로 지정된 컴포넌트가 저 자리에 렌더링 되는거죠.
+
+<br/>
+
+이전에는 종종 `{children}`으로 자식 Route를 렌더링했지만,
+
+최근 React Router(v6~)에서는 중첩 라우트를 표현할 때 `<Outlet />`을 사용하도록 변경되었습니다.
+
+`children`은 여전히 일반 ReactNode 컴포넌트 합성용으로 쓰이고, 라우팅에는 `<Outlet />`이 표준입니다.
+
 
 ---
 
