@@ -1,20 +1,16 @@
 import { useParams } from 'react-router-dom';
 import CourseList from '../components/CourseListPage/CourseList';
+import type { EnglishLevelType, LevelType } from '../types/CourseList';
+import { ENGLISH_LEVEL_MAPPINGS } from '../types/CourseList';
 
 const CourseListPage: React.FC = () => {
-    const { level } = useParams<{ level: string }>();
+    const { level } = useParams<{ level: EnglishLevelType }>();
     
-    // id를 한국어 레벨명으로 변환
-    const getLevelName = (id: string): '초급' | '중급' | '고급' => {
-        const levelMap: Record<string, '초급' | '중급' | '고급'> = {
-            'beginner': '초급',
-            'intermediate': '중급', 
-            'advanced': '고급'
-        };
-        return levelMap[id] || '초급';
+    const getLevelName = (id: string): LevelType => {
+        return ENGLISH_LEVEL_MAPPINGS[id as EnglishLevelType] || '초급';
     };
 
-    return <CourseList level={getLevelName(level!)} />;
+    return <CourseList level={getLevelName(level!)} englishLevel={level as EnglishLevelType} />;
 };
 
 export default CourseListPage;

@@ -158,11 +158,10 @@ React가 왜 이렇게 인기가 많은지 구체적인 이유를 알아보겠�
 
 <CodeSandbox
 title="재사용 가능한 버튼 컴포넌트 - 간단한 예시"
-language="javascript"
 code={`// 한 번만 만든 버튼 컴포넌트
     function Button({ text, color }) {
     return (
-        <button style={{ backgroundColor: color, padding: '10px', margin: '5px' }}>
+        <button style={{ backgroundColor: color, color:'white', padding: '10px', margin: '5px' }}>
           {text}
         </button>
     );
@@ -178,7 +177,6 @@ code={`// 한 번만 만든 버튼 컴포넌트
       </div>
     );
 }`}
-editable={true}
 />
 
 이를 통해 코드 분량을 줄이고, 이해하기 쉬운 구조를 통해 코드 파악이 쉬워집니다.

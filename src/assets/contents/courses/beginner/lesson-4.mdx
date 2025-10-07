@@ -147,8 +147,10 @@ JSX에서는 중첩된 요소들을 HTML처럼 자연스럽게 작성할 수 있
 
 중괄호 안에 JavaScript를 넣어 표현식을 바로 사용할 수 있는 JSX의 특징이자 장점이죠.
 
-```jsx
-function App() {
+
+<CodeSandbox
+title="JSX 내부에서 Javasciprt 표현식 사용"
+code={`function App() {
   const todos = ['React 공부하기', 'JSX 익히기', '프로젝트 만들기'];
 
   return (
@@ -170,8 +172,8 @@ function App() {
       </footer>
     </div>
   );
-}
-```
+}`} />
+
 
 ---
 
@@ -265,15 +267,14 @@ Javascript를 포함해 여러 프로그래밍 언어에서 자주 사용되는 
 
 또한 user의 레벨에 따라 다른 메시지를 보여줍니다.
 
-```jsx
-function App() {
+export const jsxTernaryCode = `function App() {
   const isLoggedIn = true;
   const user = { name: '김리액트', level: 'beginner' };
 
   return ( 
     <div>
       <h1>
-        {isLoggedIn ? `안녕하세요, ${user.name}님!` : '로그인해주세요'}
+        {isLoggedIn ? \`안녕하세요, \${user.name}님!\` : '로그인해주세요'}
       </h1>
       
       <div>
@@ -285,8 +286,13 @@ function App() {
       </div>
     </div>
   );
-}
-```
+}`;
+
+<CodeSandbox
+  title="JSX 내부에서 삼항 연산자 사용"
+  code={jsxTernaryCode}
+/>
+
 
 ### 2. 논리 AND 연산자 사용
 
@@ -294,8 +300,10 @@ function App() {
 
 앞의 식이 참인 경우, 뒤의 식을 렌더링합니다.
 
-```jsx
-function App() {
+
+<CodeSandbox
+  title="JSX 내부에서 논리 AND 연산자 사용"
+  code={`function App() {
   const showWelcome = true;
   const notifications = ['새 메시지', '친구 요청'];
 
@@ -315,8 +323,8 @@ function App() {
       )}
     </div>
   );
-}
-```
+}`}
+/>
 
 하지만 주의할 점이 있습니다.
 
@@ -344,8 +352,9 @@ javascript 함수를 활용해 조건부 렌더링을 처리할 수 있습니다
 
 이 함수를 JSX 내에서 호출하면 return된 JSX가 렌더링됩니다.
 
-```jsx
-function App() {
+<CodeSandbox
+  title=" 함수를 사용한 복잡한 조건부 렌더링"
+  code={`function App() {
   const user = {
     name: '김리액트',
     role: 'admin',
@@ -370,8 +379,8 @@ function App() {
       {renderUserStatus()}
     </div>
   );
-}
-```
+}`}
+/>
 
 ---
 
@@ -401,8 +410,9 @@ map으로 반복 렌더링을 할 때는 반드시 최상단 요소에 `key` 속
 
 또는 배열의 인덱스를 사용할 수도 있지만, <HighlightWord>데이터가 변경될 가능성이 있는 경우에는 권장하지 않습니다</HighlightWord>.
 
-```jsx
-function App() {
+<CodeSandbox
+  title="JSX 내부에서 리스트 렌더링"
+  code={`function App() {
   const fruits = [
     { id: 1, name: '사과', color: 'red', price: 1000 },
     { id: 2, name: '바나나', color: 'yellow', price: 500 },
@@ -435,8 +445,8 @@ function App() {
       </div>
     </div>
   );
-}
-```
+}`}
+/>
 
 <CalloutBox type="warning" title="key 속성의 중요성">
 **고유한 값**: 각 리스트 아이템은 형제들 사이에서 고유한 key를 가져야 합니다
@@ -462,38 +472,32 @@ JSX에서는 HTML 이벤트와 비슷하지만 조금 다른 방식으로 이벤
 
 우선 일반 javascript와 마찬가지로 이벤트 핸들러를 함수로 정의하고, JSX에서 해당 함수를 이벤트 속성에 할당합니다.
 
+<CodeSandbox
+  title="JSX 내부에서 이벤트 처리"
+  code={`function App() {
+    const handleClick = () => {
+      alert('버튼이 클릭되었습니다!');
+    };
 
-```jsx
-function App() {
-  const handleClick = () => {
-    alert('버튼이 클릭되었습니다!');
-  };
+    const handleInputChange = (event) => {
+      console.log('입력값이 변경되었습니다: ', event.target.value);
+    };
 
-  const handleInputChange = (event) => {
-    console.log('입력값이 변경되었습니다: ', event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log('폼이 제출되었습니다!');
-  };
+    const handleSubmit = (event) => {
+      event.preventDefault();
+      console.log('폼이 제출되었습니다!');
+    };
 
   return (
-    <div>
+    <div style={{display:"flex", flexDirection:"column", gap:'16px', width:'120px'}}>
       {/* 클릭 이벤트 */}
-      <button onClick={handleClick}>
-        클릭하세요
-      </button>
+      <button onClick={handleClick}>클릭하세요</button>
 
       {/* 인라인 함수 */}
-      <button onClick={() => alert('인라인 함수!')}>
-        인라인 클릭
-      </button>
+      <button onClick={() => alert('인라인 함수!')}>인라인 클릭</button>
 
       {/* 매개변수가 있는 함수 */}
-      <button onClick={() => handleClick('매개변수')}>
-        매개변수 전달
-      </button>
+      <button onClick={() => handleClick('매개변수')}>매개변수 전달</button>
 
       {/* 입력 이벤트 */}
       <input 
@@ -509,8 +513,10 @@ function App() {
       </form>
     </div>
   );
-}
-```
+}`}
+/>
+
+
 
 ### 일반적인 이벤트 핸들러들
 
@@ -520,8 +526,9 @@ javascript에서는 `addEventListener`를 사용해 이벤트를 처리했지만
 
 한눈에 들어오니 이해가 더 잘 되지 않나요?
 
-```jsx
-function App() {
+<CodeSandbox
+  title="이벤트 핸들러 예시"
+  code={`function App() {
   return (
     <div>
       <button onClick={() => console.log('클릭!')}>클릭</button>
@@ -545,8 +552,8 @@ function App() {
       </form>
     </div>
   );
-}
-```
+}`}
+/>
 
 ---
 

@@ -258,20 +258,25 @@ diffing 과정에서 발견된 차이점들만 실제 DOM에 반영합니다.
 
 실제로 React에서 Virtual DOM이 어떻게 작동하는지 간단한 예시로 확인해보세요
 
-```jsx
-import React, { useState } from 'react';
+<CodeSandbox
+title="Virtual DOM 시각화 - 변경사항 추적 데모"
+code={`import {useState} from 'react';
+import { useState } from 'react';
 
-function VirtualDOMExample() {
+function App() {
   const [items, setItems] = useState(['사과', '바나나', '오렌지']);
   const [newItem, setNewItem] = useState('');
 
   const addItem = () => {
     if (newItem.trim()) {
-      // 새로운 아이템을 추가할 때
-      // React가 Virtual DOM에서 먼저 변경사항을 계산하고
-      // 실제 DOM에는 새로운 <li> 하나만 추가됩니다
       setItems([...items, newItem]);
       setNewItem('');
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      addItem();
     }
   };
 
@@ -283,82 +288,15 @@ function VirtualDOMExample() {
           <li key={index}>{item}</li>  // 새 항목만 DOM에 추가됨
         ))}
       </ul>
-      <input 
+      <input
         value={newItem}
         onChange={(e) => setNewItem(e.target.value)}
-        placeholder="새 과일 입력"
+        onKeyDown={handleKeyDown}
+        placeholder="새 과일 입력 후 엔터"
       />
-      <button onClick={addItem}>추가</button>
     </div>
   );
-}
-```
-<CodeSandbox
-title="Virtual DOM 시각화 - 변경사항 추적 데모"
-language="javascript"
-hideCode={true}
-code={`function VirtualDOMExample() {
-  const [items, setItems] = React.useState(['사과', '바나나', '오렌지']);
-  const [newItem, setNewItem] = React.useState('');
-  const [highlightedIndex, setHighlightedIndex] = React.useState(null);
-
-  // 스타일을 객체로 정의 (백틱 필요 없음)
-  const styles = {
-    container: {
-      padding: '20px',
-      fontFamily: 'system-ui, sans-serif',
-      maxWidth: '500px',
-      margin: '0 auto',
-      backgroundColor: '#f8fafc',
-      borderRadius: '12px'
-    },
-    listItem: (isHighlighted) => ({
-      padding: '12px 16px',
-      backgroundColor: isHighlighted ? '#dcfce7' : 'white',
-      transform: isHighlighted ? 'scale(1.02)' : 'scale(1)',
-      transition: 'all 0.5s ease',
-    })
-  };
-
-  const addItem = () => {
-    if (newItem.trim()) {
-      const newItems = [...items, newItem];
-      setItems(newItems);
-      setHighlightedIndex(newItems.length - 1);
-      setNewItem('');
-      setTimeout(() => setHighlightedIndex(null), 1500);
-    }
-  };
-
-  return (
-    <div style={styles.container}>
-      <h3>🍎 Virtual DOM 과일 목록</h3>
-      <ul style={{listStyle: 'none', padding: 0}}>
-        {items.map((item, index) => (
-          <li key={index} style={styles.listItem(highlightedIndex === index)}>
-            {item === '사과' ? '🍎' : item === '바나나' ? '🍌' : '🍊'} {item}
-          </li>
-        ))}
-      </ul>
-      <div style={{display: 'flex', gap: '8px'}}>
-        <input 
-          value={newItem}
-          onChange={(e) => setNewItem(e.target.value)}
-          placeholder="새 과일 입력"
-          style={{flex: 1, padding: '8px'}}
-        />
-        <button onClick={addItem} style={{padding: '8px 16px', backgroundColor:'black'}}>
-          추가
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function App() {
-  return <VirtualDOMExample />;
-}`}
-editable={true}
+}`} 
 />
 
 위 예시에서 과일을 하나 추가할 때, 전체 목록을 다시 그리는 게 아니라 새로운 `<li>` 하나만 DOM에 추가됩니다.

@@ -5,16 +5,17 @@ import MDXRenderer from '../components/CourseContent/MDXRenderer';
 import { componentRegistry } from '../components/CourseContent/EmbeddedComponents';
 import { useNavigate, useParams } from 'react-router-dom';
 import Button from '../components/common/Button';
-import type { LevelType } from '../types/CourseList';
-
+import type { EnglishLevelType } from '../types/CourseList';
+import { ENGLISH_LEVEL_MAPPINGS } from '../types/CourseList';
 
 function ContentPage() {
-  const { level, lessonId } = useParams<{ level: LevelType; lessonId: string }>();
-  const { MDXComponent, metadata, loading, error } = useMDXContent(level!, lessonId!);
+  const { level: englishLevel, lessonId } = useParams<{ level: EnglishLevelType; lessonId: string }>();
+  const koreanLevel = englishLevel ? ENGLISH_LEVEL_MAPPINGS[englishLevel] : '초급';
+  
+  const { MDXComponent, metadata, loading, error } = useMDXContent(englishLevel!, lessonId!);
   const navigate = useNavigate();
   
-  // 사용 가능한 레슨 목록 가져오기
-  const availableLessons = getAvailableLessons(level!);
+  const availableLessons = getAvailableLessons(englishLevel!);
   const currentLessonNum = parseInt(lessonId!);
   const currentIndex = availableLessons.indexOf(currentLessonNum);
   
@@ -25,89 +26,79 @@ function ContentPage() {
   const nextLessonNum = hasNextLesson ? availableLessons[currentIndex + 1] : null;
 
   const handleBackToList = () => {
-    navigate(`/courses/${level}`);
+    navigate(`/courses/${englishLevel}`);
   };
 
   const handlePrevLesson = () => {
     if (prevLessonNum) {
-      navigate(`/courses/${level}/${prevLessonNum}`);
+      navigate(`/courses/${englishLevel}/${prevLessonNum}`);
     }
   };
 
   const handleNextLesson = () => {
     if (nextLessonNum) {
-      navigate(`/courses/${level}/${nextLessonNum}`);
+      navigate(`/courses/${englishLevel}/${nextLessonNum}`);
     }
   };
 
-  // 로딩 상태
   if (loading) {
     return (
-      <>
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-          <div className="text-center">
-            <h3 className="text-lg font-medium text-gray-900 dark:text-[#f8f8f8] mb-2">
-              학습 콘텐츠를 불러오는 중...
-            </h3>
-            <p className="text-gray-600 dark:text-[#c2c2c2]">
-              잠시만 기다려주세요.
-            </p>
-          </div>
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+        <div className="text-center">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-[#f8f8f8] mb-2">
+            학습 콘텐츠를 불러오는 중...
+          </h3>
+          <p className="text-gray-600 dark:text-[#c2c2c2]">
+            잠시만 기다려주세요.
+          </p>
         </div>
-      </>
+      </div>
     );
   }
 
-  // 에러 상태
   if (error || !MDXComponent) {
     return (
-      <>
-        <div className="max-w-md mx-auto text-center p-6">
-          <div className="flex justify-center mb-4">
-            <AlertCircle className="w-16 h-16 text-red-500" />
-          </div>
-
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-4">
-            콘텐츠를 불러올 수 없습니다
-          </h2>
-
-          <p className="text-gray-600 dark:text-[#c2c2c2] mb-6 leading-relaxed">
-            {error || '요청한 학습 콘텐츠를 찾을 수 없습니다. 다른 강의를 선택하거나 잠시 후 다시 시도해주세요.'}
-          </p>
-
-          <div className="space-y-3">
-            <button
-              onClick={handleBackToList}
-              className="w-full bg-[#3e3e3e] hover:bg-[#2b2b2b] dark:bg-[#f8f8f8] dark:hover:bg-[#c2c2c2] text-white dark:text-[#2b2b2b] font-medium py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              목록으로 돌아가기
-            </button>
-
-            <button
-              onClick={() => window.location.reload()}
-              className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-[#3e3e3e] dark:hover:bg-[#2b2b2b] text-gray-700 dark:text-[#c2c2c2] font-medium py-3 px-6 rounded-xl transition-all duration-200"
-            >
-              페이지 새로고침
-            </button>
-          </div>
+      <div className="max-w-md mx-auto text-center p-6">
+        <div className="flex justify-center mb-4">
+          <AlertCircle className="w-16 h-16 text-red-500" />
         </div>
-      </>
+
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-4">
+          콘텐츠를 불러올 수 없습니다
+        </h2>
+
+        <p className="text-gray-600 dark:text-[#c2c2c2] mb-6 leading-relaxed">
+          {error || '요청한 학습 콘텐츠를 찾을 수 없습니다. 다른 강의를 선택하거나 잠시 후 다시 시도해주세요.'}
+        </p>
+
+        <div className="space-y-3">
+          <button
+            onClick={handleBackToList}
+            className="w-full bg-[#3e3e3e] hover:bg-[#2b2b2b] dark:bg-[#f8f8f8] dark:hover:bg-[#c2c2c2] text-white dark:text-[#2b2b2b] font-medium py-3 px-6 rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            목록으로 돌아가기
+          </button>
+
+          <button
+            onClick={() => window.location.reload()}
+            className="w-full bg-gray-200 hover:bg-gray-300 dark:bg-[#3e3e3e] dark:hover:bg-[#2b2b2b] text-gray-700 dark:text-[#c2c2c2] font-medium py-3 px-6 rounded-xl transition-all duration-200"
+          >
+            페이지 새로고침
+          </button>
+        </div>
+      </div>
     );
   }
 
-  // 제목 생성 (메타데이터에서 가져오거나 기본값 사용)
   const title = metadata?.title || `Lesson ${lessonId}`;
 
-  // 성공적으로 데이터를 불러온 경우
   return (
     <>
-      {/* 마크다운 네비게이션 - MDX 컴포넌트에서 헤딩 추출 */}
       <NavigationBar MDXComponent={MDXComponent} />
 
       <div className="max-w-6xl mx-auto px-4 py-8">
-        {/* 상단 네비게이션 */}
         <div className="mb-8">
           <button
             onClick={handleBackToList}
@@ -117,7 +108,6 @@ function ContentPage() {
             목록으로
           </button>
 
-          {/* 메타데이터가 있으면 표시 */}
           {metadata && Object.keys(metadata).length > 0 && (
             <div className="mb-4">
               <div className="flex flex-wrap gap-2">
@@ -152,7 +142,6 @@ function ContentPage() {
             </div>
           )}
 
-          {/* 모바일에서 제목 크기 줄임 */}
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-[#f8f8f8] mb-2">
             {title}
           </h1>
@@ -170,7 +159,6 @@ function ContentPage() {
           )}
         </div>
 
-        {/* MDX 콘텐츠 - 모바일에서 좌우 여백 줄임 */}
         <div className="bg-white dark:bg-[#2b2b2b] rounded-xl border border-gray-200 dark:border-[#3e3e3e] overflow-hidden shadow-lg">
           <div className="px-4 sm:px-12 py-6">
             <MDXRenderer
@@ -182,19 +170,9 @@ function ContentPage() {
           </div>
         </div>
 
-        {/* 하단 네비게이션 */}
-        <div className="mt-12 flex flex-col sm:flex-row gap-4 justify-between items-center">
-          {/* 목록으로 돌아가기 버튼 */}
-          <button
-            onClick={handleBackToList}
-            className="text-gray-600 dark:text-[#c2c2c2] hover:text-blue-600 dark:hover:text-blue-400 font-medium cursor-pointer transition-colors"
-          >
-            목록으로
-          </button>
+        <div className="mt-12 flex flex-col sm:flex-row gap-4 ">
 
-          {/* 이전/다음 강의 버튼 */}
-          <div className="flex gap-3">
-            {/* 이전 강의 버튼 */}
+          <div className="w-full flex justify-between items-center">
             {hasPrevLesson && (
               <Button 
                 variant="primary" 
@@ -207,7 +185,6 @@ function ContentPage() {
               </Button>
             )}
 
-            {/* 다음 강의 버튼 */}
             {hasNextLesson && (
               <Button 
                 variant="primary" 

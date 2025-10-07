@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { MDXMetadata } from '../types/mdx';
-import { getLevelFolderName } from '../components/CourseListPage/generateLearningData';
-import type { LevelType } from '../types/CourseList';
+import type { EnglishLevelType } from '../types/CourseList';
 
 interface UseMDXContentReturn {
   MDXComponent: React.ComponentType | null;
@@ -10,7 +9,6 @@ interface UseMDXContentReturn {
   metadata: MDXMetadata | null;
 }
 
-// Vite의 glob import를 사용하여 모든 MDX 파일을 미리 로드
 const mdxModules = import.meta.glob('/src/assets/contents/courses/**/*.mdx', { 
   eager: false,
   import: 'default'
@@ -21,7 +19,7 @@ const mdxMetadataModules = import.meta.glob('/src/assets/contents/courses/**/*.m
   import: 'metadata'
 });
 
-export const useMDXContent = (level: LevelType, lessonId: string): UseMDXContentReturn => {
+export const useMDXContent = (level: EnglishLevelType, lessonId: string): UseMDXContentReturn => {
   const [MDXComponent, setMDXComponent] = useState<React.ComponentType | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -33,29 +31,22 @@ export const useMDXContent = (level: LevelType, lessonId: string): UseMDXContent
         setLoading(true);
         setError(null);
 
-        const mappedLevel = getLevelFolderName(level);
-
-        // MDX 파일 경로 구성
-        const mdxPath = `/src/assets/contents/courses/${mappedLevel}/lesson-${lessonId}.mdx`;
+        const mdxPath = `/src/assets/contents/courses/${level}/lesson-${lessonId}.mdx`;
         
-        // glob으로 로드된 모듈에서 해당 파일 찾기
         const moduleLoader = mdxModules[mdxPath];
         const metadataLoader = mdxMetadataModules[mdxPath];
         
         if (!moduleLoader) {
-          throw new Error(`레슨 파일을 찾을 수 없습니다: ${mappedLevel}/lesson-${lessonId}`);
+          throw new Error(`레슨 파일을 찾을 수 없습니다: ${level}/lesson-${lessonId}`);
         }
 
-        // 비동기로 MDX 모듈 로드
         const [mdxModule, moduleMetadata] = await Promise.all([
           moduleLoader(),
           metadataLoader?.() || Promise.resolve(null)
         ]);
         
-        // MDX 컴포넌트 설정
         setMDXComponent(() => mdxModule as React.ComponentType);
         
-        // 메타데이터 설정
         if (moduleMetadata) {
           setMetadata(moduleMetadata as MDXMetadata);
         }
@@ -75,8 +66,7 @@ export const useMDXContent = (level: LevelType, lessonId: string): UseMDXContent
   return { MDXComponent, loading, error, metadata };
 };
 
-// 사용 가능한 레슨 목록 가져오기
-export const getAvailableLessons = (level: string): number[] => {
+export const getAvailableLessons = (level: EnglishLevelType): number[] => {
   const lessons: number[] = [];
   
   Object.keys(mdxModules).forEach(path => {
@@ -89,8 +79,7 @@ export const getAvailableLessons = (level: string): number[] => {
   return lessons.sort((a, b) => a - b);
 };
 
-// 특정 레벨의 모든 레슨 메타데이터 가져오기
-export const getLevelMetadata = async (level: string): Promise<Record<string, MDXMetadata>> => {
+export const getLevelMetadata = async (level: EnglishLevelType): Promise<Record<string, MDXMetadata>> => {
   const levelMetadata: Record<string, MDXMetadata> = {};
   
   const relevantPaths = Object.keys(mdxMetadataModules).filter(path => 

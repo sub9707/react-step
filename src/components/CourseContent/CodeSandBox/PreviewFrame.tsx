@@ -52,7 +52,7 @@ export const PreviewFrame = ({
         ref={iframeRef}
         title="code-preview"
         srcDoc={htmlContent}
-        sandbox="allow-scripts allow-same-origin"
+        sandbox="allow-scripts allow-same-origin allow-modals allow-forms"
         className="w-full border-none"
         style={{ 
           height: `${iframeHeight}px`,
